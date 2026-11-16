@@ -1,0 +1,45 @@
+[package]
+name = "food-api"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+description = "Diet and lifestyle guidance API (Bangladesh first)"
+publish = false
+
+[lib]
+name = "food_api"
+path = "src/lib.rs"
+
+[[bin]]
+name = "food"
+path = "src/main.rs"
+
+[dependencies]
+axum = { version = "0.8", features = ["multipart"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "fs"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "compression-gzip", "compression-br", "fs", "set-header"] }
+sea-orm = { version = "1.1", default-features = false, features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+async-trait = "0.1"
+redis = { version = "0.27", default-features = false, features = ["tokio-comp", "connection-manager"] }
+uuid = { version = "1", features = ["v4"] }
+argon2 = { version = "0.5", features = ["std"] }
+sha2 = "0.10"
+aes-gcm = "0.10"
+hex = "0.4"
+rand = "0.8"
+thiserror = "2"
+rust-s3 = { version = "0.35", default-features = false, features = ["tokio-rustls-tls"] }
+webp = "0.3"
+ts-rs = { version = "10", features = ["serde-compat"] }
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

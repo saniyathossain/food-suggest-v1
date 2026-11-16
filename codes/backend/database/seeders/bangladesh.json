@@ -1,0 +1,2365 @@
+{
+  "country": {
+    "code": "BD",
+    "name": {
+      "en": "Bangladesh",
+      "bn": "বাংলাদেশ"
+    }
+  },
+  "categories": [
+    [
+      "grains",
+      "Rice, ruti & grains",
+      "ভাত, রুটি ও শস্য"
+    ],
+    [
+      "proteins",
+      "Fish, meat & eggs",
+      "মাছ, মাংস ও ডিম"
+    ],
+    [
+      "lentils",
+      "Dal, beans & nuts",
+      "ডাল, বীজ ও বাদাম"
+    ],
+    [
+      "vegetables",
+      "Shak & vegetables",
+      "শাক ও সবজি"
+    ],
+    [
+      "fruits",
+      "Fruits",
+      "ফল"
+    ],
+    [
+      "dairy",
+      "Milk & dairy",
+      "দুধ ও দুগ্ধজাত"
+    ],
+    [
+      "snacks",
+      "Fried & street snacks",
+      "ভাজাপোড়া ও নাস্তা"
+    ],
+    [
+      "sweets",
+      "Sweets & sugar",
+      "মিষ্টি ও চিনি"
+    ],
+    [
+      "drinks",
+      "Drinks",
+      "পানীয়"
+    ],
+    [
+      "kitchen",
+      "Oil, salt & spices",
+      "তেল, লবণ ও মসলা"
+    ],
+    [
+      "processed",
+      "Processed food",
+      "প্রক্রিয়াজাত খাবার"
+    ]
+  ],
+  "foods": [
+    [
+      "white-rice",
+      "grains",
+      "White rice (bhat)",
+      "সাদা ভাত"
+    ],
+    [
+      "red-rice",
+      "grains",
+      "Red / brown rice",
+      "লাল চালের ভাত"
+    ],
+    [
+      "atta-ruti",
+      "grains",
+      "Whole-wheat ruti",
+      "লাল আটার রুটি"
+    ],
+    [
+      "paratha",
+      "grains",
+      "Paratha",
+      "পরোটা"
+    ],
+    [
+      "luchi-puri",
+      "grains",
+      "Luchi / puri",
+      "লুচি / পুরি"
+    ],
+    [
+      "khichuri",
+      "grains",
+      "Khichuri",
+      "খিচুড়ি"
+    ],
+    [
+      "biryani",
+      "grains",
+      "Biryani / tehari",
+      "বিরিয়ানি / তেহারি"
+    ],
+    [
+      "oats",
+      "grains",
+      "Oats",
+      "ওটস"
+    ],
+    [
+      "chira-muri",
+      "grains",
+      "Chira & muri",
+      "চিড়া ও মুড়ি"
+    ],
+    [
+      "white-bread",
+      "grains",
+      "White bread / bun",
+      "পাউরুটি / বনরুটি"
+    ],
+    [
+      "ilish",
+      "proteins",
+      "Hilsa (ilish)",
+      "ইলিশ মাছ"
+    ],
+    [
+      "rui-fish",
+      "proteins",
+      "Rui / katla fish",
+      "রুই / কাতলা মাছ"
+    ],
+    [
+      "small-fish",
+      "proteins",
+      "Small fish (mola, kachki)",
+      "ছোট মাছ (মলা, কাচকি)"
+    ],
+    [
+      "shutki",
+      "proteins",
+      "Dried fish (shutki)",
+      "শুটকি মাছ"
+    ],
+    [
+      "chingri",
+      "proteins",
+      "Prawn / shrimp (chingri)",
+      "চিংড়ি"
+    ],
+    [
+      "chicken",
+      "proteins",
+      "Chicken, skinless",
+      "মুরগি (চামড়া ছাড়া)"
+    ],
+    [
+      "beef",
+      "proteins",
+      "Beef",
+      "গরুর মাংস"
+    ],
+    [
+      "mutton",
+      "proteins",
+      "Mutton",
+      "খাসির মাংস"
+    ],
+    [
+      "egg",
+      "proteins",
+      "Egg",
+      "ডিম"
+    ],
+    [
+      "masoor-dal",
+      "lentils",
+      "Masoor dal",
+      "মসুর ডাল"
+    ],
+    [
+      "chola",
+      "lentils",
+      "Chickpeas (chola)",
+      "ছোলা"
+    ],
+    [
+      "soybean",
+      "lentils",
+      "Soybean / soy chunks",
+      "সয়াবিন / সয়া চাঙ্ক"
+    ],
+    [
+      "peanuts",
+      "lentils",
+      "Peanuts (chinabadam)",
+      "চিনাবাদাম"
+    ],
+    [
+      "nuts",
+      "lentils",
+      "Almonds & walnuts",
+      "কাঠবাদাম ও আখরোট"
+    ],
+    [
+      "lal-shak",
+      "vegetables",
+      "Red amaranth (lal shak)",
+      "লাল শাক"
+    ],
+    [
+      "palong-shak",
+      "vegetables",
+      "Spinach (palong shak)",
+      "পালং শাক"
+    ],
+    [
+      "korola",
+      "vegetables",
+      "Bitter gourd (korola)",
+      "করলা"
+    ],
+    [
+      "lau",
+      "vegetables",
+      "Bottle gourd (lau)",
+      "লাউ"
+    ],
+    [
+      "dherosh",
+      "vegetables",
+      "Okra (dherosh)",
+      "ঢেঁড়স"
+    ],
+    [
+      "cabbage",
+      "vegetables",
+      "Cabbage & cauliflower",
+      "বাঁধাকপি ও ফুলকপি"
+    ],
+    [
+      "potato",
+      "vegetables",
+      "Potato (alu)",
+      "আলু"
+    ],
+    [
+      "cucumber",
+      "vegetables",
+      "Cucumber (shosha)",
+      "শসা"
+    ],
+    [
+      "tomato",
+      "vegetables",
+      "Tomato",
+      "টমেটো"
+    ],
+    [
+      "guava",
+      "fruits",
+      "Guava (peyara)",
+      "পেয়ারা"
+    ],
+    [
+      "amloki",
+      "fruits",
+      "Amla (amloki)",
+      "আমলকী"
+    ],
+    [
+      "papaya",
+      "fruits",
+      "Ripe papaya (pepe)",
+      "পাকা পেঁপে"
+    ],
+    [
+      "banana",
+      "fruits",
+      "Banana (kola)",
+      "কলা"
+    ],
+    [
+      "ripe-mango",
+      "fruits",
+      "Ripe mango",
+      "পাকা আম"
+    ],
+    [
+      "jackfruit",
+      "fruits",
+      "Ripe jackfruit",
+      "পাকা কাঁঠাল"
+    ],
+    [
+      "lychee",
+      "fruits",
+      "Lychee",
+      "লিচু"
+    ],
+    [
+      "dates",
+      "fruits",
+      "Dates (khejur)",
+      "খেজুর"
+    ],
+    [
+      "lemon",
+      "fruits",
+      "Lemon / lime",
+      "লেবু"
+    ],
+    [
+      "milk",
+      "dairy",
+      "Milk",
+      "দুধ"
+    ],
+    [
+      "doi",
+      "dairy",
+      "Plain yogurt (tok doi)",
+      "টক দই"
+    ],
+    [
+      "mishti-doi",
+      "dairy",
+      "Sweet yogurt (mishti doi)",
+      "মিষ্টি দই"
+    ],
+    [
+      "ghee",
+      "dairy",
+      "Ghee & butter",
+      "ঘি ও মাখন"
+    ],
+    [
+      "cheese",
+      "dairy",
+      "Aged cheese",
+      "পুরনো চিজ"
+    ],
+    [
+      "fried-snacks",
+      "snacks",
+      "Singara, samosa, piyaju, beguni",
+      "সিঙ্গারা, সমুচা, পেঁয়াজু, বেগুনি"
+    ],
+    [
+      "chanachur",
+      "snacks",
+      "Chanachur & chips",
+      "চানাচুর ও চিপস"
+    ],
+    [
+      "fast-food",
+      "snacks",
+      "Burger, pizza, fried chicken",
+      "বার্গার, পিজ্জা, ফ্রাইড চিকেন"
+    ],
+    [
+      "instant-noodles",
+      "processed",
+      "Instant noodles",
+      "ইনস্ট্যান্ট নুডলস"
+    ],
+    [
+      "sausage",
+      "processed",
+      "Sausage, salami, nuggets",
+      "সসেজ, সালামি, নাগেট"
+    ],
+    [
+      "mishti",
+      "sweets",
+      "Roshogolla, chomchom & sweets",
+      "রসগোল্লা, চমচম ও মিষ্টি"
+    ],
+    [
+      "sugar-gur",
+      "sweets",
+      "Sugar & jaggery (gur)",
+      "চিনি ও গুড়"
+    ],
+    [
+      "honey",
+      "sweets",
+      "Honey",
+      "মধু"
+    ],
+    [
+      "chocolate",
+      "sweets",
+      "Chocolate",
+      "চকলেট"
+    ],
+    [
+      "ice-cream",
+      "sweets",
+      "Ice cream & cold desserts",
+      "আইসক্রিম ও ঠান্ডা ডেজার্ট"
+    ],
+    [
+      "water",
+      "drinks",
+      "Water",
+      "পানি"
+    ],
+    [
+      "milk-tea",
+      "drinks",
+      "Milk tea with sugar",
+      "দুধ-চিনির চা"
+    ],
+    [
+      "black-tea",
+      "drinks",
+      "Black / green tea, no sugar",
+      "চিনি ছাড়া রং চা / গ্রিন টি"
+    ],
+    [
+      "coffee",
+      "drinks",
+      "Coffee",
+      "কফি"
+    ],
+    [
+      "soft-drinks",
+      "drinks",
+      "Soft drinks & packaged juice",
+      "কোমল পানীয় ও প্যাকেট জুস"
+    ],
+    [
+      "daab",
+      "drinks",
+      "Coconut water (daab)",
+      "ডাবের পানি"
+    ],
+    [
+      "sugarcane",
+      "drinks",
+      "Sugarcane juice",
+      "আখের রস"
+    ],
+    [
+      "alcohol",
+      "drinks",
+      "Alcohol",
+      "অ্যালকোহল"
+    ],
+    [
+      "mustard-oil",
+      "kitchen",
+      "Mustard oil",
+      "সরিষার তেল"
+    ],
+    [
+      "dalda",
+      "kitchen",
+      "Dalda / vanaspati",
+      "ডালডা / বনস্পতি"
+    ],
+    [
+      "tasting-salt",
+      "kitchen",
+      "Tasting salt (MSG)",
+      "টেস্টিং সল্ট (এমএসজি)"
+    ],
+    [
+      "iodized-salt",
+      "kitchen",
+      "Iodized salt",
+      "আয়োডিনযুক্ত লবণ"
+    ],
+    [
+      "ginger-garlic",
+      "kitchen",
+      "Ginger & garlic",
+      "আদা ও রসুন"
+    ],
+    [
+      "turmeric",
+      "kitchen",
+      "Turmeric (holud)",
+      "হলুদ"
+    ],
+    [
+      "achar",
+      "kitchen",
+      "Pickles (achar)",
+      "আচার"
+    ]
+  ],
+  "general": {
+    "timing": [
+      [
+        "do",
+        "07:30",
+        "Eat breakfast within an hour of waking",
+        "ঘুম থেকে ওঠার এক ঘণ্টার মধ্যে নাস্তা করুন",
+        "Breaks the overnight fast and keeps energy steady.",
+        "সারা রাতের উপবাস ভাঙে, শক্তি স্থির রাখে।"
+      ],
+      [
+        "do",
+        "13:30",
+        "Make lunch the main meal",
+        "দুপুরের খাবারকে প্রধান খাবার করুন",
+        "Eat most of your rice at lunch, not at dinner.",
+        "ভাতের বেশির ভাগ দুপুরে খান, রাতে নয়।"
+      ],
+      [
+        "do",
+        null,
+        "Fill half the plate with vegetables",
+        "প্লেটের অর্ধেক সবজি দিয়ে ভরুন",
+        "A quarter rice or ruti, a quarter fish, dal or meat.",
+        "এক-চতুর্থাংশ ভাত বা রুটি, এক-চতুর্থাংশ মাছ, ডাল বা মাংস।"
+      ],
+      [
+        "dont",
+        null,
+        "Don't lie down right after eating",
+        "খাওয়ার পরপরই শুয়ে পড়বেন না",
+        "Wait 2–3 hours; take a 10–15 minute walk instead.",
+        "২–৩ ঘণ্টা অপেক্ষা করুন; বরং ১০–১৫ মিনিট হাঁটুন।"
+      ],
+      [
+        "dont",
+        "22:00",
+        "No heavy food after 10 pm",
+        "রাত ১০টার পর ভারী খাবার নয়",
+        "Late heavy meals disturb sleep and digestion.",
+        "রাতে ভারী খাবার ঘুম ও হজমে ব্যাঘাত ঘটায়।"
+      ]
+    ],
+    "habits": [
+      [
+        "footprints",
+        "Walk 30 minutes a day",
+        "দিনে ৩০ মিনিট হাঁটুন",
+        "Brisk walking, 5 days a week — 150 minutes in total.",
+        "জোরে হাঁটা, সপ্তাহে ৫ দিন — মোট ১৫০ মিনিট।"
+      ],
+      [
+        "glass-water",
+        "Drink 8–10 glasses of water",
+        "দিনে ৮–১০ গ্লাস পানি পান করুন",
+        "More in summer heat and after sweating.",
+        "গরমে ও ঘামার পর আরও বেশি।"
+      ],
+      [
+        "bed",
+        "Sleep 7–8 hours",
+        "৭–৮ ঘণ্টা ঘুমান",
+        "Same bedtime and wake time every day.",
+        "প্রতিদিন একই সময়ে ঘুমানো ও ওঠা।"
+      ]
+    ]
+  },
+  "conditions": [
+    {
+      "slug": "diabetes",
+      "icon": "droplet",
+      "color": "#ff9f0a",
+      "name": {
+        "en": "Diabetes",
+        "bn": "ডায়াবেটিস"
+      },
+      "summary": {
+        "en": "Steady blood sugar: smaller rice portions, more fibre, no sugary drinks, regular meal times.",
+        "bn": "রক্তে শর্করা স্থির রাখুন: ভাত কম, আঁশ বেশি, চিনিযুক্ত পানীয় নয়, নিয়মিত সময়ে খাবার।"
+      },
+      "rules": [
+        [
+          "white-rice",
+          "limit",
+          "Raises blood sugar fast. Keep to about 1 cup cooked per meal.",
+          "দ্রুত শর্করা বাড়ায়। প্রতি বেলা রান্না করা ১ কাপের মধ্যে রাখুন।"
+        ],
+        [
+          "red-rice",
+          "recommended",
+          "More fibre and a slower sugar rise than white rice.",
+          "সাদা ভাতের চেয়ে বেশি আঁশ, শর্করা ধীরে বাড়ে।"
+        ],
+        [
+          "atta-ruti",
+          "recommended",
+          "Whole wheat; 2 medium ruti is a good dinner portion.",
+          "লাল আটা; রাতে মাঝারি ২টি রুটি ভালো পরিমাণ।"
+        ],
+        [
+          "paratha",
+          "limit",
+          "Extra oil and refined flour; keep it occasional.",
+          "বাড়তি তেল ও ময়দা; মাঝে মাঝে খান।"
+        ],
+        [
+          "luchi-puri",
+          "avoid",
+          "Refined flour, deep-fried: fast sugar plus fat.",
+          "ময়দা ডুবো তেলে ভাজা: দ্রুত শর্করা ও চর্বি।"
+        ],
+        [
+          "biryani",
+          "limit",
+          "Large rice and ghee load; small plate, rarely.",
+          "প্রচুর ভাত ও ঘি; ছোট প্লেট, কালেভদ্রে।"
+        ],
+        [
+          "white-bread",
+          "limit",
+          "Refined flour; choose whole-wheat instead.",
+          "ময়দার তৈরি; বদলে লাল আটার রুটি নিন।"
+        ],
+        [
+          "oats",
+          "recommended",
+          "Soluble fibre slows sugar absorption.",
+          "দ্রবণীয় আঁশ শর্করা শোষণ ধীর করে।"
+        ],
+        [
+          "chira-muri",
+          "limit",
+          "Muri spikes sugar; chira with tok doi is better, small bowl.",
+          "মুড়ি দ্রুত শর্করা বাড়ায়; টক দই দিয়ে চিড়া ভালো, অল্প পরিমাণে।"
+        ],
+        [
+          "masoor-dal",
+          "recommended",
+          "Protein and fibre; fill a quarter of the plate.",
+          "প্রোটিন ও আঁশ; প্লেটের এক-চতুর্থাংশ।"
+        ],
+        [
+          "chola",
+          "recommended",
+          "Low glycaemic; eat boiled, not fried.",
+          "গ্লাইসেমিক ইনডেক্স কম; সেদ্ধ খান, ভাজা নয়।"
+        ],
+        [
+          "korola",
+          "recommended",
+          "May help a little with sugar control; it never replaces your medicine.",
+          "শর্করা নিয়ন্ত্রণে সামান্য সাহায্য করতে পারে; কখনোই ওষুধের বিকল্প নয়।"
+        ],
+        [
+          "lal-shak",
+          "recommended",
+          "Leafy greens — fill half the plate with vegetables.",
+          "শাক — প্লেটের অর্ধেক সবজি দিয়ে ভরুন।"
+        ],
+        [
+          "dherosh",
+          "recommended",
+          "Fibre-rich, slows digestion.",
+          "আঁশে ভরপুর, হজম ধীর করে।"
+        ],
+        [
+          "lau",
+          "recommended",
+          "Low calorie, almost no effect on sugar.",
+          "ক্যালরি কম, শর্করায় প্রায় প্রভাব নেই।"
+        ],
+        [
+          "potato",
+          "limit",
+          "Starchy like rice; count it as part of your rice.",
+          "ভাতের মতোই শ্বেতসার; ভাতের অংশ হিসেবে ধরুন।"
+        ],
+        [
+          "small-fish",
+          "recommended",
+          "Protein without raising sugar.",
+          "শর্করা না বাড়িয়ে প্রোটিন।"
+        ],
+        [
+          "rui-fish",
+          "recommended",
+          "Lean protein; curry with little oil.",
+          "চর্বিহীন প্রোটিন; কম তেলে রান্না।"
+        ],
+        [
+          "egg",
+          "recommended",
+          "Good breakfast protein; keeps you full.",
+          "সকালের ভালো প্রোটিন; পেট ভরা রাখে।"
+        ],
+        [
+          "chicken",
+          "ok",
+          "Skinless, cooked with little oil.",
+          "চামড়া ছাড়া, কম তেলে রান্না।"
+        ],
+        [
+          "guava",
+          "recommended",
+          "Low sugar, high fibre — the best fruit choice.",
+          "কম চিনি, বেশি আঁশ — সেরা ফল।"
+        ],
+        [
+          "papaya",
+          "ok",
+          "A small bowl between meals is fine.",
+          "দুই খাবারের মাঝে এক ছোট বাটি চলবে।"
+        ],
+        [
+          "ripe-mango",
+          "limit",
+          "Very sweet; 2–3 slices, between meals.",
+          "খুব মিষ্টি; ২–৩ ফালি, দুই খাবারের মাঝে।"
+        ],
+        [
+          "jackfruit",
+          "limit",
+          "High sugar; a few pieces only.",
+          "চিনি বেশি; কয়েক কোয়া মাত্র।"
+        ],
+        [
+          "lychee",
+          "limit",
+          "4–5 at a time, never on an empty stomach.",
+          "একবারে ৪–৫টি, খালি পেটে নয়।"
+        ],
+        [
+          "banana",
+          "limit",
+          "Half a banana, preferably less ripe.",
+          "আধা কলা, কম পাকা হলে ভালো।"
+        ],
+        [
+          "dates",
+          "limit",
+          "1–2 dates; very sugar-dense.",
+          "১–২টি; চিনি খুব বেশি।"
+        ],
+        [
+          "mishti",
+          "avoid",
+          "Sugar syrup spikes blood sugar.",
+          "চিনির সিরা শর্করা দ্রুত বাড়ায়।"
+        ],
+        [
+          "mishti-doi",
+          "avoid",
+          "Sweetened; choose tok doi instead.",
+          "চিনিযুক্ত; বদলে টক দই নিন।"
+        ],
+        [
+          "doi",
+          "recommended",
+          "Plain yogurt — protein and probiotics.",
+          "টক দই — প্রোটিন ও প্রোবায়োটিক।"
+        ],
+        [
+          "sugar-gur",
+          "avoid",
+          "Gur is still sugar; both raise blood sugar.",
+          "গুড়ও চিনি; দুটোই শর্করা বাড়ায়।"
+        ],
+        [
+          "honey",
+          "limit",
+          "Still sugar; only if your doctor allows.",
+          "এটাও চিনি; চিকিৎসক অনুমতি দিলে তবেই।"
+        ],
+        [
+          "soft-drinks",
+          "avoid",
+          "Liquid sugar — the fastest spike.",
+          "তরল চিনি — সবচেয়ে দ্রুত শর্করা বাড়ায়।"
+        ],
+        [
+          "sugarcane",
+          "avoid",
+          "Almost pure sugar.",
+          "প্রায় খাঁটি চিনি।"
+        ],
+        [
+          "milk-tea",
+          "limit",
+          "Drink it without sugar.",
+          "চিনি ছাড়া পান করুন।"
+        ],
+        [
+          "black-tea",
+          "ok",
+          "Fine without sugar.",
+          "চিনি ছাড়া চলবে।"
+        ],
+        [
+          "daab",
+          "limit",
+          "One glass; it carries natural sugar.",
+          "এক গ্লাস; এতে প্রাকৃতিক চিনি আছে।"
+        ],
+        [
+          "fried-snacks",
+          "avoid",
+          "Flour, oil and salt — raises sugar and weight.",
+          "ময়দা, তেল ও লবণ — শর্করা ও ওজন দুটোই বাড়ায়।"
+        ],
+        [
+          "fast-food",
+          "avoid",
+          "Refined carbs and fat together.",
+          "ময়দা ও চর্বি একসাথে।"
+        ],
+        [
+          "water",
+          "recommended",
+          "Helps the kidneys clear excess sugar.",
+          "অতিরিক্ত শর্করা বের করতে কিডনিকে সাহায্য করে।"
+        ]
+      ],
+      "timing": [
+        [
+          "do",
+          "07:30",
+          "Never skip breakfast",
+          "সকালের নাস্তা কখনো বাদ দেবেন না",
+          "Skipping leads to sugar swings and overeating later.",
+          "বাদ দিলে শর্করা ওঠানামা করে, পরে বেশি খাওয়া হয়।"
+        ],
+        [
+          "do",
+          null,
+          "Eat every 3–4 hours at fixed times",
+          "প্রতি ৩–৪ ঘণ্টা পরপর নির্দিষ্ট সময়ে খান",
+          "Regular timing matches your medicine and keeps sugar steady.",
+          "নিয়মিত সময় ওষুধের সঙ্গে মিলে শর্করা স্থির রাখে।"
+        ],
+        [
+          "do",
+          null,
+          "Walk 10–15 minutes after each meal",
+          "প্রতিবার খাওয়ার পর ১০–১৫ মিনিট হাঁটুন",
+          "Muscles use the sugar from the meal.",
+          "পেশি খাবারের শর্করা কাজে লাগায়।"
+        ],
+        [
+          "do",
+          "20:30",
+          "Finish dinner by 8:30 pm",
+          "রাত ৮:৩০-এর মধ্যে রাতের খাবার শেষ করুন",
+          "Gives sugar time to settle before sleep.",
+          "ঘুমের আগে শর্করা স্থির হওয়ার সময় পায়।"
+        ],
+        [
+          "do",
+          null,
+          "Have fruit as a separate snack",
+          "ফল আলাদা নাস্তা হিসেবে খান",
+          "Eating fruit between meals instead of with a big rice meal spreads the sugar out.",
+          "বড় ভাতের বেলার সঙ্গে না খেয়ে দুই খাবারের মাঝে ফল খেলে শর্করা ধীরে ধীরে বাড়ে।"
+        ],
+        [
+          "dont",
+          null,
+          "Don't fast or skip meals on medicine",
+          "ওষুধ চললে না খেয়ে থাকবেন না",
+          "Risk of low sugar. Ask your doctor before fasting, e.g. in Ramadan.",
+          "শর্করা কমে যাওয়ার ঝুঁকি। রোজা রাখার আগে চিকিৎসকের পরামর্শ নিন।"
+        ]
+      ],
+      "habits": [
+        [
+          "activity",
+          "Check your sugar regularly",
+          "নিয়মিত শর্করা মাপুন",
+          "Fasting and 2 hours after meals; keep a log for your doctor.",
+          "খালি পেটে ও খাওয়ার ২ ঘণ্টা পর; চিকিৎসকের জন্য লিখে রাখুন।"
+        ],
+        [
+          "ruler",
+          "Watch your waist",
+          "কোমরের মাপ খেয়াল রাখুন",
+          "Under 90 cm for men, 80 cm for women.",
+          "পুরুষ ৯০ সেমি, নারী ৮০ সেমির নিচে।"
+        ],
+        [
+          "heart",
+          "Check your feet daily",
+          "প্রতিদিন পা পরীক্ষা করুন",
+          "Look for cuts or sores; wear soft shoes.",
+          "কাটা বা ঘা আছে কি না দেখুন; নরম জুতা পরুন।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/17597408/pexels-photo-17597408.jpeg"
+    },
+    {
+      "slug": "fatty-liver",
+      "icon": "salad",
+      "color": "#bf5af2",
+      "name": {
+        "en": "Fatty liver",
+        "bn": "ফ্যাটি লিভার"
+      },
+      "summary": {
+        "en": "Unload the liver: cut sugar, fried food and fatty meat; move daily; lose 7–10% weight if overweight.",
+        "bn": "লিভারের বোঝা কমান: চিনি, ভাজাপোড়া ও চর্বিযুক্ত মাংস কমান; প্রতিদিন নড়াচড়া; বাড়তি ওজন ৭–১০% কমান।"
+      },
+      "rules": [
+        [
+          "soft-drinks",
+          "avoid",
+          "Fructose is turned straight into liver fat.",
+          "ফ্রুক্টোজ সরাসরি লিভারে চর্বি জমায়।"
+        ],
+        [
+          "sugarcane",
+          "avoid",
+          "A large sugar load in one glass.",
+          "এক গ্লাসেই অনেক চিনি।"
+        ],
+        [
+          "mishti",
+          "avoid",
+          "Extra sugar becomes liver fat.",
+          "বাড়তি চিনি লিভারে চর্বি হয়ে জমে।"
+        ],
+        [
+          "sugar-gur",
+          "limit",
+          "Keep added sugar to a minimum.",
+          "চিনি যতটা সম্ভব কম।"
+        ],
+        [
+          "fried-snacks",
+          "avoid",
+          "Deep-fried in reused oil — hard on the liver.",
+          "বারবার ব্যবহৃত তেলে ভাজা — লিভারের জন্য ক্ষতিকর।"
+        ],
+        [
+          "fast-food",
+          "avoid",
+          "Fat, sugar and salt together.",
+          "চর্বি, চিনি ও লবণ একসাথে।"
+        ],
+        [
+          "dalda",
+          "avoid",
+          "Trans fat — the worst fat for the liver.",
+          "ট্রান্স ফ্যাট — লিভারের জন্য সবচেয়ে খারাপ চর্বি।"
+        ],
+        [
+          "ghee",
+          "limit",
+          "Saturated fat; a teaspoon at most.",
+          "স্যাচুরেটেড ফ্যাট; সর্বোচ্চ এক চা-চামচ।"
+        ],
+        [
+          "beef",
+          "limit",
+          "Fatty red meat; lean, small portion, once a week.",
+          "চর্বিযুক্ত লাল মাংস; চর্বি ছাড়া, অল্প, সপ্তাহে একবার।"
+        ],
+        [
+          "mutton",
+          "limit",
+          "Fatty red meat; lean, small portion, rarely.",
+          "চর্বিযুক্ত লাল মাংস; চর্বি ছাড়া, অল্প, কালেভদ্রে।"
+        ],
+        [
+          "biryani",
+          "limit",
+          "Rice, ghee and fatty meat combined.",
+          "ভাত, ঘি ও চর্বিযুক্ত মাংস একসাথে।"
+        ],
+        [
+          "white-rice",
+          "limit",
+          "Extra carbs turn into liver fat; smaller portions.",
+          "অতিরিক্ত শর্করা লিভারে চর্বি হয়; ভাত কম খান।"
+        ],
+        [
+          "alcohol",
+          "avoid",
+          "Directly damages liver cells — stop completely.",
+          "সরাসরি লিভারের কোষ নষ্ট করে — পুরোপুরি বাদ দিন।"
+        ],
+        [
+          "sausage",
+          "avoid",
+          "Processed meat, salt and saturated fat.",
+          "প্রক্রিয়াজাত মাংস, লবণ ও স্যাচুরেটেড ফ্যাট।"
+        ],
+        [
+          "instant-noodles",
+          "avoid",
+          "Refined flour, palm oil and salt.",
+          "ময়দা, পাম তেল ও লবণ।"
+        ],
+        [
+          "coffee",
+          "recommended",
+          "Black, unsweetened coffee (2–3 cups a day) is linked to less liver scarring — if your doctor agrees.",
+          "চিনি ছাড়া কালো কফি (দিনে ২–৩ কাপ) লিভারের ক্ষত কমার সঙ্গে যুক্ত — চিকিৎসক অনুমতি দিলে।"
+        ],
+        [
+          "black-tea",
+          "recommended",
+          "Green tea antioxidants support the liver.",
+          "গ্রিন টি-র অ্যান্টিঅক্সিডেন্ট লিভারের জন্য উপকারী।"
+        ],
+        [
+          "lal-shak",
+          "recommended",
+          "Fibre and antioxidants.",
+          "আঁশ ও অ্যান্টিঅক্সিডেন্ট।"
+        ],
+        [
+          "palong-shak",
+          "recommended",
+          "Fibre and antioxidants.",
+          "আঁশ ও অ্যান্টিঅক্সিডেন্ট।"
+        ],
+        [
+          "small-fish",
+          "recommended",
+          "Lean protein and omega-3.",
+          "চর্বিহীন প্রোটিন ও ওমেগা-৩।"
+        ],
+        [
+          "ilish",
+          "recommended",
+          "Omega-3 helps lower liver fat.",
+          "ওমেগা-৩ লিভারের চর্বি কমাতে সাহায্য করে।"
+        ],
+        [
+          "masoor-dal",
+          "recommended",
+          "Plant protein instead of red meat.",
+          "লাল মাংসের বদলে উদ্ভিজ্জ প্রোটিন।"
+        ],
+        [
+          "oats",
+          "recommended",
+          "Fibre helps weight and liver fat.",
+          "আঁশ ওজন ও লিভারের চর্বি কমাতে সাহায্য করে।"
+        ],
+        [
+          "nuts",
+          "recommended",
+          "A small handful of walnuts — good fats.",
+          "এক মুঠো আখরোট — ভালো চর্বি।"
+        ],
+        [
+          "ginger-garlic",
+          "recommended",
+          "Garlic may help reduce liver fat.",
+          "রসুন লিভারের চর্বি কমাতে সাহায্য করতে পারে।"
+        ],
+        [
+          "guava",
+          "recommended",
+          "Low-sugar, high-fibre fruit.",
+          "কম চিনি, বেশি আঁশের ফল।"
+        ],
+        [
+          "papaya",
+          "recommended",
+          "Light, low-sugar fruit.",
+          "হালকা, কম চিনির ফল।"
+        ],
+        [
+          "ripe-mango",
+          "limit",
+          "High in fructose; small portion.",
+          "ফ্রুক্টোজ বেশি; অল্প খান।"
+        ],
+        [
+          "egg",
+          "ok",
+          "One whole egg a day is fine.",
+          "দিনে ১টি ডিম চলবে।"
+        ],
+        [
+          "chicken",
+          "recommended",
+          "Lean protein, skinless.",
+          "চামড়া ছাড়া চর্বিহীন প্রোটিন।"
+        ],
+        [
+          "mustard-oil",
+          "ok",
+          "2–3 teaspoons a day for cooking.",
+          "রান্নায় দিনে ২–৩ চা-চামচ।"
+        ],
+        [
+          "water",
+          "recommended",
+          "Replaces sugary drinks.",
+          "চিনিযুক্ত পানীয়ের বিকল্প।"
+        ]
+      ],
+      "timing": [
+        [
+          "dont",
+          "22:00",
+          "No late-night snacking",
+          "গভীর রাতে খাওয়া নয়",
+          "Gives the liver an overnight break.",
+          "রাতে লিভারকে বিশ্রাম দেয়।"
+        ],
+        [
+          "do",
+          null,
+          "Keep a 12-hour overnight gap",
+          "রাতে ১২ ঘণ্টা বিরতি রাখুন",
+          "For example dinner at 8 pm, breakfast at 8 am.",
+          "যেমন রাত ৮টায় রাতের খাবার, সকাল ৮টায় নাস্তা।"
+        ],
+        [
+          "dont",
+          null,
+          "No sugary drinks with meals",
+          "খাবারের সঙ্গে চিনিযুক্ত পানীয় নয়",
+          "Drink water or lemon water instead.",
+          "বদলে পানি বা লেবু-পানি পান করুন।"
+        ]
+      ],
+      "habits": [
+        [
+          "scale",
+          "Lose 7–10% of body weight, slowly",
+          "শরীরের ওজন ৭–১০% কমান, ধীরে ধীরে",
+          "About half a kilo a week; crash diets can harm the liver.",
+          "সপ্তাহে প্রায় আধা কেজি; হঠাৎ ডায়েট লিভারের ক্ষতি করতে পারে।"
+        ],
+        [
+          "dumbbell",
+          "150 minutes of exercise a week",
+          "সপ্তাহে ১৫০ মিনিট ব্যায়াম",
+          "Brisk walking plus some strength work.",
+          "জোরে হাঁটা ও কিছু শক্তির ব্যায়াম।"
+        ],
+        [
+          "stethoscope",
+          "Check liver enzymes every 6 months",
+          "প্রতি ৬ মাসে লিভার এনজাইম পরীক্ষা",
+          "SGPT/ALT and an ultrasound as your doctor advises.",
+          "চিকিৎসকের পরামর্শে এসজিপিটি/এএলটি ও আল্ট্রাসাউন্ড।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg"
+    },
+    {
+      "slug": "asthma",
+      "icon": "wind",
+      "color": "#64d2ff",
+      "name": {
+        "en": "Asthma",
+        "bn": "অ্যাজমা / হাঁপানি"
+      },
+      "summary": {
+        "en": "Calm airways: skip known triggers, eat colourful produce, keep dinner light.",
+        "bn": "শ্বাসনালী শান্ত রাখুন: ট্রিগার এড়িয়ে চলুন, রঙিন শাকসবজি-ফল খান, রাতের খাবার হালকা রাখুন।"
+      },
+      "rules": [
+        [
+          "achar",
+          "avoid",
+          "Many pickles contain sulphite preservatives, a common asthma trigger.",
+          "অনেক আচারে সালফাইট প্রিজারভেটিভ থাকে, যা হাঁপানির সাধারণ ট্রিগার।"
+        ],
+        [
+          "sausage",
+          "avoid",
+          "Processed meat with nitrites or sulphites can trigger attacks.",
+          "নাইট্রাইট/সালফাইটযুক্ত প্রক্রিয়াজাত মাংস হাঁপানি উসকে দিতে পারে।"
+        ],
+        [
+          "soft-drinks",
+          "avoid",
+          "Sulphites and cold fizz; also add weight that worsens breathing.",
+          "সালফাইট ও ঠান্ডা গ্যাস; ওজনও বাড়ায়, যা শ্বাসকষ্ট বাড়ায়।"
+        ],
+        [
+          "shutki",
+          "limit",
+          "Strong smell and preservatives can trigger symptoms in some.",
+          "তীব্র গন্ধ ও সংরক্ষণকারী উপাদান কারও কারও উপসর্গ বাড়ায়।"
+        ],
+        [
+          "chingri",
+          "limit",
+          "Shellfish allergy can set off attacks — avoid fully if you react.",
+          "চিংড়িতে অ্যালার্জি থাকলে শ্বাসকষ্ট হতে পারে — প্রতিক্রিয়া হলে পুরোপুরি বাদ দিন।"
+        ],
+        [
+          "ice-cream",
+          "limit",
+          "Very cold food can tighten airways in sensitive people.",
+          "খুব ঠান্ডা খাবার সংবেদনশীলদের শ্বাসনালী সংকুচিত করতে পারে।"
+        ],
+        [
+          "fried-snacks",
+          "limit",
+          "Heavy oily food worsens reflux, which aggravates asthma.",
+          "তেলে ভাজা ভারী খাবার এসিড রিফ্লাক্স বাড়ায়, যা হাঁপানি বাড়ায়।"
+        ],
+        [
+          "fast-food",
+          "limit",
+          "Saturated fat and salt are linked to more airway inflammation.",
+          "স্যাচুরেটেড ফ্যাট ও লবণ শ্বাসনালীর প্রদাহ বাড়ায়।"
+        ],
+        [
+          "tasting-salt",
+          "limit",
+          "MSG triggers symptoms in a small group of people.",
+          "অল্প কিছু মানুষের ক্ষেত্রে এমএসজি উপসর্গ বাড়ায়।"
+        ],
+        [
+          "guava",
+          "recommended",
+          "Rich in vitamin C, which supports the airways.",
+          "ভিটামিন সি-তে ভরপুর, শ্বাসনালীর জন্য উপকারী।"
+        ],
+        [
+          "amloki",
+          "recommended",
+          "One of the richest vitamin C sources.",
+          "ভিটামিন সি-র সবচেয়ে ভালো উৎসগুলোর একটি।"
+        ],
+        [
+          "lemon",
+          "recommended",
+          "Vitamin C; squeeze over dal or into water.",
+          "ভিটামিন সি; ডালে বা পানিতে মিশিয়ে নিন।"
+        ],
+        [
+          "ilish",
+          "recommended",
+          "Omega-3 fats help calm inflammation.",
+          "ওমেগা-৩ ফ্যাট প্রদাহ কমাতে সাহায্য করে।"
+        ],
+        [
+          "small-fish",
+          "recommended",
+          "Vitamin D and calcium; low vitamin D is linked to worse asthma.",
+          "ভিটামিন ডি ও ক্যালসিয়াম; ভিটামিন ডি-র ঘাটতি হাঁপানি বাড়ায়।"
+        ],
+        [
+          "ginger-garlic",
+          "recommended",
+          "Anti-inflammatory; warm ginger tea soothes the throat.",
+          "প্রদাহরোধী; আদা চা গলায় আরাম দেয়।"
+        ],
+        [
+          "turmeric",
+          "recommended",
+          "Curcumin has a mild anti-inflammatory effect.",
+          "কারকিউমিন হালকা প্রদাহরোধী।"
+        ],
+        [
+          "lal-shak",
+          "recommended",
+          "Magnesium and antioxidants for the lungs.",
+          "ফুসফুসের জন্য ম্যাগনেসিয়াম ও অ্যান্টিঅক্সিডেন্ট।"
+        ],
+        [
+          "egg",
+          "ok",
+          "Fine unless you have an egg allergy.",
+          "ডিমে অ্যালার্জি না থাকলে খাওয়া যাবে।"
+        ],
+        [
+          "milk",
+          "ok",
+          "Does not cause mucus for most people.",
+          "অধিকাংশ মানুষের কফ বাড়ায় না।"
+        ],
+        [
+          "water",
+          "recommended",
+          "Keeps mucus thin and easy to clear.",
+          "কফ পাতলা রাখে, সহজে বের হয়।"
+        ]
+      ],
+      "timing": [
+        [
+          "dont",
+          "21:00",
+          "No heavy dinner within 3 hours of bed",
+          "ঘুমের ৩ ঘণ্টার মধ্যে ভারী খাবার নয়",
+          "A full stomach and reflux can trigger night-time attacks.",
+          "ভরা পেট ও রিফ্লাক্স রাতে শ্বাসকষ্ট বাড়াতে পারে।"
+        ],
+        [
+          "dont",
+          null,
+          "Avoid ice-cold drinks, especially in winter",
+          "ঠান্ডা পানীয় এড়িয়ে চলুন, বিশেষ করে শীতে",
+          "Choose room-temperature or warm water.",
+          "সাধারণ তাপমাত্রার বা কুসুম গরম পানি নিন।"
+        ],
+        [
+          "do",
+          null,
+          "Eat smaller, more frequent meals",
+          "অল্প অল্প করে বারবার খান",
+          "A large meal presses on the diaphragm.",
+          "বেশি খেলে ডায়াফ্রামে চাপ পড়ে।"
+        ]
+      ],
+      "habits": [
+        [
+          "wind",
+          "Practise breathing exercises",
+          "শ্বাসের ব্যায়াম করুন",
+          "Pursed-lip and belly breathing, 10 minutes a day.",
+          "ঠোঁট গোল করে ও পেট দিয়ে শ্বাস, দিনে ১০ মিনিট।"
+        ],
+        [
+          "cigarette-off",
+          "Stay away from smoke",
+          "ধোঁয়া থেকে দূরে থাকুন",
+          "Tobacco, mosquito coils and wood stoves.",
+          "সিগারেট, মশার কয়েল ও লাকড়ির চুলা।"
+        ],
+        [
+          "shield",
+          "Mask on dusty roads and in winter fog",
+          "ধুলাবালি ও শীতের কুয়াশায় মাস্ক পরুন",
+          "Dust and cold air are common triggers.",
+          "ধুলা ও ঠান্ডা বাতাস সাধারণ ট্রিগার।"
+        ],
+        [
+          "pill",
+          "Carry your reliever inhaler",
+          "রিলিভার ইনহেলার সঙ্গে রাখুন",
+          "Know your action plan.",
+          "নিজের অ্যাকশন প্ল্যান জেনে রাখুন।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/1002778/pexels-photo-1002778.jpeg"
+    },
+    {
+      "slug": "migraine",
+      "icon": "brain",
+      "color": "#ff375f",
+      "name": {
+        "en": "Migraine",
+        "bn": "মাইগ্রেন"
+      },
+      "summary": {
+        "en": "Fewer attacks: never skip meals, drink water, find and avoid your food triggers.",
+        "bn": "আক্রমণ কমান: কোনো বেলা না খেয়ে থাকবেন না, পানি পান করুন, নিজের খাবারের ট্রিগার চিনে এড়িয়ে চলুন।"
+      },
+      "rules": [
+        [
+          "cheese",
+          "limit",
+          "Tyramine in aged cheese is a trigger for some people. Keep a diary and avoid it only if it triggers you.",
+          "পুরনো চিজের টাইরামিন কারও কারও ট্রিগার। ডায়েরি রাখুন; ট্রিগার হলে তবেই বাদ দিন।"
+        ],
+        [
+          "sausage",
+          "limit",
+          "Nitrites in processed meat trigger attacks in some people; it is also worth limiting for general health.",
+          "প্রক্রিয়াজাত মাংসের নাইট্রাইট কারও কারও মাইগ্রেন আনে; সাধারণ স্বাস্থ্যের জন্যও কম খাওয়া ভালো।"
+        ],
+        [
+          "tasting-salt",
+          "limit",
+          "MSG is reported as a trigger by some people; there is no universal food trigger, so test it with a diary.",
+          "কেউ কেউ এমএসজি-কে ট্রিগার বলেন; সবার জন্য একই ট্রিগার নেই, ডায়েরি দিয়ে যাচাই করুন।"
+        ],
+        [
+          "instant-noodles",
+          "limit",
+          "Seasoning packets are high in salt and MSG; limit them and note whether they trigger you.",
+          "মসলার প্যাকেটে লবণ ও এমএসজি বেশি; কম খান এবং ট্রিগার হয় কি না লক্ষ্য করুন।"
+        ],
+        [
+          "alcohol",
+          "avoid",
+          "A strong trigger, especially red wine.",
+          "শক্তিশালী ট্রিগার, বিশেষ করে রেড ওয়াইন।"
+        ],
+        [
+          "soft-drinks",
+          "limit",
+          "Caffeine and sweeteners can trigger some people; sudden caffeine changes matter more than the drink itself.",
+          "ক্যাফেইন ও কৃত্রিম মিষ্টি কারও কারও ট্রিগার; হঠাৎ ক্যাফেইন বাড়ানো-কমানোই বেশি গুরুত্বপূর্ণ।"
+        ],
+        [
+          "chocolate",
+          "limit",
+          "A trigger for some; track it in a diary.",
+          "কারও কারও ট্রিগার; ডায়েরিতে লিখে রাখুন।"
+        ],
+        [
+          "achar",
+          "limit",
+          "Fermented, aged food contains tyramine.",
+          "গাঁজানো, পুরনো খাবারে টাইরামিন থাকে।"
+        ],
+        [
+          "shutki",
+          "limit",
+          "Aged and salty, high in tyramine.",
+          "পুরনো ও লবণাক্ত, টাইরামিন বেশি।"
+        ],
+        [
+          "coffee",
+          "limit",
+          "Keep caffeine steady at 1–2 cups; sudden stops cause headaches.",
+          "ক্যাফেইন ১–২ কাপে স্থির রাখুন; হঠাৎ বন্ধ করলেও মাথাব্যথা হয়।"
+        ],
+        [
+          "milk-tea",
+          "limit",
+          "Count tea in your daily caffeine.",
+          "চা-ও দৈনিক ক্যাফেইনের মধ্যে ধরুন।"
+        ],
+        [
+          "ice-cream",
+          "limit",
+          "Brain-freeze can set off a migraine.",
+          "হঠাৎ ঠান্ডা লাগা মাইগ্রেন শুরু করতে পারে।"
+        ],
+        [
+          "fried-snacks",
+          "limit",
+          "Fatty meals are linked to more attacks.",
+          "চর্বিযুক্ত খাবার আক্রমণ বাড়ায়।"
+        ],
+        [
+          "water",
+          "recommended",
+          "Dehydration is one of the most common triggers.",
+          "পানিশূন্যতা অন্যতম প্রধান ট্রিগার।"
+        ],
+        [
+          "palong-shak",
+          "recommended",
+          "Magnesium helps prevent attacks.",
+          "ম্যাগনেসিয়াম আক্রমণ প্রতিরোধে সহায়ক।"
+        ],
+        [
+          "nuts",
+          "recommended",
+          "Magnesium and riboflavin.",
+          "ম্যাগনেসিয়াম ও রিবোফ্লাভিন।"
+        ],
+        [
+          "banana",
+          "recommended",
+          "Magnesium and potassium; an easy snack.",
+          "ম্যাগনেসিয়াম ও পটাশিয়াম; সহজ নাস্তা।"
+        ],
+        [
+          "ilish",
+          "recommended",
+          "Omega-3 may reduce how often attacks come.",
+          "ওমেগা-৩ আক্রমণের সংখ্যা কমাতে পারে।"
+        ],
+        [
+          "egg",
+          "recommended",
+          "Riboflavin (vitamin B2) helps prevent migraine.",
+          "রিবোফ্লাভিন (ভিটামিন বি২) মাইগ্রেন প্রতিরোধে সাহায্য করে।"
+        ],
+        [
+          "milk",
+          "ok",
+          "A source of riboflavin.",
+          "রিবোফ্লাভিনের উৎস।"
+        ],
+        [
+          "ginger-garlic",
+          "recommended",
+          "Ginger can ease nausea and pain.",
+          "আদা বমিভাব ও ব্যথা কমাতে পারে।"
+        ],
+        [
+          "daab",
+          "recommended",
+          "Restores fluids and electrolytes.",
+          "পানি ও লবণের ঘাটতি পূরণ করে।"
+        ]
+      ],
+      "timing": [
+        [
+          "do",
+          "07:00",
+          "Drink a glass of water on waking",
+          "ঘুম থেকে উঠে এক গ্লাস পানি",
+          "Start the day hydrated.",
+          "দিনের শুরু হোক পানি দিয়ে।"
+        ],
+        [
+          "do",
+          null,
+          "Eat every 3–4 hours; never skip a meal",
+          "প্রতি ৩–৪ ঘণ্টায় খান; কোনো বেলা বাদ নয়",
+          "Low blood sugar from fasting is a top trigger.",
+          "না খেয়ে থাকায় শর্করা কমে যাওয়া প্রধান ট্রিগার।"
+        ],
+        [
+          "dont",
+          null,
+          "Don't change your caffeine time suddenly",
+          "হঠাৎ চা/কফির সময় বদলাবেন না",
+          "Caffeine withdrawal headaches start within a day.",
+          "ক্যাফেইন বন্ধের মাথাব্যথা এক দিনের মধ্যেই শুরু হয়।"
+        ]
+      ],
+      "habits": [
+        [
+          "notebook-pen",
+          "Keep a trigger diary",
+          "ট্রিগার ডায়েরি রাখুন",
+          "Food, sleep, stress and weather before each attack.",
+          "প্রতিটি আক্রমণের আগে খাবার, ঘুম, দুশ্চিন্তা ও আবহাওয়া।"
+        ],
+        [
+          "bed",
+          "Fixed sleep and wake times",
+          "নির্দিষ্ট সময়ে ঘুম ও ওঠা",
+          "Too much or too little sleep both trigger attacks.",
+          "বেশি বা কম ঘুম দুটোই আক্রমণ ঘটায়।"
+        ],
+        [
+          "sun",
+          "Sunglasses in harsh sun",
+          "কড়া রোদে সানগ্লাস",
+          "Bright light is a common trigger.",
+          "তীব্র আলো সাধারণ ট্রিগার।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/4021976/pexels-photo-4021976.jpeg"
+    },
+    {
+      "slug": "thyroid",
+      "icon": "activity",
+      "color": "#30d158",
+      "name": {
+        "en": "Thyroid (hypothyroid)",
+        "bn": "থাইরয়েড (হাইপোথাইরয়েড)"
+      },
+      "summary": {
+        "en": "Help your medicine work: take it on an empty stomach, keep calcium, iron and soy apart, cook your cabbage.",
+        "bn": "ওষুধ কাজ করতে দিন: খালি পেটে খান, ক্যালসিয়াম, আয়রন ও সয়া দূরে রাখুন, বাঁধাকপি রান্না করে খান।"
+      },
+      "rules": [
+        [
+          "soybean",
+          "limit",
+          "Soy can block absorption of the tablet: keep it at least 2 hours away, 4 if you can.",
+          "সয়া ওষুধের শোষণে বাধা দিতে পারে: অন্তত ২ ঘণ্টা, সম্ভব হলে ৪ ঘণ্টা দূরে রাখুন।"
+        ],
+        [
+          "cabbage",
+          "limit",
+          "Raw cabbage and cauliflower are goitrogens; cooked is fine.",
+          "কাঁচা বাঁধাকপি ও ফুলকপি গয়ট্রোজেন; রান্না করলে সমস্যা নেই।"
+        ],
+        [
+          "coffee",
+          "limit",
+          "Wait 30–60 minutes after your tablet.",
+          "ট্যাবলেটের ৩০–৬০ মিনিট পরে।"
+        ],
+        [
+          "milk",
+          "limit",
+          "Calcium blocks the tablet: keep milk at least 2 hours away, 4 if you can.",
+          "ক্যালসিয়াম ওষুধের শোষণ কমায়: দুধ অন্তত ২ ঘণ্টা, সম্ভব হলে ৪ ঘণ্টা দূরে রাখুন।"
+        ],
+        [
+          "doi",
+          "ok",
+          "Fine, but not within 4 hours of the tablet.",
+          "চলবে, তবে ট্যাবলেটের ৪ ঘণ্টার মধ্যে নয়।"
+        ],
+        [
+          "iodized-salt",
+          "recommended",
+          "Iodine makes thyroid hormone; use iodized salt, not extra salt.",
+          "থাইরয়েড হরমোন তৈরিতে আয়োডিন লাগে; আয়োডিনযুক্ত লবণ ব্যবহার করুন, বাড়তি নয়।"
+        ],
+        [
+          "egg",
+          "recommended",
+          "Selenium and iodine.",
+          "সেলেনিয়াম ও আয়োডিন।"
+        ],
+        [
+          "small-fish",
+          "recommended",
+          "Iodine and selenium.",
+          "আয়োডিন ও সেলেনিয়াম।"
+        ],
+        [
+          "ilish",
+          "recommended",
+          "Iodine, selenium and omega-3.",
+          "আয়োডিন, সেলেনিয়াম ও ওমেগা-৩।"
+        ],
+        [
+          "chingri",
+          "ok",
+          "A good iodine source if you have no allergy.",
+          "অ্যালার্জি না থাকলে আয়োডিনের ভালো উৎস।"
+        ],
+        [
+          "nuts",
+          "ok",
+          "Selenium; not at the same time as the tablet.",
+          "সেলেনিয়াম; ট্যাবলেটের সঙ্গে একসাথে নয়।"
+        ],
+        [
+          "fried-snacks",
+          "limit",
+          "Weight gain is common; keep fried food low.",
+          "ওজন বাড়া সাধারণ; ভাজাপোড়া কম খান।"
+        ],
+        [
+          "mishti",
+          "limit",
+          "Metabolism is slower; limit sweets.",
+          "বিপাক ধীর থাকে; মিষ্টি কম খান।"
+        ],
+        [
+          "fast-food",
+          "limit",
+          "Calorie-dense; makes weight control harder.",
+          "ক্যালরি বেশি; ওজন নিয়ন্ত্রণ কঠিন করে।"
+        ],
+        [
+          "papaya",
+          "recommended",
+          "Fibre helps the constipation common with hypothyroid.",
+          "হাইপোথাইরয়েডে কোষ্ঠকাঠিন্য সাধারণ; আঁশ সাহায্য করে।"
+        ],
+        [
+          "lal-shak",
+          "recommended",
+          "Fibre and iron.",
+          "আঁশ ও আয়রন।"
+        ],
+        [
+          "water",
+          "recommended",
+          "Take your tablet with a full glass of plain water.",
+          "পুরো এক গ্লাস সাধারণ পানি দিয়ে ট্যাবলেট খান।"
+        ]
+      ],
+      "timing": [
+        [
+          "do",
+          "06:30",
+          "Take your tablet on an empty stomach",
+          "খালি পেটে ট্যাবলেট খান",
+          "With plain water, 30–60 minutes before breakfast.",
+          "শুধু পানি দিয়ে, নাস্তার ৩০–৬০ মিনিট আগে।"
+        ],
+        [
+          "dont",
+          "07:00",
+          "No tea, coffee or milk right after the tablet",
+          "ট্যাবলেটের পরপর চা, কফি বা দুধ নয়",
+          "Wait at least 30–60 minutes.",
+          "অন্তত ৩০–৬০ মিনিট অপেক্ষা করুন।"
+        ],
+        [
+          "dont",
+          null,
+          "Keep calcium, iron and soy away from the tablet",
+          "ক্যালসিয়াম, আয়রন ও সয়া ট্যাবলেট থেকে দূরে রাখুন",
+          "They block absorption of the medicine: at least 2 hours apart, 4 if you can.",
+          "এগুলো ওষুধের শোষণে বাধা দেয়: অন্তত ২ ঘণ্টা, সম্ভব হলে ৪ ঘণ্টা ব্যবধান রাখুন।"
+        ]
+      ],
+      "habits": [
+        [
+          "pill",
+          "Same tablet time every day",
+          "প্রতিদিন একই সময়ে ট্যাবলেট",
+          "Set a phone reminder.",
+          "ফোনে রিমাইন্ডার দিন।"
+        ],
+        [
+          "activity",
+          "Test TSH as advised",
+          "পরামর্শ অনুযায়ী টিএসএইচ পরীক্ষা",
+          "Usually every 6–12 months once stable.",
+          "স্থিতিশীল হলে সাধারণত প্রতি ৬–১২ মাসে।"
+        ],
+        [
+          "dumbbell",
+          "Exercise regularly",
+          "নিয়মিত ব্যায়াম করুন",
+          "Helps a slow metabolism and mood.",
+          "ধীর বিপাক ও মনমেজাজে সাহায্য করে।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/128388/pexels-photo-128388.jpeg"
+    },
+    {
+      "slug": "insomnia",
+      "icon": "moon-star",
+      "color": "#5e5ce6",
+      "name": {
+        "en": "Insomnia",
+        "bn": "অনিদ্রা"
+      },
+      "summary": {
+        "en": "Sleep better: no caffeine after 2 pm, an early light dinner, a calm wind-down routine.",
+        "bn": "ভালো ঘুম: দুপুর ২টার পর ক্যাফেইন নয়, আগেভাগে হালকা রাতের খাবার, শান্ত প্রস্তুতি।"
+      },
+      "rules": [
+        [
+          "coffee",
+          "limit",
+          "Caffeine lasts 6+ hours; none after 2 pm.",
+          "ক্যাফেইন ৬ ঘণ্টার বেশি থাকে; দুপুর ২টার পর নয়।"
+        ],
+        [
+          "milk-tea",
+          "limit",
+          "Tea has caffeine — last cup before 2 pm.",
+          "চায়ে ক্যাফেইন আছে — শেষ কাপ দুপুর ২টার আগে।"
+        ],
+        [
+          "black-tea",
+          "limit",
+          "Green and black tea both contain caffeine.",
+          "গ্রিন ও রং চা দুটোতেই ক্যাফেইন আছে।"
+        ],
+        [
+          "soft-drinks",
+          "avoid",
+          "Caffeine and sugar at night keep you awake.",
+          "রাতে ক্যাফেইন ও চিনি ঘুম তাড়ায়।"
+        ],
+        [
+          "chocolate",
+          "limit",
+          "Contains caffeine; not in the evening.",
+          "ক্যাফেইন আছে; সন্ধ্যার পর নয়।"
+        ],
+        [
+          "alcohol",
+          "avoid",
+          "Breaks deep sleep in the second half of the night.",
+          "রাতের দ্বিতীয় ভাগে গভীর ঘুম ভেঙে দেয়।"
+        ],
+        [
+          "fried-snacks",
+          "limit",
+          "Oily evening snacks cause reflux at night.",
+          "সন্ধ্যার তেলেভাজা রাতে এসিডিটি করে।"
+        ],
+        [
+          "biryani",
+          "limit",
+          "A heavy dinner delays sleep; keep it for lunch.",
+          "ভারী রাতের খাবার ঘুম পিছিয়ে দেয়; দুপুরে খান।"
+        ],
+        [
+          "fast-food",
+          "limit",
+          "Heavy and salty; not at dinner.",
+          "ভারী ও লবণাক্ত; রাতে নয়।"
+        ],
+        [
+          "milk",
+          "recommended",
+          "A warm glass an hour before bed is calming.",
+          "ঘুমের এক ঘণ্টা আগে এক গ্লাস গরম দুধ আরামদায়ক।"
+        ],
+        [
+          "banana",
+          "recommended",
+          "Magnesium and potassium relax muscles.",
+          "ম্যাগনেসিয়াম ও পটাশিয়াম পেশি শিথিল করে।"
+        ],
+        [
+          "nuts",
+          "recommended",
+          "Almonds carry magnesium; a small handful.",
+          "কাঠবাদামে ম্যাগনেসিয়াম; এক মুঠো।"
+        ],
+        [
+          "oats",
+          "recommended",
+          "A light evening option.",
+          "সন্ধ্যার হালকা খাবার।"
+        ],
+        [
+          "ilish",
+          "recommended",
+          "Omega-3 and vitamin D are linked to better sleep.",
+          "ওমেগা-৩ ও ভিটামিন ডি ভালো ঘুমের সঙ্গে যুক্ত।"
+        ],
+        [
+          "honey",
+          "ok",
+          "A teaspoon in warm milk is fine.",
+          "গরম দুধে এক চা-চামচ চলবে।"
+        ],
+        [
+          "dates",
+          "ok",
+          "One or two as an evening snack.",
+          "সন্ধ্যার নাস্তায় ১–২টি।"
+        ],
+        [
+          "water",
+          "ok",
+          "Drink through the day, less in the last hour before bed.",
+          "সারাদিন পান করুন, ঘুমের আগের এক ঘণ্টায় কম।"
+        ]
+      ],
+      "timing": [
+        [
+          "dont",
+          "14:00",
+          "No caffeine after 2 pm",
+          "দুপুর ২টার পর ক্যাফেইন নয়",
+          "Tea, coffee, cola and chocolate all count.",
+          "চা, কফি, কোলা ও চকলেট সবই ধরুন।"
+        ],
+        [
+          "do",
+          "20:00",
+          "Finish dinner 3 hours before bed",
+          "ঘুমের ৩ ঘণ্টা আগে রাতের খাবার শেষ করুন",
+          "Digestion settles before you lie down.",
+          "শোয়ার আগে হজম শেষ হয়।"
+        ],
+        [
+          "do",
+          "22:00",
+          "Warm milk or a banana if hungry",
+          "ক্ষুধা লাগলে গরম দুধ বা একটি কলা",
+          "Small and light, never a full meal.",
+          "অল্প ও হালকা, পুরো খাবার নয়।"
+        ],
+        [
+          "dont",
+          "22:30",
+          "No screens in the last hour",
+          "শেষ এক ঘণ্টা স্ক্রিন নয়",
+          "Blue light delays the sleep hormone.",
+          "নীল আলো ঘুমের হরমোন দেরি করায়।"
+        ]
+      ],
+      "habits": [
+        [
+          "moon",
+          "Same bedtime every night",
+          "প্রতিরাতে একই সময়ে ঘুম",
+          "Weekends too — within 30 minutes.",
+          "ছুটির দিনেও — ৩০ মিনিটের মধ্যে।"
+        ],
+        [
+          "smartphone",
+          "Screens off an hour before bed",
+          "ঘুমের এক ঘণ্টা আগে স্ক্রিন বন্ধ",
+          "Read, stretch or pray instead.",
+          "বদলে পড়ুন, হালকা ব্যায়াম বা নামাজ/প্রার্থনা।"
+        ],
+        [
+          "sun",
+          "15 minutes of morning sunlight",
+          "সকালে ১৫ মিনিট রোদ",
+          "Sets your body clock.",
+          "শরীরের ঘড়ি ঠিক রাখে।"
+        ],
+        [
+          "bed",
+          "Use the bed only for sleep",
+          "বিছানা শুধু ঘুমের জন্য",
+          "If awake for 20 minutes, get up and return when sleepy.",
+          "২০ মিনিট ঘুম না এলে উঠে পড়ুন, ঘুম পেলে ফিরুন।"
+        ]
+      ],
+      "image": "https://images.pexels.com/photos/9871626/pexels-photo-9871626.jpeg"
+    }
+  ],
+  "meal_slots": [
+    {
+      "slug": "breakfast",
+      "time": "07:30",
+      "name": {
+        "en": "Breakfast",
+        "bn": "সকালের নাস্তা"
+      },
+      "items": [
+        "atta-ruti",
+        "oats",
+        "egg",
+        "masoor-dal",
+        "lau",
+        "paratha",
+        "white-bread",
+        "chira-muri",
+        "black-tea",
+        "milk-tea"
+      ],
+      "image": "https://images.pexels.com/photos/4725753/pexels-photo-4725753.jpeg"
+    },
+    {
+      "slug": "mid-morning",
+      "time": "10:30",
+      "name": {
+        "en": "Mid-morning",
+        "bn": "মধ্য-সকাল"
+      },
+      "items": [
+        "guava",
+        "papaya",
+        "amloki",
+        "doi",
+        "nuts",
+        "daab",
+        "banana",
+        "chanachur"
+      ],
+      "image": "https://images.pexels.com/photos/5945791/pexels-photo-5945791.jpeg"
+    },
+    {
+      "slug": "lunch",
+      "time": "13:30",
+      "name": {
+        "en": "Lunch",
+        "bn": "দুপুরের খাবার"
+      },
+      "items": [
+        "red-rice",
+        "white-rice",
+        "small-fish",
+        "rui-fish",
+        "ilish",
+        "chicken",
+        "masoor-dal",
+        "lal-shak",
+        "korola",
+        "dherosh",
+        "cucumber",
+        "tomato",
+        "biryani"
+      ],
+      "image": "https://images.pexels.com/photos/10050659/pexels-photo-10050659.jpeg"
+    },
+    {
+      "slug": "evening",
+      "time": "17:00",
+      "name": {
+        "en": "Evening snack",
+        "bn": "বিকেলের নাস্তা"
+      },
+      "items": [
+        "chola",
+        "chira-muri",
+        "guava",
+        "amloki",
+        "nuts",
+        "black-tea",
+        "milk-tea",
+        "coffee",
+        "fried-snacks"
+      ],
+      "image": "https://images.pexels.com/photos/6066051/pexels-photo-6066051.jpeg"
+    },
+    {
+      "slug": "dinner",
+      "time": "20:30",
+      "name": {
+        "en": "Dinner",
+        "bn": "রাতের খাবার"
+      },
+      "items": [
+        "atta-ruti",
+        "red-rice",
+        "white-rice",
+        "rui-fish",
+        "chicken",
+        "egg",
+        "masoor-dal",
+        "lau",
+        "palong-shak",
+        "khichuri"
+      ],
+      "image": "https://images.pexels.com/photos/6120506/pexels-photo-6120506.jpeg"
+    },
+    {
+      "slug": "bedtime",
+      "time": "22:00",
+      "name": {
+        "en": "Before bed",
+        "bn": "ঘুমের আগে"
+      },
+      "items": [
+        "milk",
+        "banana",
+        "water"
+      ],
+      "image": "https://images.pexels.com/photos/6913386/pexels-photo-6913386.jpeg"
+    }
+  ],
+  "notes": [
+    {
+      "age_group": "child",
+      "gender": null,
+      "condition": null,
+      "text": {
+        "en": "Children are growing: they need milk, eggs and fish. Never put a child on a weight-loss diet without a paediatrician.",
+        "bn": "শিশুরা বেড়ে উঠছে: দুধ, ডিম ও মাছ দরকার। শিশু বিশেষজ্ঞ ছাড়া শিশুর ওজন কমানোর ডায়েট নয়।"
+      }
+    },
+    {
+      "age_group": "teen",
+      "gender": null,
+      "condition": null,
+      "text": {
+        "en": "Teens need extra iron and calcium; limit fast food and energy drinks.",
+        "bn": "কিশোর-কিশোরীদের বাড়তি আয়রন ও ক্যালসিয়াম দরকার; ফাস্ট ফুড ও এনার্জি ড্রিংক কমান।"
+      }
+    },
+    {
+      "age_group": "senior",
+      "gender": null,
+      "condition": null,
+      "text": {
+        "en": "Over 60: protein at every meal protects muscle; drink water even when not thirsty.",
+        "bn": "৬০-এর বেশি বয়সে: প্রতি বেলায় প্রোটিন পেশি রক্ষা করে; তৃষ্ণা না পেলেও পানি পান করুন।"
+      }
+    },
+    {
+      "age_group": null,
+      "gender": "female",
+      "condition": null,
+      "text": {
+        "en": "Women need more iron: pair lal shak, small fish and dal with vitamin C like lemon or guava.",
+        "bn": "নারীদের আয়রন বেশি দরকার: লাল শাক, ছোট মাছ ও ডালের সঙ্গে লেবু বা পেয়ারার মতো ভিটামিন সি খান।"
+      }
+    },
+    {
+      "age_group": "adult",
+      "gender": "male",
+      "condition": null,
+      "text": {
+        "en": "Men: watch waist size and salt; heart risk rises after 40.",
+        "bn": "পুরুষ: কোমরের মাপ ও লবণ খেয়াল রাখুন; ৪০-এর পর হৃদরোগের ঝুঁকি বাড়ে।"
+      }
+    },
+    {
+      "age_group": "senior",
+      "gender": null,
+      "condition": "diabetes",
+      "text": {
+        "en": "Older adults are more prone to low sugar — keep a small snack and glucose handy.",
+        "bn": "বয়স্কদের শর্করা কমে যাওয়ার ঝুঁকি বেশি — হাতের কাছে ছোট নাস্তা ও গ্লুকোজ রাখুন।"
+      }
+    },
+    {
+      "age_group": null,
+      "gender": "female",
+      "condition": "thyroid",
+      "text": {
+        "en": "Planning a pregnancy? The thyroid dose often changes — tell your doctor early.",
+        "bn": "গর্ভধারণের পরিকল্পনা করছেন? থাইরয়েডের ডোজ প্রায়ই বদলায় — আগেভাগে চিকিৎসককে জানান।"
+      }
+    },
+    {
+      "age_group": "child",
+      "gender": null,
+      "condition": "asthma",
+      "text": {
+        "en": "Share a written asthma action plan with the school.",
+        "bn": "স্কুলকে লিখিত অ্যাজমা অ্যাকশন প্ল্যান দিন।"
+      }
+    }
+  ],
+  "category_images": {
+    "grains": "https://images.pexels.com/photos/8923092/pexels-photo-8923092.jpeg",
+    "proteins": "https://images.pexels.com/photos/5695580/pexels-photo-5695580.jpeg",
+    "lentils": "https://images.pexels.com/photos/7090131/pexels-photo-7090131.jpeg",
+    "vegetables": "https://images.pexels.com/photos/2095569/pexels-photo-2095569.jpeg",
+    "fruits": "https://images.pexels.com/photos/2351813/pexels-photo-2351813.jpeg",
+    "dairy": "https://images.pexels.com/photos/10421049/pexels-photo-10421049.jpeg",
+    "snacks": "https://images.pexels.com/photos/14477873/pexels-photo-14477873.jpeg",
+    "sweets": "https://images.pexels.com/photos/8788869/pexels-photo-8788869.jpeg",
+    "drinks": "https://images.pexels.com/photos/5946623/pexels-photo-5946623.jpeg",
+    "kitchen": "https://images.pexels.com/photos/4198928/pexels-photo-4198928.jpeg",
+    "processed": "https://images.pexels.com/photos/4518665/pexels-photo-4518665.jpeg"
+  },
+  "sources": [
+    {
+      "key": "who-healthy-diet",
+      "title": {
+        "en": "Healthy diet (fact sheet)",
+        "bn": "স্বাস্থ্যকর খাদ্য (তথ্যপত্র)"
+      },
+      "publisher": "World Health Organization",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+      "year": null,
+      "kind": "guideline",
+      "conditions": null
+    },
+    {
+      "key": "bd-dietary-guidelines",
+      "title": {
+        "en": "National Dietary Guidelines for Bangladesh",
+        "bn": "বাংলাদেশের জাতীয় খাদ্য নির্দেশিকা"
+      },
+      "publisher": "BIRDEM with FAO",
+      "url": "https://cdn.who.int/media/docs/default-source/searo/bangladesh/national-dietary-guidelines-for-bangladesh.pdf",
+      "year": 2013,
+      "kind": "guideline",
+      "conditions": null
+    },
+    {
+      "key": "ada-standards-2025",
+      "title": {
+        "en": "Standards of Care in Diabetes 2025, Section 5: Nutrition and physical activity",
+        "bn": "ডায়াবেটিস চিকিৎসার মানদণ্ড ২০২৫, অধ্যায় ৫: পুষ্টি ও শরীরচর্চা"
+      },
+      "publisher": "American Diabetes Association (Diabetes Care, Vol. 48, Suppl. 1)",
+      "url": "https://diabetesjournals.org/care/issue/48/Supplement_1",
+      "year": 2025,
+      "kind": "guideline",
+      "conditions": [
+        "diabetes"
+      ]
+    },
+    {
+      "key": "nhs-t2d-food",
+      "title": {
+        "en": "Type 2 diabetes: food and keeping active",
+        "bn": "টাইপ ২ ডায়াবেটিস: খাবার ও সক্রিয় থাকা"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/type-2-diabetes/food-and-keeping-active/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "diabetes"
+      ]
+    },
+    {
+      "key": "aasld-nafld-2023",
+      "title": {
+        "en": "AASLD practice guidance on the clinical assessment and management of NAFLD (Hepatology 77(5):1797–1835)",
+        "bn": "এএএসএলডি ফ্যাটি লিভার নির্দেশিকা (হেপাটোলজি ৭৭(৫):১৭৯৭–১৮৩৫)"
+      },
+      "publisher": "American Association for the Study of Liver Diseases",
+      "url": null,
+      "year": 2023,
+      "kind": "guideline",
+      "conditions": [
+        "fatty-liver"
+      ]
+    },
+    {
+      "key": "nhs-nafld",
+      "title": {
+        "en": "Non-alcoholic fatty liver disease (NAFLD)",
+        "bn": "নন-অ্যালকোহলিক ফ্যাটি লিভার"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/non-alcoholic-fatty-liver-disease/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "fatty-liver"
+      ]
+    },
+    {
+      "key": "gina-reports",
+      "title": {
+        "en": "Global Strategy for Asthma Management and Prevention",
+        "bn": "অ্যাজমা ব্যবস্থাপনা ও প্রতিরোধের বৈশ্বিক কৌশল"
+      },
+      "publisher": "Global Initiative for Asthma (GINA)",
+      "url": "https://ginasthma.org/reports/",
+      "year": 2024,
+      "kind": "guideline",
+      "conditions": [
+        "asthma"
+      ]
+    },
+    {
+      "key": "nhs-asthma",
+      "title": {
+        "en": "Asthma",
+        "bn": "অ্যাজমা"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/asthma/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "asthma"
+      ]
+    },
+    {
+      "key": "amf-diet",
+      "title": {
+        "en": "Diet and migraine",
+        "bn": "খাদ্য ও মাইগ্রেন"
+      },
+      "publisher": "American Migraine Foundation",
+      "url": "https://americanmigrainefoundation.org/resource-library/diet-and-migraine/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "migraine"
+      ]
+    },
+    {
+      "key": "amf-lifestyle",
+      "title": {
+        "en": "Lifestyle changes for migraine",
+        "bn": "মাইগ্রেনে জীবনযাপনের পরিবর্তন"
+      },
+      "publisher": "American Migraine Foundation",
+      "url": "https://americanmigrainefoundation.org/resource-library/lifestyle-changes-for-migraine/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "migraine"
+      ]
+    },
+    {
+      "key": "nhs-migraine",
+      "title": {
+        "en": "Migraine",
+        "bn": "মাইগ্রেন"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/migraine/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "migraine"
+      ]
+    },
+    {
+      "key": "nhs-levothyroxine",
+      "title": {
+        "en": "Levothyroxine: how and when to take it",
+        "bn": "লেভোথাইরক্সিন: কীভাবে ও কখন খাবেন"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/medicines/levothyroxine/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "thyroid"
+      ]
+    },
+    {
+      "key": "nhs-hypothyroid-treatment",
+      "title": {
+        "en": "Underactive thyroid (hypothyroidism): treatment",
+        "bn": "থাইরয়েড কম কাজ করা (হাইপোথাইরয়েডিজম): চিকিৎসা"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/underactive-thyroid-hypothyroidism/treatment/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "thyroid"
+      ]
+    },
+    {
+      "key": "nhs-insomnia",
+      "title": {
+        "en": "Insomnia",
+        "bn": "অনিদ্রা"
+      },
+      "publisher": "NHS",
+      "url": "https://www.nhs.uk/conditions/insomnia/",
+      "year": null,
+      "kind": "patient_info",
+      "conditions": [
+        "insomnia"
+      ]
+    }
+  ],
+  "food_images": {
+    "white-rice": "https://images.pexels.com/photos/31346219/pexels-photo-31346219.jpeg",
+    "red-rice": "https://images.pexels.com/photos/4110263/pexels-photo-4110263.jpeg",
+    "atta-ruti": "https://images.pexels.com/photos/5434693/pexels-photo-5434693.jpeg",
+    "paratha": "https://images.pexels.com/photos/39833390/pexels-photo-39833390.jpeg",
+    "luchi-puri": "https://images.pexels.com/photos/38532723/pexels-photo-38532723.jpeg",
+    "khichuri": "https://images.pexels.com/photos/6363499/pexels-photo-6363499.jpeg",
+    "biryani": "https://images.pexels.com/photos/9738983/pexels-photo-9738983.jpeg",
+    "oats": "https://images.pexels.com/photos/33874707/pexels-photo-33874707.jpeg",
+    "chira-muri": "https://images.pexels.com/photos/35213277/pexels-photo-35213277.jpeg",
+    "white-bread": "https://images.pexels.com/photos/8599600/pexels-photo-8599600.jpeg",
+    "ilish": "https://images.pexels.com/photos/40700642/pexels-photo-40700642.jpeg",
+    "rui-fish": "https://images.pexels.com/photos/14673874/pexels-photo-14673874.jpeg",
+    "small-fish": "https://images.pexels.com/photos/4627295/pexels-photo-4627295.jpeg",
+    "shutki": "https://images.pexels.com/photos/30688175/pexels-photo-30688175.jpeg",
+    "chingri": "https://images.pexels.com/photos/2714384/pexels-photo-2714384.jpeg",
+    "chicken": "https://images.pexels.com/photos/29684985/pexels-photo-29684985.jpeg",
+    "beef": "https://images.pexels.com/photos/15131224/pexels-photo-15131224.jpeg",
+    "mutton": "https://images.pexels.com/photos/29684989/pexels-photo-29684989.jpeg",
+    "egg": "https://images.pexels.com/photos/4184073/pexels-photo-4184073.jpeg",
+    "masoor-dal": "https://images.pexels.com/photos/30203314/pexels-photo-30203314.jpeg",
+    "chola": "https://images.pexels.com/photos/6805059/pexels-photo-6805059.jpeg",
+    "soybean": "https://images.pexels.com/photos/6805069/pexels-photo-6805069.jpeg",
+    "peanuts": "https://images.pexels.com/photos/209345/pexels-photo-209345.jpeg",
+    "nuts": "https://images.pexels.com/photos/7420934/pexels-photo-7420934.jpeg",
+    "lal-shak": "https://images.pexels.com/photos/8243930/pexels-photo-8243930.jpeg",
+    "palong-shak": "https://images.pexels.com/photos/4506881/pexels-photo-4506881.jpeg",
+    "korola": "https://images.pexels.com/photos/4590490/pexels-photo-4590490.jpeg",
+    "lau": "https://images.pexels.com/photos/39130946/pexels-photo-39130946.jpeg",
+    "dherosh": "https://images.pexels.com/photos/38272573/pexels-photo-38272573.jpeg",
+    "cabbage": "https://images.pexels.com/photos/6316537/pexels-photo-6316537.jpeg",
+    "potato": "https://images.pexels.com/photos/17617617/pexels-photo-17617617.jpeg",
+    "cucumber": "https://images.pexels.com/photos/17975573/pexels-photo-17975573.jpeg",
+    "tomato": "https://images.pexels.com/photos/35699715/pexels-photo-35699715.jpeg",
+    "guava": "https://images.pexels.com/photos/8668726/pexels-photo-8668726.jpeg",
+    "amloki": "https://images.pexels.com/photos/34928285/pexels-photo-34928285.jpeg",
+    "papaya": "https://images.pexels.com/photos/4113812/pexels-photo-4113812.jpeg",
+    "banana": "https://images.pexels.com/photos/4399936/pexels-photo-4399936.jpeg",
+    "ripe-mango": "https://images.pexels.com/photos/7543212/pexels-photo-7543212.jpeg",
+    "jackfruit": "https://images.pexels.com/photos/18302715/pexels-photo-18302715.jpeg",
+    "lychee": "https://images.pexels.com/photos/14532762/pexels-photo-14532762.jpeg",
+    "dates": "https://images.pexels.com/photos/3993529/pexels-photo-3993529.jpeg",
+    "lemon": "https://images.pexels.com/photos/4090363/pexels-photo-4090363.jpeg",
+    "milk": "https://images.pexels.com/photos/4324359/pexels-photo-4324359.jpeg",
+    "doi": "https://images.pexels.com/photos/10809243/pexels-photo-10809243.jpeg",
+    "mishti-doi": "https://images.pexels.com/photos/34870890/pexels-photo-34870890.jpeg",
+    "cheese": "https://images.pexels.com/photos/8860297/pexels-photo-8860297.jpeg",
+    "fried-snacks": "https://images.pexels.com/photos/37153389/pexels-photo-37153389.jpeg",
+    "chanachur": "https://images.pexels.com/photos/34466116/pexels-photo-34466116.jpeg",
+    "fast-food": "https://images.pexels.com/photos/19036022/pexels-photo-19036022.jpeg",
+    "instant-noodles": "https://images.pexels.com/photos/6940988/pexels-photo-6940988.jpeg",
+    "sausage": "https://images.pexels.com/photos/10794112/pexels-photo-10794112.jpeg",
+    "mishti": "https://images.pexels.com/photos/39959155/pexels-photo-39959155.jpeg",
+    "sugar-gur": "https://images.pexels.com/photos/5469035/pexels-photo-5469035.jpeg",
+    "honey": "https://images.pexels.com/photos/5634211/pexels-photo-5634211.jpeg",
+    "chocolate": "https://images.pexels.com/photos/4113363/pexels-photo-4113363.jpeg",
+    "ice-cream": "https://images.pexels.com/photos/29269196/pexels-photo-29269196.jpeg",
+    "water": "https://images.pexels.com/photos/31206817/pexels-photo-31206817.jpeg",
+    "milk-tea": "https://images.pexels.com/photos/37186989/pexels-photo-37186989.jpeg",
+    "black-tea": "https://images.pexels.com/photos/3644476/pexels-photo-3644476.jpeg",
+    "coffee": "https://images.pexels.com/photos/13523793/pexels-photo-13523793.jpeg",
+    "soft-drinks": "https://images.pexels.com/photos/33469209/pexels-photo-33469209.jpeg",
+    "daab": "https://images.pexels.com/photos/35620444/pexels-photo-35620444.jpeg",
+    "sugarcane": "https://images.pexels.com/photos/34635373/pexels-photo-34635373.jpeg",
+    "alcohol": "https://images.pexels.com/photos/14465764/pexels-photo-14465764.jpeg",
+    "iodized-salt": "https://images.pexels.com/photos/6682957/pexels-photo-6682957.jpeg",
+    "ginger-garlic": "https://images.pexels.com/photos/5202126/pexels-photo-5202126.jpeg",
+    "turmeric": "https://images.pexels.com/photos/6220708/pexels-photo-6220708.jpeg",
+    "achar": "https://images.pexels.com/photos/9164642/pexels-photo-9164642.jpeg"
+  }
+}

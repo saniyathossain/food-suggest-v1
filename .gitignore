@@ -1,0 +1,47 @@
+# environment and secrets (examples stay tracked)
+.env
+.env.*
+!.env.example
+docker/.env
+docker/.envs/*.env
+!docker/.envs/*.env.example
+docker/docker-compose.override.yml
+*.pem
+*.key
+
+# rust
+codes/backend/target/
+codes/backend/storage/*
+!codes/backend/storage/.gitkeep
+# ts-rs writes here when tests run without TS_RS_EXPORT_DIR; the real types live in codes/frontend/src/generated (make types)
+codes/backend/bindings/
+
+# node
+node_modules/
+codes/frontend/dist/
+codes/frontend/.vite/
+*.tsbuildinfo
+coverage/
+
+# reports and scratch
+*.log
+lighthouse/
+*.lighthouse.json
+*.orig
+*.bak
+
+# os / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# tools: personal settings and caches (shared instructions stay tracked)
+.claude/settings.local.json
+.claude/worktrees/
+.impeccable/cache/
+.impeccable/live/
+.impeccable/hook.cache.json
+
+# AIDLC session log (local only)
+aidlc-docs/audit.md

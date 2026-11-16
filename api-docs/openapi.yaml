@@ -1,0 +1,607 @@
+openapi: 3.1.0
+info:
+  title: Pathya API
+  version: 0.1.0
+  summary: Diet, meal-timing and lifestyle guidance (Bangladesh first, English / Bangla).
+  description: |
+    Public reads are computed from one cached catalog snapshot (zero queries per page view) and answer in one
+    language chosen by `lang`. Admin routes need `Authorization: Bearer <ADMIN_TOKEN>` (replaced by RBAC in the
+    platform unit). Errors are `{"error", "code"}` plus `fields` on 422; every response carries `x-request-id`.
+    Guidance is general information, not medical advice.
+servers:
+  - url: http://127.0.0.1:8100
+    description: Local Docker
+tags:
+  - name: system
+  - name: catalog
+  - name: plan
+  - name: media
+  - name: admin
+paths:
+  /api/v1/tiers:
+    get: { summary: 'Tiers and what each includes (counts: -1 unlimited; switches 1/0)', responses: { '200': { description: Tiers } } }
+  /api/v1/auth/register:
+    post: { summary: Create an account and sign in (HttpOnly session cookie), requestBody: { content: { application/json: { schema: { type: object, required: [email, password, name], properties: { email: { type: string }, password: { type: string, minLength: 8, maxLength: 128 }, name: { type: string }, locale: { type: string, enum: [en, bn] } } } } } }, responses: { '201': { description: Me }, '422': { description: Field errors } } }
+  /api/v1/auth/login:
+    post: { summary: 'Sign in; 5 failures per email per 15 minutes, then 429', requestBody: { content: { application/json: { schema: { type: object, properties: { email: { type: string }, password: { type: string } } } } } }, responses: { '200': { description: Me (sets cookie) }, '422': { description: Wrong email or password }, '429': { description: Too many attempts } } }
+  /api/v1/auth/logout:
+    post: { summary: Sign out (clears cookie), responses: { '204': { description: Done } } }
+  /api/v1/auth/me:
+    get: { summary: The signed-in account with its tier and features, or null, responses: { '200': { description: Me or null } } }
+  /api/v1/auth/forgot:
+    post: { summary: Mail a one-hour reset link (always 204), responses: { '204': { description: Done } } }
+  /api/v1/auth/reset:
+    post: { summary: Set a new password with the link's token (ends all sessions), responses: { '204': { description: Done }, '422': { description: Expired token or bad password } } }
+  /api/v1/me/profiles:
+    get: { summary: 'Profiles (self and family) with conditions, allergies, surgeries, pregnancy, medicines, lab history', security: [{ session: [] }], responses: { '200': { description: Profiles } } }
+    post: { summary: 'Add a profile (402 upgrade_required when the tier''s profile count is used)', security: [{ session: [] }], responses: { '201': { description: Saved }, '402': { description: Upgrade required } } }
+  /api/v1/me/profiles/{id}:
+    put: { summary: Save a profile and its conditions, security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: Saved } } }
+    delete: { summary: Delete a profile, security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '204': { description: Deleted } } }
+  /api/v1/me/profiles/{id}/labs:
+    post: { summary: 'Add a dated lab value (tier: history)', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '201': { description: Saved }, '402': { description: Upgrade required } } }
+  /api/v1/me/profiles/{id}/medicines:
+    post: { summary: 'Add a medicine as prescribed: brand, generic or typed name; dose in the person''s words (tier: medicines). The app never suggests a dose.', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '201': { description: Saved }, '402': { description: Upgrade required } } }
+  /api/v1/me/profiles/{id}/medicines/{row}:
+    patch: { summary: 'Stop a medicine (dated, kept in history) or remove it (stopped_on null)', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: row, in: path, required: true, schema: { type: integer } }], responses: { '204': { description: Done } } }
+  /api/v1/me/plan:
+    get: { summary: 'Personal plan for a profile: tier limits (conditions counted; only the eat-more list is cut, never avoid / go easy), meal alternatives, medicine–medicine and medicine–food checks with sources', security: [{ session: [] }], parameters: [{ name: profile, in: query, schema: { type: integer } }, { name: lang, in: query, schema: { type: string } }], responses: { '200': { description: Personal plan } } }
+  /api/v1/medicines/search:
+    get: { summary: Brands and generics starting with q (2+ letters), security: [{ session: [] }], parameters: [{ name: q, in: query, schema: { type: string } }], responses: { '200': { description: Hits } } }
+  /api/v1/recipes:
+    get:
+      summary: Published recipes (filters q, kind, food, condition = not "avoid" for it); each with its fit per condition
+      parameters:
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: kind, in: query, schema: { type: string, enum: [main, side, breakfast, snack, drink] } }
+        - { name: food, in: query, schema: { type: string } }
+        - { name: condition, in: query, schema: { type: string } }
+      responses: { '200': { description: Recipe cards } }
+  /api/v1/recipes/{slug}:
+    get:
+      summary: A recipe with ingredients (catalogue foods linked), steps, tips, fit
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }, { name: lang, in: query, schema: { type: string } }]
+      responses: { '200': { description: Recipe }, '404': { description: Unknown or hidden } }
+  /api/v1/posts:
+    get:
+      summary: Published articles, newest first (filter tag)
+      parameters: [{ name: lang, in: query, schema: { type: string } }, { name: tag, in: query, schema: { type: string } }]
+      responses: { '200': { description: Article cards } }
+  /api/v1/posts/{slug}:
+    get:
+      summary: An article (body lines, sources)
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }, { name: lang, in: query, schema: { type: string } }]
+      responses: { '200': { description: Article }, '404': { description: Unknown or hidden } }
+  /api/v1/admin/recipes:
+    get: { summary: All recipes with publish state, security: [{ bearer: [] }], responses: { '200': { description: Rows } } }
+  /api/v1/admin/recipes/{slug}:
+    patch: { summary: Publish or hide a recipe, security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+  /api/v1/admin/posts:
+    get: { summary: All articles with publish state, security: [{ bearer: [] }], responses: { '200': { description: Rows } } }
+  /api/v1/admin/posts/{slug}:
+    patch: { summary: Publish or hide an article, security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+  /api/v1/modes/{slug}:
+    get:
+      summary: A diet mode (everyday, ramadan, intermittent-16-8) with its meals, tips and how each condition fits it
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+      responses:
+        '200': { description: The mode, content: { application/json: { schema: { $ref: '#/components/schemas/DietMode' } } } }
+        '404': { description: Unknown or switched off }
+  /api/v1/admin/modes:
+    get:
+      summary: Every diet mode (on and off) with counts
+      security: [{ bearer: [] }]
+      responses: { '200': { description: Rows } }
+  /api/v1/admin/modes/{slug}:
+    patch:
+      summary: Switch a diet mode on or off, or move it
+      security: [{ bearer: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      requestBody: { content: { application/json: { schema: { type: object, properties: { active: { type: boolean }, sort: { type: integer } } } } } }
+      responses: { '200': { description: Saved } }
+  /api/v1/health:
+    get:
+      tags: [system]
+      summary: Liveness + active drivers
+      responses:
+        '200':
+          description: Healthy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+        '503': { description: Database unreachable }
+  /api/v1/bootstrap:
+    get:
+      tags: [catalog]
+      summary: Everything the home screen needs (small)
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200':
+          description: Countries, conditions with counts, categories, meal slots, closed lists
+          headers: { Cache-Control: { schema: { type: string, example: 'public, max-age=60, stale-while-revalidate=600' } } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Bootstrap' }
+  /api/v1/conditions/{slug}:
+    get:
+      tags: [catalog]
+      summary: One condition — food lanes, timing, habits
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string, example: diabetes } }
+        - { $ref: '#/components/parameters/Lang' }
+      responses:
+        '200':
+          description: Condition detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ConditionDetail' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/v1/foods:
+    get:
+      tags: [catalog]
+      summary: Search foods (English or Bangla) with the verdict per condition
+      parameters:
+        - { name: q, in: query, schema: { type: string, example: ilish } }
+        - { name: category, in: query, schema: { type: string, example: proteins } }
+        - { name: season, in: query, description: 'now = only foods in season this month (Dhaka time)', schema: { type: string, enum: [now] } }
+        - { $ref: '#/components/parameters/Lang' }
+      responses:
+        '200':
+          description: Up to 80 foods
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/FoodSearch' } }
+  /api/v1/foods/{slug}:
+    get:
+      tags: [catalog]
+      summary: 'One food: verdict per condition, food types with nutrients per 100 g (USDA-cited), season, meals, swaps, sources'
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string, example: chicken } }
+        - { $ref: '#/components/parameters/Lang' }
+      responses:
+        '200': { description: Food detail, content: { application/json: { schema: { $ref: '#/components/schemas/FoodDetail' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /readyz:
+    get:
+      tags: [system]
+      summary: 'Readiness: database (critical), cache, storage; 503 when a critical dependency is down (drives the outage screen)'
+      responses:
+        '200': { description: Ready }
+        '503': { description: Not ready }
+  /robots.txt:
+    get: { tags: [system], summary: Crawler rules and sitemap link, responses: { '200': { description: text/plain } } }
+  /sitemap.xml:
+    get: { tags: [system], summary: 'Every page, condition and food with en/bn alternates', responses: { '200': { description: application/xml } } }
+  /api/v1/plan:
+    post:
+      tags: [plan]
+      summary: Merge a profile's conditions into one day plan (strictest verdict wins)
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PlanRequest' }
+      responses:
+        '200':
+          description: Merged plan
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Plan' }
+        '422': { $ref: '#/components/responses/Error' }
+  /media/{id}:
+    get:
+      tags: [media]
+      summary: Media-library image, nearest stored WebP/JPEG variant from the storage disk (S3/MinIO)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: w, in: query, description: 'Wanted width (16-2400), nearest stored variant at least w', schema: { type: integer, example: 960 } }
+      responses:
+        '200':
+          description: 'Image bytes, Cache-Control public, max-age=31536000, immutable'
+          content: { image/webp: {}, image/jpeg: {} }
+        '307': { description: 'Not yet in storage, redirect to the source CDN' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/catalog:
+    get:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: Raw catalog, both languages, inactive rows included (flushes the cache)
+      responses:
+        '200': { description: CatalogSnapshot }
+        '401': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/food-rules:
+    put:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: Create or update the rule for (condition, food)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RuleUpsert' }
+      responses:
+        '200': { description: Saved, content: { application/json: { schema: { $ref: '#/components/schemas/Saved' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/food-rules/{id}:
+    delete:
+      tags: [admin]
+      security: [{ admin: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Deleted }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/foods:
+    post:
+      tags: [admin]
+      security: [{ admin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FoodCreate' }
+      responses:
+        '201': { description: Created, content: { application/json: { schema: { $ref: '#/components/schemas/Saved' } } } }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/conditions/{slug}:
+    patch:
+      tags: [admin]
+      security: [{ admin: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ConditionPatch' }
+      responses:
+        '200': { description: Saved, content: { application/json: { schema: { $ref: '#/components/schemas/Saved' } } } }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/media:
+    get:
+      tags: [admin, media]
+      security: [{ admin: [] }]
+      summary: Media library, newest first
+      responses:
+        '200':
+          description: Items
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/Media' } }
+    post:
+      tags: [admin, media]
+      security: [{ admin: [] }]
+      summary: Import an image by URL (images.pexels.com, images.unsplash.com) into storage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { type: string, format: uri }
+                alt: { $ref: '#/components/schemas/Text' }
+      responses:
+        '201': { description: Imported, content: { application/json: { schema: { $ref: '#/components/schemas/Media' } } } }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/media/upload:
+    post:
+      tags: [admin, media]
+      security: [{ admin: [] }]
+      summary: 'Dropzone upload: JPEG/PNG/WebP up to 10 MB and 6000 px; stored as WebP 32/160/480/960/1600, transparency kept'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+                alt_en: { type: string }
+                alt_bn: { type: string }
+      responses:
+        '201': { description: Stored, content: { application/json: { schema: { $ref: '#/components/schemas/Media' } } } }
+        '413': { description: Body over the limit }
+        '422': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/media/{id}:
+    delete:
+      tags: [admin, media]
+      security: [{ admin: [] }]
+      summary: Delete an item and its files; covers using it fall back to a gradient
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Deleted }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/v1/admin/cache:
+    delete:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: Flush the catalog cache
+      responses:
+        '204': { description: Flushed }
+components:
+  securitySchemes:
+    session: { type: apiKey, in: cookie, name: pathya_session }
+    admin: { type: http, scheme: bearer, description: 'ADMIN_TOKEN from docker/.envs/app.env, at least 16 chars' }
+  parameters:
+    Lang:
+      name: lang
+      in: query
+      schema: { type: string, enum: [en, bn], default: en }
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error, code]
+            properties:
+              error: { type: string }
+              code: { type: string, enum: [not_found, unauthorized, validation_failed, server_error] }
+              fields: { type: object, additionalProperties: { type: string } }
+  schemas:
+    DietMode:
+      type: object
+      properties:
+        slug: { type: string }
+        kind: { type: string, enum: [general, religious_fast, time_restricted] }
+        name: { type: string }
+        summary: { type: string }
+        window: { type: [string, 'null'] }
+        slots: { type: array, items: { type: object, properties: { slug: { type: string }, name: { type: string }, time: { type: [string, 'null'] }, moment: { type: string }, note: { type: string } } } }
+        tips: { type: array, items: { type: object, properties: { kind: { type: string, enum: [do, dont, safety, order] }, text: { type: string }, source: { type: [object, 'null'] } } } }
+        conditions: { type: array, items: { type: object, properties: { condition: { type: object }, stance: { type: string, enum: [suits, caution, doctor_first] }, reason: { type: string }, source: { type: [object, 'null'] } } } }
+    Glycemic:
+      type: object
+      description: From a published GI table; load = GI x (carbohydrate - fibre) / 100 per 100 g
+      properties:
+        gi: { type: integer }
+        band: { type: string, enum: [low, medium, high] }
+        available_carb_g: { type: [number, 'null'] }
+        load_per_100g: { type: [number, 'null'] }
+        load_band: { type: [string, 'null'], enum: [low, medium, high, null] }
+        source: { type: [object, 'null'] }
+    Verdict: { type: string, enum: [avoid, limit, ok, recommended] }
+    Gender: { type: string, enum: [male, female, other] }
+    AgeGroup: { type: string, enum: [child, teen, adult, senior] }
+    Text:
+      type: object
+      required: [en]
+      properties: { en: { type: string }, bn: { type: string } }
+    Health:
+      type: object
+      properties:
+        status: { type: string, enum: [ok, degraded] }
+        database: { type: boolean }
+        cache: { type: string, enum: [memory, redis, 'null'] }
+        storage: { type: string, enum: [local, s3] }
+        version: { type: string }
+    ConditionTag:
+      type: object
+      properties: { slug: { type: string }, name: { type: string }, icon: { type: string }, color: { type: string } }
+    Bootstrap:
+      type: object
+      properties:
+        locale: { type: string }
+        countries: { type: array, items: { type: object, properties: { code: { type: string }, name: { type: string } } } }
+        conditions:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ConditionTag'
+              - type: object
+                properties:
+                  image: { type: [string, 'null'], example: /media/12 }
+                  summary: { type: string }
+                  counts: { type: object, additionalProperties: { type: integer } }
+        categories: { type: array, items: { type: object, properties: { slug: { type: string }, name: { type: string }, image: { type: [string, 'null'] } } } }
+        meal_slots:
+          type: array
+          items:
+            type: object
+            properties: { country: { type: string }, slug: { type: string }, name: { type: string }, time: { type: string }, image: { type: [string, 'null'] }, cutout: { type: [string, 'null'], description: 'the same food as a transparent image (no background)' } }
+        age_groups: { type: array, items: { $ref: '#/components/schemas/AgeGroup' } }
+        genders: { type: array, items: { $ref: '#/components/schemas/Gender' } }
+        verdicts: { type: array, items: { $ref: '#/components/schemas/Verdict' } }
+    FoodItem:
+      type: object
+      properties: { slug: { type: string }, name: { type: string }, image: { type: [string, 'null'], description: 'Own photo, else category cover' }, category: { type: string }, reason: { type: string } }
+    Timing:
+      type: object
+      properties:
+        kind: { type: string, enum: [do, dont] }
+        time: { type: [string, 'null'], example: '07:30' }
+        title: { type: string }
+        detail: { type: string }
+        condition: { oneOf: [{ $ref: '#/components/schemas/ConditionTag' }, { type: 'null' }] }
+    Habit:
+      type: object
+      properties:
+        icon: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        condition: { oneOf: [{ $ref: '#/components/schemas/ConditionTag' }, { type: 'null' }] }
+    ConditionDetail:
+      allOf:
+        - $ref: '#/components/schemas/ConditionTag'
+        - type: object
+          properties:
+            image: { type: [string, 'null'] }
+            summary: { type: string }
+            foods:
+              type: object
+              properties:
+                avoid: { type: array, items: { $ref: '#/components/schemas/FoodItem' } }
+                limit: { type: array, items: { $ref: '#/components/schemas/FoodItem' } }
+                ok: { type: array, items: { $ref: '#/components/schemas/FoodItem' } }
+                recommended: { type: array, items: { $ref: '#/components/schemas/FoodItem' } }
+            timing: { type: array, items: { $ref: '#/components/schemas/Timing' } }
+            habits: { type: array, items: { $ref: '#/components/schemas/Habit' } }
+            sources: { type: array, items: { $ref: '#/components/schemas/Source' } }
+    FoodSearch:
+      type: object
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        image: { type: [string, 'null'] }
+        cutout: { type: [string, 'null'], description: 'the same food as a transparent image (no background)' }
+        origin: { type: string, enum: [local, imported] }
+        season: { type: array, items: { type: integer } }
+        in_season: { type: boolean }
+        category: { type: string }
+        verdicts:
+          type: array
+          items: { type: object, properties: { condition: { type: string }, verdict: { $ref: '#/components/schemas/Verdict' }, reason: { type: string } } }
+    PlanRequest:
+      type: object
+      required: [age, gender]
+      properties:
+        country: { type: string, default: BD }
+        age: { type: integer, minimum: 1, maximum: 120 }
+        gender: { $ref: '#/components/schemas/Gender' }
+        conditions: { type: array, maxItems: 6, items: { type: string }, example: [diabetes, insomnia] }
+    PlanFood:
+      type: object
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        image: { type: [string, 'null'] }
+        category: { type: string }
+        verdict: { $ref: '#/components/schemas/Verdict' }
+        conflict: { type: boolean, description: 'A restriction overrode a recommendation from another condition' }
+        reasons:
+          type: array
+          items: { type: object, properties: { condition: { type: string }, color: { type: string }, verdict: { $ref: '#/components/schemas/Verdict' }, reason: { type: string } } }
+    Plan:
+      type: object
+      properties:
+        profile:
+          type: object
+          properties:
+            country: { type: string }
+            age: { type: integer }
+            age_group: { $ref: '#/components/schemas/AgeGroup' }
+            gender: { $ref: '#/components/schemas/Gender' }
+            conditions: { type: array, items: { $ref: '#/components/schemas/ConditionTag' } }
+        meals:
+          type: array
+          items:
+            type: object
+            properties:
+              slug: { type: string }
+              name: { type: string }
+              time: { type: string }
+              image: { type: [string, 'null'] }
+              items: { type: array, items: { type: object, properties: { slug: { type: string }, name: { type: string }, verdict: { $ref: '#/components/schemas/Verdict' } } } }
+        foods:
+          type: object
+          properties:
+            avoid: { type: array, items: { $ref: '#/components/schemas/PlanFood' } }
+            limit: { type: array, items: { $ref: '#/components/schemas/PlanFood' } }
+            recommended: { type: array, items: { $ref: '#/components/schemas/PlanFood' } }
+        timing:
+          type: object
+          properties:
+            do: { type: array, items: { $ref: '#/components/schemas/Timing' } }
+            dont: { type: array, items: { $ref: '#/components/schemas/Timing' } }
+        habits: { type: array, items: { $ref: '#/components/schemas/Habit' } }
+        notes: { type: array, items: { type: string } }
+        sources: { type: array, items: { $ref: '#/components/schemas/Source' } }
+    RuleUpsert:
+      type: object
+      required: [condition, food, verdict, reason]
+      properties:
+        condition: { type: string }
+        food: { type: string }
+        verdict: { $ref: '#/components/schemas/Verdict' }
+        reason: { $ref: '#/components/schemas/Text' }
+    FoodCreate:
+      type: object
+      required: [slug, category, name]
+      properties:
+        slug: { type: string, pattern: '^[a-z0-9-]{2,60}$' }
+        category: { type: string }
+        name: { $ref: '#/components/schemas/Text' }
+    ConditionPatch:
+      type: object
+      properties:
+        name: { $ref: '#/components/schemas/Text' }
+        summary: { $ref: '#/components/schemas/Text' }
+        icon: { type: string }
+        color: { type: string, pattern: '^#[0-9a-fA-F]{6}$' }
+        media_id: { type: integer, description: 'Zero clears the cover' }
+        active: { type: boolean }
+    Media:
+      type: object
+      properties:
+        id: { type: integer }
+        url: { type: string, example: /media/7 }
+        status: { type: string, enum: [pending, stored, failed] }
+        source: { type: [string, 'null'], example: pexels }
+        license: { type: [string, 'null'] }
+        source_url: { type: [string, 'null'] }
+        widths: { type: array, items: { type: integer } }
+        bytes: { type: integer }
+    Nutrients:
+      type: object
+      description: 'Per 100 g; null when the source does not report it'
+      properties:
+        kcal: { type: [number, 'null'] }
+        protein_g: { type: [number, 'null'] }
+        fat_g: { type: [number, 'null'] }
+        carb_g: { type: [number, 'null'] }
+        fibre_g: { type: [number, 'null'] }
+        sugar_g: { type: [number, 'null'] }
+        sat_fat_g: { type: [number, 'null'] }
+        sodium_mg: { type: [number, 'null'] }
+        potassium_mg: { type: [number, 'null'] }
+        iron_mg: { type: [number, 'null'] }
+        calcium_mg: { type: [number, 'null'] }
+    FoodVariant:
+      type: object
+      properties:
+        slug: { type: string, example: breast }
+        name: { type: string, example: 'Breast, skinless, roasted' }
+        is_default: { type: boolean }
+        per_100g: { $ref: '#/components/schemas/Nutrients' }
+        source: { type: string, example: 'USDA FoodData Central #171477' }
+        source_url: { type: [string, 'null'] }
+        method: { type: [string, 'null'], enum: [raw, boiled, poached, steamed, stewed, dry_heat, roasted, baked, scrambled, omelette, mashed, fried, deep_fried, null] }
+        fat: { type: [string, 'null'], enum: [none, little, added, deep, null], description: 'fat the cooking adds' }
+        versus_default: { type: [object, 'null'], properties: { kcal: { type: number }, fat_g: { type: number } }, description: 'per 100 g against the plain (default) variant' }
+        verdicts: { type: array, description: 'conditions stricter about this way of cooking (sourced)', items: { type: object, properties: { condition: { type: object }, verdict: { type: string, enum: [avoid, limit, ok, recommended] }, reason: { type: string }, source: { type: [object, 'null'] } } } }
+    FoodDetail:
+      type: object
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        image: { type: [string, 'null'] }
+        cutout: { type: [string, 'null'], description: 'the same food as a transparent image (no background)' }
+        origin: { type: string, enum: [local, imported] }
+        season: { type: array, items: { type: integer, minimum: 1, maximum: 12 } }
+        in_season: { type: boolean }
+        variants: { type: array, items: { $ref: '#/components/schemas/FoodVariant' } }
+        best_way: { type: [string, 'null'], description: 'slug of the lightest way to cook it (least added fat, then fewest calories)' }
+        glycemic: { oneOf: [{ $ref: '#/components/schemas/Glycemic' }, { type: 'null' }] }
+        category: { type: object, properties: { slug: { type: string }, name: { type: string }, image: { type: [string, 'null'] } } }
+        verdicts: { type: array, items: { type: object, properties: { condition: { $ref: '#/components/schemas/ConditionTag' }, verdict: { $ref: '#/components/schemas/Verdict' }, reason: { type: string } } } }
+        meal_slots: { type: array, items: { type: object } }
+        swaps: { type: array, items: { type: object, properties: { slug: { type: string }, name: { type: string }, image: { type: [string, 'null'] }, recommended_for: { type: integer } } } }
+        sources: { type: array, items: { $ref: '#/components/schemas/Source' } }
+    Source:
+      type: object
+      description: 'Guideline or patient-information page behind the guidance; condition sources first, then general ones'
+      properties:
+        title: { type: string }
+        publisher: { type: string }
+        url: { type: [string, 'null'] }
+        year: { type: [integer, 'null'] }
+    Saved:
+      type: object
+      properties: { id: { type: integer } }

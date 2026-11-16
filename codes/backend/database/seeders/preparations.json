@@ -1,0 +1,112 @@
+[
+  {
+    "food": "egg",
+    "variant": "fried",
+    "condition": "fatty-liver",
+    "verdict": "limit",
+    "source": "nhs-nafld",
+    "reason": {
+      "en": "Cooked in oil or butter, so it adds fat. With fatty liver, keep added fat low: boil or poach eggs instead.",
+      "bn": "তেল বা মাখনে রান্না, তাই বাড়তি চর্বি যোগ হয়। ফ্যাটি লিভারে বাড়তি চর্বি কম রাখুন: ডিম সেদ্ধ বা পোচ করে খান।"
+    }
+  },
+  {
+    "food": "egg",
+    "variant": "omelette",
+    "condition": "fatty-liver",
+    "verdict": "limit",
+    "source": "nhs-nafld",
+    "reason": {
+      "en": "Cooked in oil or butter, so it adds fat. With fatty liver, keep added fat low: boil or poach eggs instead.",
+      "bn": "তেল বা মাখনে রান্না, তাই বাড়তি চর্বি যোগ হয়। ফ্যাটি লিভারে বাড়তি চর্বি কম রাখুন: ডিম সেদ্ধ বা পোচ করে খান।"
+    }
+  },
+  {
+    "food": "egg",
+    "variant": "scrambled",
+    "condition": "fatty-liver",
+    "verdict": "limit",
+    "source": "nhs-nafld",
+    "reason": {
+      "en": "Cooked in oil or butter, so it adds fat. With fatty liver, keep added fat low: boil or poach eggs instead.",
+      "bn": "তেল বা মাখনে রান্না, তাই বাড়তি চর্বি যোগ হয়। ফ্যাটি লিভারে বাড়তি চর্বি কম রাখুন: ডিম সেদ্ধ বা পোচ করে খান।"
+    }
+  },
+  {
+    "food": "egg",
+    "variant": "fried",
+    "condition": "diabetes",
+    "verdict": "ok",
+    "source": "nhs-t2d-food",
+    "reason": {
+      "en": "Still a good protein, but the pan adds fat and calories. Boiled or poached is the better everyday choice.",
+      "bn": "প্রোটিন ভালোই, তবে ভাজায় চর্বি ও ক্যালরি বাড়ে। রোজকার জন্য সেদ্ধ বা পোচ ডিম ভালো।"
+    }
+  },
+  {
+    "food": "egg",
+    "variant": "omelette",
+    "condition": "diabetes",
+    "verdict": "ok",
+    "source": "nhs-t2d-food",
+    "reason": {
+      "en": "Still a good protein, but the pan adds fat and calories. Boiled or poached is the better everyday choice.",
+      "bn": "প্রোটিন ভালোই, তবে ভাজায় চর্বি ও ক্যালরি বাড়ে। রোজকার জন্য সেদ্ধ বা পোচ ডিম ভালো।"
+    }
+  },
+  {
+    "food": "egg",
+    "variant": "scrambled",
+    "condition": "diabetes",
+    "verdict": "ok",
+    "source": "nhs-t2d-food",
+    "reason": {
+      "en": "Still a good protein, but the pan adds fat and calories. Boiled or poached is the better everyday choice.",
+      "bn": "প্রোটিন ভালোই, তবে ভাজায় চর্বি ও ক্যালরি বাড়ে। রোজকার জন্য সেদ্ধ বা পোচ ডিম ভালো।"
+    }
+  },
+  {
+    "food": "chicken",
+    "variant": "fried",
+    "condition": "fatty-liver",
+    "verdict": "limit",
+    "source": "nhs-nafld",
+    "reason": {
+      "en": "Fried in batter with skin: much more fat. With fatty liver, choose roasted or stewed skinless chicken.",
+      "bn": "ব্যাটারে চামড়াসহ ভাজা: চর্বি অনেক বেশি। ফ্যাটি লিভারে চামড়া ছাড়া রোস্ট বা ঝোলের মুরগি বেছে নিন।"
+    }
+  },
+  {
+    "food": "chicken",
+    "variant": "fried",
+    "condition": "diabetes",
+    "verdict": "limit",
+    "source": "nhs-t2d-food",
+    "reason": {
+      "en": "Batter adds refined flour and frying adds fat. Choose roasted or stewed skinless chicken.",
+      "bn": "ব্যাটারে ময়দা আর ভাজায় চর্বি যোগ হয়। চামড়া ছাড়া রোস্ট বা ঝোলের মুরগি বেছে নিন।"
+    }
+  },
+  {
+    "food": "potato",
+    "variant": "french-fries",
+    "condition": "diabetes",
+    "verdict": "avoid",
+    "source": "nhs-t2d-food",
+    "reason": {
+      "en": "Deep-fried starch: fat plus a quick rise in blood sugar. Keep potatoes boiled or baked, in small portions.",
+      "bn": "ডুবো তেলে ভাজা শ্বেতসার: চর্বি আর রক্তে শর্করা দ্রুত বাড়ায়। আলু সেদ্ধ বা বেক করে, অল্প পরিমাণে খান।"
+    }
+  },
+  {
+    "food": "potato",
+    "variant": "french-fries",
+    "condition": "fatty-liver",
+    "verdict": "limit",
+    "source": "nhs-nafld",
+    "reason": {
+      "en": "Deep-fried, so high in fat. With fatty liver, keep fried foods rare.",
+      "bn": "ডুবো তেলে ভাজা, তাই চর্বি বেশি। ফ্যাটি লিভারে ভাজা খাবার কম খান।"
+    }
+  }
+]

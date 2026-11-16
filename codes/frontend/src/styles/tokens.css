@@ -1,0 +1,273 @@
+/* Design tokens: Pathya's colour, glass, shadow, type and motion values, and the Tailwind theme that maps them to utilities
+   (bg-card, text-primary, text-avoid …). Shell Console's token layout (shadcn/ui names), Pathya's own look: a bright Lifesum-style
+   ground, white cards, one fresh green, verdict colours only on chips and meters.
+
+   Light and dark live in one declaration each through light-dark(): the pair is picked by color-scheme, which styles/base.css sets
+   from <html data-theme> (light | dark | auto → the system's). No second block to keep in step. */
+:root {
+  --radius: 1.75rem;
+
+  /* FlavorFit: a cool pale canvas, white panels on it, near-black ink */
+  --background: light-dark(#f4efee, #0f0d16);
+  --foreground: light-dark(#18181c, #f5f4f7);
+  --card: light-dark(#ffffff, #1a1a1f);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(#ffffff, #1c1d24);
+  --popover-foreground: var(--foreground);
+  /* brand: #15803d carries white text (5.0:1) and is the link colour on the ground; #16a34a is the fill (bars, meters, dots);
+     dark mode lifts both to #22c55e with deep green text on it */
+  /* brand: FlavorFit violet for links, focus and brand fills; white ink on it (5.6:1). Verdict green stays separate (--recommended). */
+  --primary: light-dark(#6a48f5, #a08cff);
+  --primary-foreground: light-dark(#ffffff, #160f33);
+  --brand: light-dark(#16a34a, #22c55e);
+  --primary-soft: light-dark(#efebff, #241d47);
+  --secondary: light-dark(#f2f2f4, #24242a);
+  --secondary-foreground: var(--foreground);
+  --muted: light-dark(#f2f2f4, #24242a);
+  --muted-foreground: light-dark(#5e5e6a, #b0afbb);
+  --faint-foreground: light-dark(#6c6f7b, #8f93a0);
+  --accent: light-dark(rgb(17 18 22 / 0.05), rgb(255 255 255 / 0.07));
+  --accent-foreground: var(--foreground);
+  --border: light-dark(#ececef, #2a2a31);
+  --input: light-dark(#dcdee6, #363944);
+  --ring: var(--primary);
+
+  /* verdicts: the fill colours are the owner's (avoid #dc2626, limit #d97706, ok #2563eb, recommended #16a34a); the -ink twins are
+     the same hues deepened for text on white and on tinted grounds (4.5:1 or more on both) */
+  --avoid: light-dark(#dc2626, #f87171);
+  --limit: light-dark(#d97706, #fbbf24);
+  --ok: light-dark(#2563eb, #60a5fa);
+  --recommended: light-dark(#16a34a, #4ade80);
+  --avoid-ink: light-dark(#991b1b, #fca5a5);
+  --limit-ink: light-dark(#92400e, #fcd34d);
+  --ok-ink: light-dark(#1e40af, #93c5fd);
+  --recommended-ink: light-dark(#166534, #86efac);
+
+  /* Shell Console's signal names, mapped onto the verdicts so ported kit parts read right */
+  --destructive: var(--avoid);
+  --destructive-ink: var(--avoid-ink);
+  --destructive-foreground: #ffffff;
+  --success: var(--recommended);
+  --success-ink: var(--recommended-ink);
+  --success-soft: color-mix(in srgb, var(--recommended) 14%, transparent);
+  --warning: var(--limit);
+  --warning-ink: var(--limit-ink);
+  --warning-foreground: #3d2600;
+  --warning-soft: color-mix(in srgb, var(--limit) 16%, transparent);
+  --danger-soft: color-mix(in srgb, var(--avoid) 12%, transparent);
+  --info: var(--ok);
+  --info-soft: color-mix(in srgb, var(--ok) 12%, transparent);
+
+  /* calm section tones: one per kind of content, used as soft tints, never as large saturated fields */
+  --tone-leaf: light-dark(#16a34a, #4ade80);
+  --tone-sun: light-dark(#e8890c, #fbbf24);
+  --tone-sky: light-dark(#0284c7, #38bdf8);
+  --tone-rose: light-dark(#e11d48, #fb7185);
+  --tone-iris: light-dark(#6366f1, #a5b4fc);
+  --tone-teal: light-dark(#0d9488, #2dd4bf);
+
+  /* warm Bangladeshi food tones: one family per section, as soft tinted grounds and icon chips, never confetti */
+  --saffron: light-dark(#e8a33d, #f0b85e);
+  --mango: light-dark(#f59e0b, #fbbf24);
+  --coral: light-dark(#f0644a, #f58a74);
+  --aubergine: light-dark(#7458c4, #a993e6);
+  --river: light-dark(#0d9488, #2dd4bf);
+  --leaf: light-dark(#16a34a, #4ade80);
+
+  /* FlavorFit pastels: one soft tile per metric or choice (sky, butter, mint, blush, lilac), dark ink on them; in dark mode the
+     same hues sunk low with light ink. Paired with the sunny call to action (--sun), which carries dark text. */
+  --tint-sky: light-dark(#dcecff, #1a2b40);
+  --tint-butter: light-dark(#fff2c2, #3a3115);
+  --tint-mint: light-dark(#d9f5e4, #15342a);
+  --tint-blush: light-dark(#ffe1dc, #3d201d);
+  --tint-lilac: light-dark(#ebe3ff, #2a2342);
+  /* the violet promo card (FlavorFit's "Got a recipe"): white ink on it */
+  --violet: light-dark(#6a48f5, #7e62f8);
+  --tint-ink: light-dark(#13201a, #f1f5f2);
+  --sun: light-dark(#ffd23f, #ffd23f);
+  --sun-hover: light-dark(#ffc414, #ffdc66);
+  --sun-ink: #1d1a0e;
+  --lift-sun-sm: 0 1px 1px rgb(150 110 0 / 0.28), 0 3px 8px -4px rgb(210 160 0 / 0.5);
+  --lift-sun: 0 1px 1px rgb(150 110 0 / 0.28), 0 8px 18px -8px rgb(210 160 0 / 0.6);
+
+  /* the ground (Shell Console's scene): an accent wash at the top, a cool light low on the left, a warm one low on the right,
+     and in dark a few faint rays from the top, so the glass bar and panes have light to bend. Light mode keeps it a whisper; dark keeps
+     the lights low (under a fifth) so they tint the ground without washing over it. */
+  --fx-wash: light-dark(rgb(255 160 96 / 0.7), rgb(255 120 64 / 0.18));
+  --fx-cool: light-dark(rgb(160 132 255 / 0.5), rgb(120 90 250 / 0.16));
+  --fx-warm: light-dark(rgb(255 116 160 / 0.5), rgb(236 72 130 / 0.14));
+  --fx-bay: light-dark(rgb(110 176 255 / 0.6), rgb(40 100 220 / 0.18));
+  --fx-ray: transparent;
+  /* the Golden Gate ground (macOS wallpaper mood): a sunset of peach and rose above, violet across the middle, the bay's blue below.
+     Panes over it are frosted glass: translucent white (or smoked in dark), a top sheen, a light rim and a soft drop. */
+  --pane: light-dark(rgb(255 255 255 / 0.55), rgb(28 26 40 / 0.5));
+  --pane-sheen: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.07));
+  --pane-rim: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.1));
+  --pane-glint: light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.07));
+
+  /* the selected chip (Shell Console's chip + outset): a tint of the brand with one border in it, raised in light (a white sheen
+     fading down, a lit top line, a soft shadow in its own ink), flat in dark (a tone and a hairline) */
+  --chip-on-bg: light-dark(color-mix(in srgb, var(--primary) 12%, #ffffff), color-mix(in srgb, var(--primary) 26%, #18171f));
+  --chip-on-edge: light-dark(color-mix(in srgb, var(--primary) 38%, transparent), color-mix(in srgb, var(--primary) 48%, transparent));
+  --chip-on-ink: light-dark(color-mix(in srgb, var(--primary) 82%, #000000), color-mix(in srgb, var(--primary) 55%, #ffffff));
+  --chip-on-sheen: light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0));
+  --chip-on-top: light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.06));
+  --chip-on-pool: light-dark(color-mix(in srgb, var(--primary) 42%, transparent), transparent);
+  /* hover / focus: the same chip, quieter */
+  --chip-hover-bg: light-dark(color-mix(in srgb, var(--primary) 6%, rgb(255 255 255 / 0.7)), color-mix(in srgb, var(--primary) 12%, transparent));
+  --chip-hover-edge: light-dark(color-mix(in srgb, var(--primary) 22%, transparent), color-mix(in srgb, var(--primary) 30%, transparent));
+
+  /* a badge laid over a photo */
+  --badge-glass: light-dark(rgb(255 255 255 / 0.86), rgb(22 21 30 / 0.74));
+  --badge-edge: light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.14));
+  --badge-ink: light-dark(#1b1b22, #f4f3f8);
+
+  --chart-1: var(--brand);
+  --chart-2: var(--tone-sun);
+  --chart-3: var(--tone-sky);
+  --chart-4: var(--tone-rose);
+  --chart-5: var(--tone-iris);
+  --chart-6: var(--tone-teal);
+
+  /* shadows: one ink, deeper in dark */
+  --shade: light-dark(rgb(30 32 60 / 0.04), rgb(0 0 0 / 0.35));
+  --shade-deep: light-dark(rgb(30 32 60 / 0.12), rgb(0 0 0 / 0.7));
+  --sh-xs: 0 1px 2px var(--shade);
+  --sh-sm: 0 1px 2px var(--shade), 0 2px 8px var(--shade);
+  --sh-md: 0 2px 4px var(--shade), 0 12px 32px -12px var(--shade-deep);
+  --sh-lg: 0 4px 8px var(--shade), 0 22px 48px -16px var(--shade-deep);
+  /* a solid button's lift: a hairline of its own colour under it and a small, tight shadow of the same colour */
+  --lift-sm:
+    0 1px 1px color-mix(in srgb, var(--primary) 30%, transparent), 0 3px 8px -4px color-mix(in srgb, var(--primary) 35%, transparent);
+  --lift:
+    0 1px 1px color-mix(in srgb, var(--primary) 30%, transparent), 0 6px 14px -6px color-mix(in srgb, var(--primary) 42%, transparent);
+
+  /* liquid glass: the floating top bar and its menus and sheets only */
+  --glass: light-dark(rgb(255 255 255 / 0.58), rgb(28 26 38 / 0.55));
+  --glass-dense: light-dark(rgb(255 255 255 / 0.92), rgb(23 24 30 / 0.92));
+  --glass-edge: light-dark(rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.12));
+  --glass-rim: light-dark(rgb(19 32 26 / 0.08), rgb(0 0 0 / 0.45));
+  --glass-shine: light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.18));
+
+  /* a placeholder bone and the light that passes over it */
+  --bone: light-dark(rgb(19 32 26 / 0.07), rgb(255 255 255 / 0.07));
+  --bone-hi: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.08));
+
+  /* motion, one calm voice: things arrive on a long soft deceleration, leave on a gentle ease-in */
+  --dur-quick: 160ms;
+  --dur-base: 250ms;
+  --dur-page: 380ms;
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-liquid: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-soft: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@theme inline {
+  --color-cta: var(--sun);
+  --color-violet: var(--violet);
+  --color-cta-hover: var(--sun-hover);
+  --color-cta-ink: var(--sun-ink);
+  /* corners have roles: a small part sm, a control or a row md, a box inside a card lg, a card xl, a hero 2xl; a pill is full */
+  --radius-sm: 0.625rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: var(--radius);
+  --radius-2xl: 2rem;
+
+  --shadow-xs: var(--sh-xs);
+  --shadow-sm: var(--sh-sm);
+  --shadow-md: var(--sh-md);
+  --shadow-lg: var(--sh-lg);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-brand: var(--brand);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint-foreground: var(--faint-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger-soft: var(--danger-soft);
+  --color-info-soft: var(--info-soft);
+  --color-avoid: var(--avoid);
+  --color-limit: var(--limit);
+  --color-ok: var(--ok);
+  --color-recommended: var(--recommended);
+  --color-avoid-ink: var(--avoid-ink);
+  --color-limit-ink: var(--limit-ink);
+  --color-ok-ink: var(--ok-ink);
+  --color-recommended-ink: var(--recommended-ink);
+  --color-leaf: var(--tone-leaf);
+  --color-sun: var(--tone-sun);
+  --color-sky: var(--tone-sky);
+  --color-rose: var(--tone-rose);
+  --color-iris: var(--tone-iris);
+  --color-teal: var(--tone-teal);
+  --color-saffron: var(--saffron);
+  --color-mango: var(--mango);
+  --color-coral: var(--coral);
+  --color-aubergine: var(--aubergine);
+  --color-river: var(--river);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+
+  /* macOS typography from system faces: SF Pro on Apple (Text/Display optical sizes), Segoe UI Variable on Windows, Roboto on
+     Android. Bangla in Kohinoor on Apple; elsewhere a self-hosted Noto Sans Bengali (variable, Bengali glyphs only via
+     unicode-range, so it downloads only where Kohinoor is missing and Bangla is on screen). Figures use SF Pro Rounded. */
+  --font-bangla: 'Kohinoor Bangla', 'Noto Sans Bengali Variable', 'Noto Sans Bengali', 'Nirmala UI', sans-serif;
+  --font-sans:
+    'Plus Jakarta Sans Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', Roboto, system-ui, 'Kohinoor Bangla',
+    'Noto Sans Bengali Variable', 'Noto Sans Bengali', 'Nirmala UI', sans-serif;
+  --font-display:
+    'Rubik Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto, system-ui, 'Kohinoor Bangla',
+    'Noto Sans Bengali Variable', 'Noto Sans Bengali', 'Nirmala UI', sans-serif;
+  --font-rounded: ui-rounded, 'SF Pro Rounded', var(--font-display);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Apple HIG type scale (pt → px) */
+  --text-caption: 12.5px;
+  --text-caption--line-height: 17px;
+  --text-footnote: 13.5px;
+  --text-footnote--line-height: 20px;
+  --text-subhead: 15px;
+  --text-subhead--line-height: 23px;
+  --text-callout: 16px;
+  --text-callout--line-height: 25px;
+  --text-body: 17px;
+  --text-body--line-height: 28px;
+  --text-title-3: 20px;
+  --text-title-3--line-height: 27px;
+  --text-title-2: 24px;
+  --text-title-2--line-height: 31px;
+  --text-title-1: 30px;
+  --text-title-1--line-height: 36px;
+  --text-large-title: clamp(32px, 3.4vw, 46px);
+  --text-large-title--line-height: 1.06;
+  --text-display: clamp(40px, 5vw, 76px);
+  --text-display--line-height: 1.02;
+
+}

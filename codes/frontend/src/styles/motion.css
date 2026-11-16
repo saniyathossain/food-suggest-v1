@@ -1,0 +1,505 @@
+/* Keyframes (transform and opacity only, so they stay on the compositor), the icon hover, the odometer, the photo reveal and the
+   chart library's hooks. Shell Console's motion layer, trimmed to what Pathya draws. */
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes data-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translate3d(0, -2px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes pop-out {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0) scale(0.97);
+  }
+}
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+/* the band (at 50% of a 200vw image) travels from just left of the screen to just right of it, then rests */
+@keyframes shimmer-wave {
+  0% {
+    background-position: -130vw 0;
+  }
+  75%,
+  100% {
+    background-position: 30vw 0;
+  }
+}
+@keyframes bone-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes progress-run {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+@keyframes beam-spin {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+@keyframes breathe {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+}
+@keyframes halo {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+@keyframes ring-drain {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: var(--ring-len);
+  }
+}
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-35deg);
+  }
+  60% {
+    transform: scale(1.12) rotate(4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes check-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes mark-pop {
+  from {
+    transform: scale(0.88);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.swap-in {
+  animation: swap-in 320ms var(--ease-spring) both;
+}
+.check-pop {
+  animation: check-pop 280ms var(--ease-spring) both;
+}
+.done-mark path {
+  stroke-dasharray: 24;
+  animation: draw 360ms var(--ease-out) both;
+}
+
+/* icons answer the pointer: anything pressable lifts its icons a pixel and grows them a touch, on a spring */
+.app-icon {
+  transition: transform 280ms var(--ease-spring);
+  transform-origin: center;
+}
+:is(button, a, summary, label, [role='button'], [role='tab'], [role='menuitem'], [role='option'], [role='link']):is(:hover, :focus-visible):not(
+    :disabled,
+    [aria-disabled='true']
+  )
+  .app-icon:not(.animate-spin) {
+  transform: translate3d(0, -1px, 0) scale(1.1);
+}
+:is(button, a, [role='button'], [role='tab']):active .app-icon:not(.animate-spin) {
+  transform: scale(0.94);
+  transition-duration: 120ms;
+}
+
+/* a native <details> opens on a spring where the browser can animate it */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    block-size 240ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 160ms ease-out,
+    content-visibility 240ms allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+/* ---- the odometer (components/kit/rolling.tsx): a digit that changes slides out and the next slides in ---- */
+.odo {
+  --odo-dur: calc(var(--dur-base) * 1.6);
+  position: relative;
+  display: inline-block;
+  padding-block: 0.15em;
+  margin-block: -0.15em;
+  overflow: clip;
+  &[data-live] {
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  }
+}
+.odo-in,
+.odo-out {
+  display: inline-block;
+}
+.odo-out {
+  position: absolute;
+  inset: 0.15em auto auto 0;
+  opacity: 0;
+}
+@keyframes odo-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+}
+@keyframes odo-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-70%);
+  }
+}
+@keyframes odo-out-up {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-70%);
+  }
+}
+@keyframes odo-out-down {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+}
+.odo-in[data-motion='up'] {
+  animation: odo-in-up var(--odo-dur) var(--ease-liquid);
+}
+.odo-in[data-motion='down'] {
+  animation: odo-in-down var(--odo-dur) var(--ease-liquid);
+}
+.odo-out[data-motion='up'] {
+  animation: odo-out-up var(--odo-dur) var(--ease-in-soft) both;
+}
+.odo-out[data-motion='down'] {
+  animation: odo-out-down var(--odo-dur) var(--ease-in-soft) both;
+}
+
+/* ---- photos (components/kit/photo.tsx): tint → 32px blurred preview → sharp WebP fading in on decode ---- */
+.photo-preview {
+  position: absolute;
+  inset: -12px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(14px) saturate(1.2);
+  transform: scale(1.04);
+  transition: opacity 500ms var(--ease-out);
+}
+.photo-image {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(1.02);
+  transition:
+    opacity 600ms var(--ease-out),
+    filter 700ms var(--ease-out),
+    transform 900ms var(--ease-out);
+}
+[data-loaded] > .photo-image {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+[data-loaded] > .photo-preview {
+  opacity: 0;
+}
+
+/* while a photo is on its way: a soft light sweeps across its tint (stops the moment the picture has decoded) */
+.photo-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.38) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: photo-sweep 1.6s var(--ease-in-soft) infinite;
+}
+.photo-frame:has([data-loaded])::after {
+  animation: none;
+  opacity: 0;
+}
+@keyframes photo-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ---- charts (recharts) take the page's type and colours ---- */
+.recharts-text {
+  fill: var(--muted-foreground);
+  font-size: 11px;
+}
+.recharts-cartesian-grid line {
+  stroke: var(--border);
+}
+.recharts-wrapper:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-drain {
+    animation: none;
+    opacity: 0;
+  }
+  .odo-in,
+  .odo-out {
+    animation: none !important;
+  }
+  .odo[data-live] {
+    mask-image: none;
+  }
+  .photo-frame::after,
+  .photo-image,
+  .photo-preview {
+    transition: none;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* ---- theme and language switches (lib/switching.ts) ---- */
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+}
+@keyframes lang-out {
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+@keyframes lang-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(4px);
+  }
+}
+html[data-vt] .page {
+  view-transition-name: none;
+}
+html[data-vt='theme']::view-transition-old(root) {
+  animation: none;
+}
+html[data-vt='theme']::view-transition-new(root) {
+  animation: theme-reveal 450ms var(--ease-out) both;
+}
+html[data-vt='lang']::view-transition-old(root) {
+  animation: lang-out 200ms var(--ease-in-soft) both;
+}
+html[data-vt='lang']::view-transition-new(root) {
+  animation: lang-in 300ms var(--ease-out) 60ms both;
+}
+html.theme-fade,
+html.theme-fade :is(body, .surface, .surface-soft, .glass, .well, .chip, .seg, .field, header, main, section, a, button, p, h1, h2, h3) {
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    border-color 250ms ease !important;
+}
+
+/* ---- cut-outs (components/kit/cutout.tsx): a contact shadow under the dish and a slow, cheap float (transform only) ---- */
+.cutout-shadow {
+  background: radial-gradient(closest-side, light-dark(rgb(19 32 26 / 0.28), rgb(0 0 0 / 0.6)), transparent);
+  filter: blur(6px);
+}
+/* the dish's own soft shadow is baked once into the layer; the float only moves that layer (no repaint per frame) */
+.cutout-image {
+  filter: drop-shadow(0 18px 22px rgb(19 32 26 / 0.18));
+}
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.float-soft {
+  will-change: transform;
+  /* starts after the first paint settles, so the largest paint is not held by a moving element */
+  animation: float-soft 6s ease-in-out 1.2s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-soft {
+    animation: none;
+  }
+}
+
+/* ---- blood-sugar curve (components/food/Glycemic.tsx): the line draws itself, the fill fades in; the GI marker slides ---- */
+@keyframes curve-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes curve-fill {
+  from {
+    opacity: 0;
+  }
+}
+.curve-draw {
+  stroke-dasharray: 1;
+  animation: curve-draw 1100ms var(--ease-out) both;
+}
+.curve-fill {
+  animation: curve-fill 900ms var(--ease-out) 300ms both;
+}
+.scale-marker {
+  transition: left 700ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .curve-draw,
+  .curve-fill {
+    animation: none;
+  }
+  .scale-marker {
+    transition: none;
+  }
+}
+
+/* ---- eating order steps (components/mode/ModePanel.tsx): they arrive one after another ---- */
+@keyframes order-step {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.order-step {
+  animation: order-step 420ms var(--ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .order-step {
+    animation: none;
+  }
+}

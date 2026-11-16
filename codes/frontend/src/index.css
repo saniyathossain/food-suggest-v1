@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+/* Bangla where Kohinoor is missing (Windows, Android): Bengali glyphs only, downloaded on demand (styles/tokens.css) */
+@import '@fontsource-variable/noto-sans-bengali/wght.css';
+/* FlavorFit's slanted, rounded display titles ("Got a Recipe That Rocks?"): Rubik italic, heavy, headings only (Latin, 36 KB) */
+@import '@fontsource-variable/rubik/wght-italic.css';
+/* FlavorFit's UI voice: a friendly geometric sans for all body and control text (Latin, variable, 28 KB, swap) */
+@import '@fontsource-variable/plus-jakarta-sans/wght.css';
+
+/* dark: variants follow Pathya's theme attribute (lib/prefs.ts, public/theme.js): data-theme="dark" always, and "auto" while the
+   system is dark. The tokens themselves switch through color-scheme + light-dark() (styles/tokens.css), so this is only for the
+   few utilities that need a different value in dark. */
+@custom-variant dark {
+  &:where([data-theme='dark'], [data-theme='dark'] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-theme='auto'], [data-theme='auto'] *) {
+      @slot;
+    }
+  }
+}
+
+/* One module per concern (Shell Console's layout); components use the utilities, never new one-off classes. */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/utilities.css';
+@import './styles/motion.css';

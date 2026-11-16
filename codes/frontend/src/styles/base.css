@@ -1,0 +1,508 @@
+body::before {
+  background:
+    radial-gradient(70% 55% at 12% -6%, var(--fx-wash), transparent 70%),
+    radial-gradient(60% 50% at 92% 4%, var(--fx-warm), transparent 70%),
+    radial-gradient(90% 60% at 50% 48%, var(--fx-cool), transparent 72%),
+    radial-gradient(120% 70% at 50% 112%, var(--fx-bay), transparent 70%);
+}
+/* Element defaults: colour scheme from the theme attribute, macOS typography, focus, the boot splash, print and reduced motion. */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  /* the theme picks the light or dark half of every light-dark() token (styles/tokens.css) */
+  html {
+    color-scheme: light;
+    background: var(--background);
+    accent-color: var(--primary);
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: color-mix(in srgb, var(--foreground) 22%, transparent) transparent;
+  }
+  html[data-theme='dark'] {
+    color-scheme: dark;
+  }
+  html[data-theme='auto'] {
+    color-scheme: light dark;
+  }
+  /* corners are continuous, as Apple draws them, where the browser can */
+  @supports (corner-shape: squircle) {
+    [class*='rounded-']:not([class*='rounded-full']) {
+      corner-shape: squircle;
+    }
+  }
+  /* an icon keeps its size beside text that runs out of room */
+  svg.app-icon {
+    flex-shrink: 0;
+  }
+  /* a moving icon (components/icons/animated.tsx) is its glyph in a box that takes the icon's size */
+  .anim-icon {
+    width: var(--icon, 1.5rem);
+    height: var(--icon, 1.5rem);
+    flex-shrink: 0;
+  }
+  .anim-icon > svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: var(--icon-stroke, 1.75);
+  }
+  body {
+    @apply bg-background font-sans text-body text-foreground antialiased;
+    min-height: 100dvh;
+    letter-spacing: -0.006em;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    caret-color: var(--primary);
+    font-optical-sizing: auto;
+    font-synthesis: none;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+  }
+  /* Bangla reads best a little looser and with the Bangla face first */
+  html[lang='bn'] body {
+    font-family: var(--font-sans), var(--font-bangla);
+    letter-spacing: 0;
+    line-height: 1.72;
+  }
+  h1,
+  h2,
+  h3,
+  .text-display,
+  .text-large-title,
+  .text-title-1 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 1.04;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  /* display sizes tighten further, as SF Pro Display does at 40 px and up */
+  h1 {
+    letter-spacing: -0.03em;
+  }
+  /* h3 and smaller headings stay upright in the UI face, as in the reference's card titles */
+  h3 {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+  }
+  /* lead and body copy: a comfortable measure, figures that line up in lists and tables */
+  :where(p) {
+    max-width: 66ch;
+  }
+  /* small print stays readable: never lighter than medium, a touch of air between letters */
+  :where(.text-caption, .text-footnote) {
+    font-weight: 500;
+    letter-spacing: 0.002em;
+  }
+  /* card and list titles in the UI face: firm, slightly tight */
+  :where(strong, b, .font-semibold, .font-bold) {
+    letter-spacing: -0.01em;
+  }
+  :where(td, dd, time, [data-figure]) {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Bangla has no italic: upright, the Bangla face's own bold */
+  html[lang='bn'] :is(h1, h2, h3, .text-display, .text-large-title, .text-title-1) {
+    font-style: normal;
+    letter-spacing: 0;
+    line-height: 1.25;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  [role='alert'],
+  [role='status'],
+  p,
+  dd,
+  li {
+    overflow-wrap: break-word;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 28%, transparent);
+    color: var(--foreground);
+  }
+  /* one ring, drawn on the element's own edge (no gap, so it never reads as a second border) */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 0;
+  }
+  :where(.field):focus-visible {
+    outline: none;
+  }
+  #root {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  /* a larger hit area for small controls on a touch screen */
+  @media (pointer: coarse) {
+    :where(button, [role='button'], [role='tab'], [role='radio'], a[href]):not(:disabled, .contents) {
+      position: relative;
+    }
+    :where(button, [role='button'], [role='tab'], [role='radio']):not(:disabled, .contents)::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+    }
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  kbd {
+    font-family: var(--font-sans);
+  }
+}
+
+/* the boot splash in index.html, before React draws (plain CSS: it exists before any component) */
+.boot {
+  min-height: 70dvh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+.boot img {
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+/* the page's own view transition (lib/router.ts): the content cross-fades, the bar stays */
+::view-transition-old(page),
+::view-transition-new(page) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media print {
+  .no-print,
+  header[data-chrome] {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- the recipe video (components/kit/video.tsx) -------------------------------------------------------------------------------
+   One layer on <body>: laid over its place while inline (the component sets the box), fixed in the corner when floating, as a
+   small player with a bar or a pill. Only its style changes, so the player never restarts. */
+.video-frame {
+  z-index: 30;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #000;
+}
+.video-frame[data-mode='inline'] {
+  position: absolute;
+}
+.video-screen {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.video-frame[data-mode='inline'] .video-screen {
+  height: 100%;
+  aspect-ratio: auto;
+}
+.video-frame:is([data-mode='mini'], [data-mode='pill']) {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 45;
+  border-radius: 22px;
+  background: var(--glass-dense);
+  border: 1px solid var(--glass-edge);
+  box-shadow: 0 1px 2px var(--shade), 0 24px 48px -20px var(--shade-deep);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  backdrop-filter: blur(18px) saturate(1.6);
+  animation: video-dock-in 420ms var(--ease-spring);
+}
+.video-frame[data-mode='mini'] {
+  display: flex;
+  flex-direction: column;
+  width: min(23rem, calc(100vw - 2rem));
+}
+.video-frame[data-mode='mini'] .video-screen {
+  border-radius: 21px 21px 0 0;
+  overflow: hidden;
+}
+.video-frame[data-mode='pill'] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: min(23rem, calc(100vw - 2rem));
+  padding: 0.35rem 0.45rem 0.35rem 0.35rem;
+  border-radius: 999px;
+}
+.video-frame[data-mode='pill'] .video-screen {
+  flex: none;
+  width: 6.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+}
+.video-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.5rem 0.6rem;
+  color: var(--foreground);
+}
+.video-frame[data-mode='pill'] .video-bar {
+  flex: 1;
+  padding: 0;
+}
+@keyframes video-dock-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .video-frame {
+    animation: none;
+  }
+}
+@media print {
+  .video-frame {
+    display: none;
+  }
+}
+
+/* the phone tab bar floats over the page: the page keeps room for it, and the floating video sits above it */
+@media (max-width: 1023.98px) {
+  #root {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .video-frame:is([data-mode='mini'], [data-mode='pill']) {
+    bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+}
+@media print {
+  .tabbar {
+    display: none;
+  }
+}
+
+/* Every grid's single column may shrink below its content (minmax(0, 1fr) instead of auto): one wide child (a photo, a rail, a
+   segmented control) can never widen the page on a phone. Zero specificity, so any grid-cols-* utility still wins. */
+@layer base {
+  :where(.grid) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- the ground (Shell Console's scene) ----------------------------------------------------------------------------------------
+   Painted once on a fixed layer and never moved, so it costs nothing while scrolling: the wash, the two side lights and, in dark,
+   faint rays fanning from the top, faded out by a mask. Hidden in print and for people who ask for less transparency. */
+body {
+  isolation: isolate;
+}
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+body::before {
+  background:
+    radial-gradient(90% 42% at 50% -10%, var(--fx-wash), transparent 72%),
+    radial-gradient(55% 45% at -8% 100%, var(--fx-cool), transparent 70%),
+    radial-gradient(45% 40% at 108% 85%, var(--fx-warm), transparent 70%);
+}
+body::after {
+  background: repeating-conic-gradient(from 160deg at 50% -18%, var(--fx-ray) 0deg 1.6deg, transparent 1.6deg 7deg);
+  -webkit-mask-image: radial-gradient(70% 70% at 50% 0%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(70% 70% at 50% 0%, #000 0%, transparent 75%);
+}
+@media print, (prefers-reduced-transparency: reduce) {
+  body::before,
+  body::after {
+    display: none;
+  }
+}
+
+/* a gauge's arc sweeps in once, from empty to its share */
+.gauge-arc {
+  transition: stroke-dashoffset 900ms var(--ease-out);
+}
+@starting-style {
+  .gauge-arc {
+    stroke-dashoffset: 125.66;
+  }
+}
+
+/* the water tile's fill: rises with each glass, its wave drifts sideways (still for reduced motion) */
+.water-fill {
+  color: color-mix(in srgb, var(--tone-sky) 26%, transparent);
+  background: currentColor;
+  transition: height 700ms var(--ease-out);
+}
+.water-wave {
+  animation: water-drift 6s linear infinite;
+}
+@keyframes water-drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .water-wave {
+    animation: none;
+  }
+}
+
+/* ---- liquid glass tab indicator (components/kit/liquid.tsx) -------------------------------------------------------------------
+   A glass bead in the brand ink: a top sheen, a lit rim, a soft drop. Positioned by transform; the tabs above it stay readable. */
+.liquid-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 999px;
+  will-change: transform, width;
+}
+/* the bead and any selected chip: Shell Console's selected chip, raised (outset). One border; the shadow starts away from it. */
+.liquid-pill,
+.chip-on {
+  background: linear-gradient(180deg, var(--chip-on-sheen), transparent 72%), var(--chip-on-bg);
+  border: 1px solid var(--chip-on-edge);
+  box-shadow:
+    inset 0 1px 0 var(--chip-on-top),
+    0 5px 12px -5px var(--chip-on-pool);
+}
+.chip-on {
+  color: var(--chip-on-ink);
+}
+/* a nav link: plain until hovered, focused or chosen; then it wears the chip (quieter for hover and focus) */
+.nav-link {
+  border: 1px solid transparent;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+.nav-link:hover,
+.nav-link:focus-visible,
+.nav-link[data-state='open'] {
+  background: var(--chip-hover-bg);
+  border-color: var(--chip-hover-edge);
+  color: var(--foreground);
+  outline: none;
+}
+.nav-link[aria-current='page'] {
+  color: var(--chip-on-ink);
+  font-weight: 650;
+}
+.liquid-host .nav-link[aria-current='page'],
+.liquid-host .nav-link[aria-current='page']:hover {
+  background: transparent;
+  border-color: transparent;
+}
+.liquid-host {
+  position: relative;
+  isolation: isolate;
+}
+.liquid-host > :not(.liquid-pill) {
+  position: relative;
+  z-index: 1;
+}
+/* a segmented control with the bead: the chosen button is just its label, the bead behind it is the thumb */
+.seg[data-liquid] > button[aria-pressed='true'] {
+  background: transparent;
+  box-shadow: none;
+  color: var(--chip-on-ink);
+}
+
+/* the top bar's links sit in one soft capsule (a macOS segmented track): a hairline rim, a faint inner shade, the liquid bead
+   marking the page you are on */
+.nav-track {
+  /* no box around the group: the links stand on the bar on their own */
+}
+
+/* the menu sheet's chosen row wears the selected chip too */
+.nav-link[aria-current='page']:not(.liquid-host .nav-link) {
+  background: linear-gradient(180deg, var(--chip-on-sheen), transparent 72%), var(--chip-on-bg);
+  border-color: var(--chip-on-edge);
+  box-shadow:
+    inset 0 1px 0 var(--chip-on-top),
+    0 5px 12px -5px var(--chip-on-pool);
+}
+
+/* a flag: soft corners and a hairline edge */
+.flag {
+  width: 1.375rem;
+  height: auto;
+  flex: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.18);
+  overflow: hidden;
+}
+/* a segmented control with the chip: no grey track behind it (the track's edge plus the chip's border read as two lines). It
+   keeps 14 px of room above and below and 10 px at the ends, or its scroll box clips the chip's drop shadow. */
+.seg[data-liquid] {
+  padding: 14px 10px;
+  margin-inline: -10px;
+  /* the room at the ends sits outside the parent's edges, so the box may be that much wider than its parent */
+  max-width: calc(100% + 20px);
+  gap: 0.25rem;
+}
+.seg[data-liquid]::before {
+  display: none;
+}
+
+/* a badge over a photo: frosted, near-solid so its words read on any picture, one hairline, a coloured dot for its meaning.
+   The blur is only on these small pills, so it costs next to nothing. */
+.photo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.625rem;
+  padding: 0 0.625rem 0 0.5rem;
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 650;
+  white-space: nowrap;
+  color: var(--badge-ink);
+  background: var(--badge-glass);
+  border: 1px solid var(--badge-edge);
+  box-shadow: 0 2px 8px -3px rgb(0 0 0 / 0.25);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6);
+  backdrop-filter: blur(8px) saturate(1.6);
+}
+.photo-badge > i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  flex: none;
+}
+
+/* Bangla headings need room for the matra, the vowel signs above and the conjuncts below: never the tight Latin leading */
+html[lang='bn'] :is(h1, h2, h3, .text-display, .text-large-title, .text-title-1, .text-title-2, .text-title-3) {
+  line-height: 1.34 !important;
+  letter-spacing: 0 !important;
+}
+html[lang='bn'] :is(p, li, dd, label) {
+  line-height: 1.72;
+}

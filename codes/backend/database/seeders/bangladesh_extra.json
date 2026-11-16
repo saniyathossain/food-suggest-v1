@@ -1,0 +1,4214 @@
+{
+  "foods": [
+    {
+      "slug": "polao",
+      "category": "grains",
+      "name": {
+        "en": "Polao (fragrant rice)",
+        "bn": "পোলাও"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "semai",
+      "category": "grains",
+      "name": {
+        "en": "Semai (vermicelli)",
+        "bn": "সেমাই"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "suji",
+      "category": "grains",
+      "name": {
+        "en": "Suji (semolina)",
+        "bn": "সুজি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "bhapa-pitha",
+      "category": "grains",
+      "name": {
+        "en": "Bhapa pitha",
+        "bn": "ভাপা পিঠা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "chitoi-pitha",
+      "category": "grains",
+      "name": {
+        "en": "Chitoi pitha",
+        "bn": "চিতই পিঠা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "pasta",
+      "category": "grains",
+      "name": {
+        "en": "Pasta",
+        "bn": "পাস্তা"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "cornflakes",
+      "category": "grains",
+      "name": {
+        "en": "Cornflakes",
+        "bn": "কর্নফ্লেক্স"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "corn",
+      "category": "grains",
+      "name": {
+        "en": "Corn (bhutta)",
+        "bn": "ভুট্টা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "brown-bread",
+      "category": "grains",
+      "name": {
+        "en": "Brown / whole-wheat bread",
+        "bn": "লাল আটার পাউরুটি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "pangas",
+      "category": "proteins",
+      "name": {
+        "en": "Pangas fish",
+        "bn": "পাঙ্গাস মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "tilapia",
+      "category": "proteins",
+      "name": {
+        "en": "Tilapia",
+        "bn": "তেলাপিয়া মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "koi",
+      "category": "proteins",
+      "name": {
+        "en": "Koi fish (climbing perch)",
+        "bn": "কই মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "shing-magur",
+      "category": "proteins",
+      "name": {
+        "en": "Shing / magur fish",
+        "bn": "শিং / মাগুর মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "pabda",
+      "category": "proteins",
+      "name": {
+        "en": "Pabda fish",
+        "bn": "পাবদা মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "rupchanda",
+      "category": "proteins",
+      "name": {
+        "en": "Rupchanda (pomfret)",
+        "bn": "রূপচাঁদা মাছ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "tuna",
+      "category": "proteins",
+      "name": {
+        "en": "Tuna",
+        "bn": "টুনা মাছ"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "crab",
+      "category": "proteins",
+      "name": {
+        "en": "Crab (kakra)",
+        "bn": "কাঁকড়া"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "duck",
+      "category": "proteins",
+      "name": {
+        "en": "Duck meat",
+        "bn": "হাঁসের মাংস"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "duck-egg",
+      "category": "proteins",
+      "name": {
+        "en": "Duck egg",
+        "bn": "হাঁসের ডিম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "quail-egg",
+      "category": "proteins",
+      "name": {
+        "en": "Quail egg",
+        "bn": "কোয়েলের ডিম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "liver",
+      "category": "proteins",
+      "name": {
+        "en": "Liver (kolija)",
+        "bn": "কলিজা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "moong-dal",
+      "category": "lentils",
+      "name": {
+        "en": "Moong dal",
+        "bn": "মুগ ডাল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "mashkalai",
+      "category": "lentils",
+      "name": {
+        "en": "Mashkalai dal",
+        "bn": "মাষকলাই ডাল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "khesari",
+      "category": "lentils",
+      "name": {
+        "en": "Khesari dal",
+        "bn": "খেসারি ডাল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "rajma",
+      "category": "lentils",
+      "name": {
+        "en": "Kidney beans (rajma)",
+        "bn": "রাজমা"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "peas",
+      "category": "lentils",
+      "name": {
+        "en": "Green peas (motorshuti)",
+        "bn": "মটরশুঁটি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "flax-chia",
+      "category": "lentils",
+      "name": {
+        "en": "Flax / chia seeds",
+        "bn": "তিসি / চিয়া বীজ"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "sesame",
+      "category": "lentils",
+      "name": {
+        "en": "Sesame (til)",
+        "bn": "তিল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "shorshe-shak",
+      "category": "vegetables",
+      "name": {
+        "en": "Mustard greens (shorshe shak)",
+        "bn": "সরিষা শাক"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kolmi-shak",
+      "category": "vegetables",
+      "name": {
+        "en": "Water spinach (kolmi shak)",
+        "bn": "কলমি শাক"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "pui-shak",
+      "category": "vegetables",
+      "name": {
+        "en": "Malabar spinach (pui shak)",
+        "bn": "পুঁই শাক"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kochu",
+      "category": "vegetables",
+      "name": {
+        "en": "Taro (kochu)",
+        "bn": "কচু"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "begun",
+      "category": "vegetables",
+      "name": {
+        "en": "Eggplant (begun)",
+        "bn": "বেগুন"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "potol",
+      "category": "vegetables",
+      "name": {
+        "en": "Pointed gourd (potol)",
+        "bn": "পটল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "jhinga",
+      "category": "vegetables",
+      "name": {
+        "en": "Ridge gourd (jhinga)",
+        "bn": "ঝিঙা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "chichinga",
+      "category": "vegetables",
+      "name": {
+        "en": "Snake gourd (chichinga)",
+        "bn": "চিচিঙ্গা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "mishti-kumra",
+      "category": "vegetables",
+      "name": {
+        "en": "Pumpkin (mishti kumra)",
+        "bn": "মিষ্টি কুমড়া"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "sajna",
+      "category": "vegetables",
+      "name": {
+        "en": "Drumstick (sajna)",
+        "bn": "সজনে ডাঁটা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kacha-kola",
+      "category": "vegetables",
+      "name": {
+        "en": "Green banana (kacha kola)",
+        "bn": "কাঁচা কলা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kacha-pepe",
+      "category": "vegetables",
+      "name": {
+        "en": "Green papaya",
+        "bn": "কাঁচা পেঁপে"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "carrot",
+      "category": "vegetables",
+      "name": {
+        "en": "Carrot",
+        "bn": "গাজর"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "beetroot",
+      "category": "vegetables",
+      "name": {
+        "en": "Beetroot",
+        "bn": "বিট"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "radish",
+      "category": "vegetables",
+      "name": {
+        "en": "Radish (mula)",
+        "bn": "মুলা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "broccoli",
+      "category": "vegetables",
+      "name": {
+        "en": "Broccoli",
+        "bn": "ব্রকলি"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "capsicum",
+      "category": "vegetables",
+      "name": {
+        "en": "Capsicum",
+        "bn": "ক্যাপসিকাম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "mushroom",
+      "category": "vegetables",
+      "name": {
+        "en": "Mushroom",
+        "bn": "মাশরুম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "sweet-potato",
+      "category": "vegetables",
+      "name": {
+        "en": "Sweet potato",
+        "bn": "মিষ্টি আলু"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "onion",
+      "category": "vegetables",
+      "name": {
+        "en": "Onion",
+        "bn": "পেঁয়াজ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "green-chili",
+      "category": "vegetables",
+      "name": {
+        "en": "Green chilli",
+        "bn": "কাঁচা মরিচ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "coriander",
+      "category": "vegetables",
+      "name": {
+        "en": "Coriander leaves",
+        "bn": "ধনেপাতা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "apple",
+      "category": "fruits",
+      "name": {
+        "en": "Apple",
+        "bn": "আপেল"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "orange",
+      "category": "fruits",
+      "name": {
+        "en": "Orange / malta",
+        "bn": "কমলা / মাল্টা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "grapes",
+      "category": "fruits",
+      "name": {
+        "en": "Grapes",
+        "bn": "আঙুর"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "pomegranate",
+      "category": "fruits",
+      "name": {
+        "en": "Pomegranate",
+        "bn": "ডালিম"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "watermelon",
+      "category": "fruits",
+      "name": {
+        "en": "Watermelon",
+        "bn": "তরমুজ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "pineapple",
+      "category": "fruits",
+      "name": {
+        "en": "Pineapple",
+        "bn": "আনারস"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "jamun",
+      "category": "fruits",
+      "name": {
+        "en": "Black plum (jam)",
+        "bn": "জাম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "jolpai",
+      "category": "fruits",
+      "name": {
+        "en": "Indian olive (jolpai)",
+        "bn": "জলপাই"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "boroi",
+      "category": "fruits",
+      "name": {
+        "en": "Jujube (boroi)",
+        "bn": "বরই"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kamranga",
+      "category": "fruits",
+      "name": {
+        "en": "Star fruit (kamranga)",
+        "bn": "কামরাঙা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "bel",
+      "category": "fruits",
+      "name": {
+        "en": "Wood apple (bel)",
+        "bn": "বেল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "sofeda",
+      "category": "fruits",
+      "name": {
+        "en": "Sapodilla (sofeda)",
+        "bn": "সফেদা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kiwi",
+      "category": "fruits",
+      "name": {
+        "en": "Kiwi",
+        "bn": "কিউই"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "avocado",
+      "category": "fruits",
+      "name": {
+        "en": "Avocado",
+        "bn": "অ্যাভোকাডো"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "strawberry",
+      "category": "fruits",
+      "name": {
+        "en": "Strawberry",
+        "bn": "স্ট্রবেরি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "dragon-fruit",
+      "category": "fruits",
+      "name": {
+        "en": "Dragon fruit",
+        "bn": "ড্রাগন ফল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "raisins",
+      "category": "fruits",
+      "name": {
+        "en": "Raisins (kishmish)",
+        "bn": "কিশমিশ"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "chhana",
+      "category": "dairy",
+      "name": {
+        "en": "Chhana / paneer",
+        "bn": "ছানা / পনির"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "ghol",
+      "category": "dairy",
+      "name": {
+        "en": "Buttermilk (ghol / matha)",
+        "bn": "ঘোল / মাঠা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "lassi",
+      "category": "dairy",
+      "name": {
+        "en": "Lassi",
+        "bn": "লাচ্ছি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "condensed-milk",
+      "category": "dairy",
+      "name": {
+        "en": "Condensed milk",
+        "bn": "কনডেন্সড মিল্ক"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "powdered-milk",
+      "category": "dairy",
+      "name": {
+        "en": "Powdered milk",
+        "bn": "গুঁড়া দুধ"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "fuchka",
+      "category": "snacks",
+      "name": {
+        "en": "Fuchka",
+        "bn": "ফুচকা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "chotpoti",
+      "category": "snacks",
+      "name": {
+        "en": "Chotpoti",
+        "bn": "চটপটি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "jhalmuri",
+      "category": "snacks",
+      "name": {
+        "en": "Jhalmuri",
+        "bn": "ঝালমুড়ি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "biscuits",
+      "category": "snacks",
+      "name": {
+        "en": "Biscuits",
+        "bn": "বিস্কুট"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "cake",
+      "category": "snacks",
+      "name": {
+        "en": "Cake & pastry",
+        "bn": "কেক ও পেস্ট্রি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "popcorn",
+      "category": "snacks",
+      "name": {
+        "en": "Popcorn",
+        "bn": "পপকর্ন"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "shawarma",
+      "category": "snacks",
+      "name": {
+        "en": "Shawarma & rolls",
+        "bn": "শর্মা ও রোল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "fried-rice",
+      "category": "snacks",
+      "name": {
+        "en": "Fried rice & chowmein",
+        "bn": "ফ্রাইড রাইস ও চাওমিন"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "french-fries",
+      "category": "snacks",
+      "name": {
+        "en": "French fries",
+        "bn": "ফ্রেঞ্চ ফ্রাই"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "payesh",
+      "category": "sweets",
+      "name": {
+        "en": "Payesh (rice pudding)",
+        "bn": "পায়েস"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "jilapi",
+      "category": "sweets",
+      "name": {
+        "en": "Jilapi",
+        "bn": "জিলাপি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "sandesh",
+      "category": "sweets",
+      "name": {
+        "en": "Sandesh",
+        "bn": "সন্দেশ"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "kalojam",
+      "category": "sweets",
+      "name": {
+        "en": "Kalojam / gulab jamun",
+        "bn": "কালোজাম"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "borhani",
+      "category": "drinks",
+      "name": {
+        "en": "Borhani",
+        "bn": "বোরহানি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "energy-drink",
+      "category": "drinks",
+      "name": {
+        "en": "Energy drinks",
+        "bn": "এনার্জি ড্রিংক"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "fresh-juice",
+      "category": "drinks",
+      "name": {
+        "en": "Fresh fruit juice",
+        "bn": "তাজা ফলের রস"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "lemonade",
+      "category": "drinks",
+      "name": {
+        "en": "Lemon water (lebur shorbot)",
+        "bn": "লেবুর শরবত"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "diet-soda",
+      "category": "drinks",
+      "name": {
+        "en": "Diet soda",
+        "bn": "ডায়েট সোডা"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "kalojira",
+      "category": "kitchen",
+      "name": {
+        "en": "Black seed (kalojira)",
+        "bn": "কালোজিরা"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "cinnamon",
+      "category": "kitchen",
+      "name": {
+        "en": "Cinnamon",
+        "bn": "দারুচিনি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "fenugreek",
+      "category": "kitchen",
+      "name": {
+        "en": "Fenugreek (methi)",
+        "bn": "মেথি"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "olive-oil",
+      "category": "kitchen",
+      "name": {
+        "en": "Olive oil",
+        "bn": "অলিভ অয়েল"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "rice-bran-oil",
+      "category": "kitchen",
+      "name": {
+        "en": "Rice bran oil",
+        "bn": "রাইস ব্রান অয়েল"
+      },
+      "origin": "local"
+    },
+    {
+      "slug": "soy-sauce",
+      "category": "kitchen",
+      "name": {
+        "en": "Soy sauce",
+        "bn": "সয়া সস"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "ketchup",
+      "category": "kitchen",
+      "name": {
+        "en": "Ketchup & sauces",
+        "bn": "কেচাপ ও সস"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "mayonnaise",
+      "category": "kitchen",
+      "name": {
+        "en": "Mayonnaise",
+        "bn": "মেয়োনেজ"
+      },
+      "origin": "imported"
+    },
+    {
+      "slug": "frozen-snacks",
+      "category": "processed",
+      "name": {
+        "en": "Frozen parathas & snacks",
+        "bn": "ফ্রোজেন পরোটা ও নাস্তা"
+      },
+      "origin": "local"
+    }
+  ],
+  "food_images": {
+    "suji": "https://images.pexels.com/photos/38163947/pexels-photo-38163947.jpeg",
+    "pasta": "https://images.pexels.com/photos/3214160/pexels-photo-3214160.jpeg",
+    "cornflakes": "https://images.pexels.com/photos/30563559/pexels-photo-30563559.jpeg",
+    "corn": "https://images.pexels.com/photos/12987562/pexels-photo-12987562.jpeg",
+    "brown-bread": "https://images.pexels.com/photos/33866869/pexels-photo-33866869.jpeg",
+    "tilapia": "https://images.pexels.com/photos/31636077/pexels-photo-31636077.jpeg",
+    "shing-magur": "https://images.pexels.com/photos/32243187/pexels-photo-32243187.jpeg",
+    "rupchanda": "https://images.pexels.com/photos/31534520/pexels-photo-31534520.jpeg",
+    "tuna": "https://images.pexels.com/photos/31779503/pexels-photo-31779503.jpeg",
+    "crab": "https://images.pexels.com/photos/3640448/pexels-photo-3640448.jpeg",
+    "duck": "https://images.pexels.com/photos/29333558/pexels-photo-29333558.jpeg",
+    "duck-egg": "https://images.pexels.com/photos/9664253/pexels-photo-9664253.jpeg",
+    "quail-egg": "https://images.pexels.com/photos/4110227/pexels-photo-4110227.jpeg",
+    "moong-dal": "https://images.pexels.com/photos/18358654/pexels-photo-18358654.jpeg",
+    "rajma": "https://images.pexels.com/photos/18233225/pexels-photo-18233225.jpeg",
+    "peas": "https://images.pexels.com/photos/768089/pexels-photo-768089.jpeg",
+    "flax-chia": "https://images.pexels.com/photos/27468397/pexels-photo-27468397.jpeg",
+    "sesame": "https://images.pexels.com/photos/3338502/pexels-photo-3338502.jpeg",
+    "shorshe-shak": "https://images.pexels.com/photos/15934124/pexels-photo-15934124.jpeg",
+    "kolmi-shak": "https://images.pexels.com/photos/13768938/pexels-photo-13768938.jpeg",
+    "begun": "https://images.pexels.com/photos/6316542/pexels-photo-6316542.jpeg",
+    "potol": "https://images.pexels.com/photos/38661460/pexels-photo-38661460.jpeg",
+    "jhinga": "https://images.pexels.com/photos/33778443/pexels-photo-33778443.jpeg",
+    "chichinga": "https://images.pexels.com/photos/10683227/pexels-photo-10683227.jpeg",
+    "mishti-kumra": "https://images.pexels.com/photos/5430682/pexels-photo-5430682.jpeg",
+    "kacha-kola": "https://images.pexels.com/photos/39049842/pexels-photo-39049842.jpeg",
+    "kacha-pepe": "https://images.pexels.com/photos/13306351/pexels-photo-13306351.jpeg",
+    "carrot": "https://images.pexels.com/photos/34993618/pexels-photo-34993618.jpeg",
+    "beetroot": "https://images.pexels.com/photos/5758605/pexels-photo-5758605.jpeg",
+    "radish": "https://images.pexels.com/photos/7214603/pexels-photo-7214603.jpeg",
+    "broccoli": "https://images.pexels.com/photos/7676071/pexels-photo-7676071.jpeg",
+    "capsicum": "https://images.pexels.com/photos/35525568/pexels-photo-35525568.jpeg",
+    "mushroom": "https://images.pexels.com/photos/5950411/pexels-photo-5950411.jpeg",
+    "sweet-potato": "https://images.pexels.com/photos/7456548/pexels-photo-7456548.jpeg",
+    "onion": "https://images.pexels.com/photos/13982572/pexels-photo-13982572.jpeg",
+    "coriander": "https://images.pexels.com/photos/606540/pexels-photo-606540.jpeg",
+    "apple": "https://images.pexels.com/photos/1510392/pexels-photo-1510392.jpeg",
+    "orange": "https://images.pexels.com/photos/30925639/pexels-photo-30925639.jpeg",
+    "grapes": "https://images.pexels.com/photos/33344322/pexels-photo-33344322.jpeg",
+    "pomegranate": "https://images.pexels.com/photos/12148143/pexels-photo-12148143.jpeg",
+    "watermelon": "https://images.pexels.com/photos/3429784/pexels-photo-3429784.jpeg",
+    "pineapple": "https://images.pexels.com/photos/7194817/pexels-photo-7194817.jpeg",
+    "jamun": "https://images.pexels.com/photos/37043794/pexels-photo-37043794.jpeg",
+    "boroi": "https://images.pexels.com/photos/33030026/pexels-photo-33030026.jpeg",
+    "kamranga": "https://images.pexels.com/photos/40595358/pexels-photo-40595358.jpeg",
+    "bel": "https://images.pexels.com/photos/34782695/pexels-photo-34782695.jpeg",
+    "sofeda": "https://images.pexels.com/photos/3942502/pexels-photo-3942502.jpeg",
+    "kiwi": "https://images.pexels.com/photos/7675956/pexels-photo-7675956.jpeg",
+    "avocado": "https://images.pexels.com/photos/5785658/pexels-photo-5785658.jpeg",
+    "strawberry": "https://images.pexels.com/photos/277262/pexels-photo-277262.jpeg",
+    "dragon-fruit": "https://images.pexels.com/photos/8813523/pexels-photo-8813523.jpeg",
+    "raisins": "https://images.pexels.com/photos/12945019/pexels-photo-12945019.jpeg",
+    "chhana": "https://images.pexels.com/photos/11281296/pexels-photo-11281296.jpeg",
+    "lassi": "https://images.pexels.com/photos/18142603/pexels-photo-18142603.jpeg",
+    "fuchka": "https://images.pexels.com/photos/34356404/pexels-photo-34356404.jpeg",
+    "jhalmuri": "https://images.pexels.com/photos/35213277/pexels-photo-35213277.jpeg",
+    "biscuits": "https://images.pexels.com/photos/31909870/pexels-photo-31909870.jpeg",
+    "cake": "https://images.pexels.com/photos/10249461/pexels-photo-10249461.jpeg",
+    "popcorn": "https://images.pexels.com/photos/806880/pexels-photo-806880.jpeg",
+    "shawarma": "https://images.pexels.com/photos/5779364/pexels-photo-5779364.jpeg",
+    "fried-rice": "https://images.pexels.com/photos/19792090/pexels-photo-19792090.jpeg",
+    "french-fries": "https://images.pexels.com/photos/8272622/pexels-photo-8272622.jpeg",
+    "payesh": "https://images.pexels.com/photos/31109623/pexels-photo-31109623.jpeg",
+    "jilapi": "https://images.pexels.com/photos/39852669/pexels-photo-39852669.jpeg",
+    "kalojam": "https://images.pexels.com/photos/40000020/pexels-photo-40000020.jpeg",
+    "fresh-juice": "https://images.pexels.com/photos/30900665/pexels-photo-30900665.jpeg",
+    "lemonade": "https://images.pexels.com/photos/33107433/pexels-photo-33107433.jpeg",
+    "diet-soda": "https://images.pexels.com/photos/8880742/pexels-photo-8880742.jpeg",
+    "kalojira": "https://images.pexels.com/photos/5738744/pexels-photo-5738744.jpeg",
+    "cinnamon": "https://images.pexels.com/photos/14381804/pexels-photo-14381804.jpeg",
+    "fenugreek": "https://images.pexels.com/photos/5987968/pexels-photo-5987968.jpeg",
+    "olive-oil": "https://images.pexels.com/photos/25745504/pexels-photo-25745504.jpeg",
+    "rice-bran-oil": "https://images.pexels.com/photos/12284682/pexels-photo-12284682.jpeg",
+    "soy-sauce": "https://images.pexels.com/photos/20843711/pexels-photo-20843711.jpeg",
+    "mayonnaise": "https://images.pexels.com/photos/33775646/pexels-photo-33775646.jpeg"
+  },
+  "variants": {
+    "white-rice": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "White rice, cooked",
+          "bn": "সাদা ভাত, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168878",
+        "per_100g": {
+          "kcal": 130.0,
+          "protein_g": 2.69,
+          "fat_g": 0.28,
+          "carb_g": 28.17,
+          "fibre_g": 0.4,
+          "sugar_g": 0.05,
+          "sat_fat_g": 0.08,
+          "sodium_mg": 1.0,
+          "potassium_mg": 35.0,
+          "iron_mg": 1.2,
+          "calcium_mg": 10.0
+        },
+        "method": null
+      }
+    ],
+    "red-rice": [
+      {
+        "slug": "brown-cooked",
+        "name": {
+          "en": "Brown rice, cooked",
+          "bn": "বাদামি চালের ভাত, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169704",
+        "per_100g": {
+          "kcal": 123.0,
+          "protein_g": 2.74,
+          "fat_g": 0.97,
+          "carb_g": 25.58,
+          "fibre_g": 1.6,
+          "sugar_g": 0.24,
+          "sat_fat_g": 0.26,
+          "sodium_mg": 4.0,
+          "potassium_mg": 86.0,
+          "iron_mg": 0.56,
+          "calcium_mg": 3.0
+        },
+        "method": null
+      }
+    ],
+    "atta-ruti": [
+      {
+        "slug": "whole-wheat",
+        "name": {
+          "en": "Whole-wheat roti",
+          "bn": "লাল আটার রুটি"
+        },
+        "source": "usda-sr",
+        "source_ref": "174075",
+        "per_100g": {
+          "kcal": 299.0,
+          "protein_g": 7.85,
+          "fat_g": 9.2,
+          "carb_g": 46.13,
+          "fibre_g": 9.7,
+          "sugar_g": 2.93,
+          "sat_fat_g": 3.31,
+          "sodium_mg": 298.0,
+          "potassium_mg": 196.0,
+          "iron_mg": 2.2,
+          "calcium_mg": 36.0
+        },
+        "method": null
+      }
+    ],
+    "white-bread": [
+      {
+        "slug": "white",
+        "name": {
+          "en": "White bread",
+          "bn": "সাদা পাউরুটি"
+        },
+        "source": "usda-foundation",
+        "source_ref": "325871",
+        "per_100g": {
+          "kcal": 270.0,
+          "protein_g": 9.43,
+          "fat_g": 3.59,
+          "carb_g": 49.2,
+          "fibre_g": 2.3,
+          "sugar_g": 5.34,
+          "sat_fat_g": 0.82,
+          "sodium_mg": 477.0,
+          "potassium_mg": 117.0,
+          "iron_mg": 3.36,
+          "calcium_mg": 211.0
+        },
+        "method": null
+      }
+    ],
+    "brown-bread": [
+      {
+        "slug": "whole-wheat",
+        "name": {
+          "en": "Whole-wheat bread",
+          "bn": "লাল আটার পাউরুটি"
+        },
+        "source": "usda-sr",
+        "source_ref": "172688",
+        "per_100g": {
+          "kcal": 252.0,
+          "protein_g": 12.45,
+          "fat_g": 3.5,
+          "carb_g": 42.71,
+          "fibre_g": 6.0,
+          "sugar_g": 4.34,
+          "sat_fat_g": 0.72,
+          "sodium_mg": 455.0,
+          "potassium_mg": 254.0,
+          "iron_mg": 2.47,
+          "calcium_mg": 161.0
+        },
+        "method": null
+      }
+    ],
+    "oats": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Oats, cooked with water",
+          "bn": "পানিতে রান্না ওটস"
+        },
+        "source": "usda-sr",
+        "source_ref": "173905",
+        "per_100g": {
+          "kcal": 71.0,
+          "protein_g": 2.54,
+          "fat_g": 1.52,
+          "carb_g": 12.0,
+          "fibre_g": 1.7,
+          "sugar_g": 0.27,
+          "sat_fat_g": 0.31,
+          "sodium_mg": 4.0,
+          "potassium_mg": 70.0,
+          "iron_mg": 0.9,
+          "calcium_mg": 9.0
+        },
+        "method": null
+      }
+    ],
+    "chicken": [
+      {
+        "slug": "breast",
+        "name": {
+          "en": "Breast, skinless, roasted",
+          "bn": "বুকের মাংস, চামড়া ছাড়া, রোস্ট"
+        },
+        "source": "usda-sr",
+        "source_ref": "171477",
+        "per_100g": {
+          "kcal": 165.0,
+          "protein_g": 31.02,
+          "fat_g": 3.57,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 1.01,
+          "sodium_mg": 74.0,
+          "potassium_mg": 256.0,
+          "iron_mg": 1.04,
+          "calcium_mg": 15.0
+        },
+        "method": "roasted"
+      },
+      {
+        "slug": "thigh",
+        "name": {
+          "en": "Thigh, skinless, roasted",
+          "bn": "রানের মাংস, চামড়া ছাড়া, রোস্ট"
+        },
+        "source": "usda-sr",
+        "source_ref": "172388",
+        "per_100g": {
+          "kcal": 179.0,
+          "protein_g": 24.76,
+          "fat_g": 8.15,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 2.31,
+          "sodium_mg": 106.0,
+          "potassium_mg": 269.0,
+          "iron_mg": 1.13,
+          "calcium_mg": 9.0
+        },
+        "method": "roasted"
+      },
+      {
+        "slug": "drumstick",
+        "name": {
+          "en": "Drumstick, skinless, roasted",
+          "bn": "ঠ্যাং, চামড়া ছাড়া, রোস্ট"
+        },
+        "source": "usda-sr",
+        "source_ref": "172376",
+        "per_100g": {
+          "kcal": 155.0,
+          "protein_g": 24.24,
+          "fat_g": 5.7,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 1.5,
+          "sodium_mg": 128.0,
+          "potassium_mg": 256.0,
+          "iron_mg": 1.14,
+          "calcium_mg": 11.0
+        },
+        "method": "roasted"
+      },
+      {
+        "slug": "stewed",
+        "name": {
+          "en": "Stewed, simmered without oil",
+          "bn": "তেল ছাড়া ঝোলে সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "171451",
+        "per_100g": {
+          "kcal": 177.0,
+          "protein_g": 27.29,
+          "fat_g": 6.71,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 1.84,
+          "sodium_mg": 70.0,
+          "potassium_mg": 180.0,
+          "iron_mg": 1.17,
+          "calcium_mg": 14.0
+        },
+        "method": "stewed"
+      },
+      {
+        "slug": "fried",
+        "name": {
+          "en": "Fried in batter, with skin",
+          "bn": "ব্যাটারে ভাজা, চামড়াসহ"
+        },
+        "source": "usda-sr",
+        "source_ref": "171448",
+        "per_100g": {
+          "kcal": 289.0,
+          "protein_g": 22.54,
+          "fat_g": 17.35,
+          "carb_g": 9.42,
+          "fibre_g": 0.3,
+          "sugar_g": 0.0,
+          "sat_fat_g": 4.61,
+          "sodium_mg": 292.0,
+          "potassium_mg": 185.0,
+          "iron_mg": 1.37,
+          "calcium_mg": 21.0
+        },
+        "method": "deep_fried"
+      }
+    ],
+    "beef": [
+      {
+        "slug": "lean-mince",
+        "name": {
+          "en": "Lean mince (90%), cooked",
+          "bn": "চর্বিহীন কিমা (৯০%), রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "171793",
+        "per_100g": {
+          "kcal": 204.0,
+          "protein_g": 25.21,
+          "fat_g": 10.68,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 4.19,
+          "sodium_mg": 75.0,
+          "potassium_mg": 363.0,
+          "iron_mg": 2.77,
+          "calcium_mg": 15.0
+        },
+        "method": null
+      },
+      {
+        "slug": "stew",
+        "name": {
+          "en": "Stew meat, braised",
+          "bn": "ঝোলের মাংস, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "171203",
+        "per_100g": {
+          "kcal": 191.0,
+          "protein_g": 32.41,
+          "fat_g": 6.82,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 2.8,
+          "sodium_mg": 67.0,
+          "potassium_mg": 319.0,
+          "iron_mg": 2.96,
+          "calcium_mg": 16.0
+        },
+        "method": null
+      }
+    ],
+    "mutton": [
+      {
+        "slug": "goat-roasted",
+        "name": {
+          "en": "Goat meat, roasted",
+          "bn": "খাসির মাংস, রোস্ট"
+        },
+        "source": "usda-sr",
+        "source_ref": "175304",
+        "per_100g": {
+          "kcal": 143.0,
+          "protein_g": 27.1,
+          "fat_g": 3.03,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.93,
+          "sodium_mg": 86.0,
+          "potassium_mg": 405.0,
+          "iron_mg": 3.73,
+          "calcium_mg": 17.0
+        },
+        "method": "roasted"
+      }
+    ],
+    "egg": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Whole, hard-boiled",
+          "bn": "পুরো ডিম, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "173424",
+        "per_100g": {
+          "kcal": 155.0,
+          "protein_g": 12.58,
+          "fat_g": 10.61,
+          "carb_g": 1.12,
+          "fibre_g": 0.0,
+          "sugar_g": 1.12,
+          "sat_fat_g": 3.27,
+          "sodium_mg": 124.0,
+          "potassium_mg": 126.0,
+          "iron_mg": 1.19,
+          "calcium_mg": 50.0
+        },
+        "method": "boiled"
+      },
+      {
+        "slug": "fried",
+        "name": {
+          "en": "Whole, fried",
+          "bn": "পুরো ডিম, ভাজা"
+        },
+        "source": "usda-sr",
+        "source_ref": "173423",
+        "per_100g": {
+          "kcal": 196.0,
+          "protein_g": 13.61,
+          "fat_g": 14.84,
+          "carb_g": 0.83,
+          "fibre_g": 0.0,
+          "sugar_g": 0.4,
+          "sat_fat_g": 4.32,
+          "sodium_mg": 207.0,
+          "potassium_mg": 152.0,
+          "iron_mg": 1.89,
+          "calcium_mg": 62.0
+        },
+        "method": "fried"
+      },
+      {
+        "slug": "white",
+        "name": {
+          "en": "White only, raw",
+          "bn": "শুধু সাদা অংশ, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "172183",
+        "per_100g": {
+          "kcal": 52.0,
+          "protein_g": 10.9,
+          "fat_g": 0.17,
+          "carb_g": 0.73,
+          "fibre_g": 0.0,
+          "sugar_g": 0.71,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 166.0,
+          "potassium_mg": 163.0,
+          "iron_mg": 0.08,
+          "calcium_mg": 7.0
+        },
+        "method": "raw"
+      },
+      {
+        "slug": "poached",
+        "name": {
+          "en": "Whole, poached",
+          "bn": "পোচ ডিম"
+        },
+        "source": "usda-sr",
+        "source_ref": "172186",
+        "per_100g": {
+          "kcal": 143.0,
+          "protein_g": 12.51,
+          "fat_g": 9.47,
+          "carb_g": 0.71,
+          "fibre_g": 0.0,
+          "sugar_g": 0.37,
+          "sat_fat_g": 3.11,
+          "sodium_mg": 297.0,
+          "potassium_mg": 138.0,
+          "iron_mg": 1.75,
+          "calcium_mg": 56.0
+        },
+        "method": "poached"
+      },
+      {
+        "slug": "scrambled",
+        "name": {
+          "en": "Scrambled",
+          "bn": "স্ক্র্যাম্বলড ডিম"
+        },
+        "source": "usda-sr",
+        "source_ref": "172187",
+        "per_100g": {
+          "kcal": 149.0,
+          "protein_g": 9.99,
+          "fat_g": 10.98,
+          "carb_g": 1.61,
+          "fibre_g": 0.0,
+          "sugar_g": 1.39,
+          "sat_fat_g": 3.33,
+          "sodium_mg": 145.0,
+          "potassium_mg": 132.0,
+          "iron_mg": 1.31,
+          "calcium_mg": 66.0
+        },
+        "method": "scrambled"
+      },
+      {
+        "slug": "omelette",
+        "name": {
+          "en": "Omelette",
+          "bn": "অমলেট"
+        },
+        "source": "usda-sr",
+        "source_ref": "172185",
+        "per_100g": {
+          "kcal": 154.0,
+          "protein_g": 10.57,
+          "fat_g": 11.66,
+          "carb_g": 0.64,
+          "fibre_g": 0.0,
+          "sugar_g": 0.31,
+          "sat_fat_g": 3.32,
+          "sodium_mg": 155.0,
+          "potassium_mg": 117.0,
+          "iron_mg": 1.48,
+          "calcium_mg": 48.0
+        },
+        "method": "omelette"
+      }
+    ],
+    "chingri": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Shrimp, cooked",
+          "bn": "চিংড়ি, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "175180",
+        "per_100g": {
+          "kcal": 99.0,
+          "protein_g": 23.98,
+          "fat_g": 0.28,
+          "carb_g": 0.2,
+          "sat_fat_g": 0.06,
+          "sodium_mg": 111.0,
+          "potassium_mg": 259.0,
+          "iron_mg": 0.51,
+          "calcium_mg": 70.0
+        },
+        "method": null
+      }
+    ],
+    "masoor-dal": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Lentils, boiled",
+          "bn": "ডাল, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "172421",
+        "per_100g": {
+          "kcal": 116.0,
+          "protein_g": 9.02,
+          "fat_g": 0.38,
+          "carb_g": 20.13,
+          "fibre_g": 7.9,
+          "sugar_g": 1.8,
+          "sat_fat_g": 0.05,
+          "sodium_mg": 2.0,
+          "potassium_mg": 369.0,
+          "iron_mg": 3.33,
+          "calcium_mg": 19.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "moong-dal": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Mung beans, boiled",
+          "bn": "মুগ ডাল, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "174257",
+        "per_100g": {
+          "kcal": 105.0,
+          "protein_g": 7.02,
+          "fat_g": 0.38,
+          "carb_g": 19.15,
+          "fibre_g": 7.6,
+          "sugar_g": 2.0,
+          "sat_fat_g": 0.12,
+          "sodium_mg": 2.0,
+          "potassium_mg": 266.0,
+          "iron_mg": 1.4,
+          "calcium_mg": 27.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "mashkalai": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Black gram (urad), boiled",
+          "bn": "মাষকলাই, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "172427",
+        "per_100g": {
+          "kcal": 105.0,
+          "protein_g": 7.54,
+          "fat_g": 0.55,
+          "carb_g": 18.34,
+          "fibre_g": 6.4,
+          "sugar_g": 2.01,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 7.0,
+          "potassium_mg": 231.0,
+          "iron_mg": 1.75,
+          "calcium_mg": 53.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "chola": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Chickpeas, boiled",
+          "bn": "ছোলা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "173757",
+        "per_100g": {
+          "kcal": 164.0,
+          "protein_g": 8.86,
+          "fat_g": 2.59,
+          "carb_g": 27.42,
+          "fibre_g": 7.6,
+          "sugar_g": 4.8,
+          "sat_fat_g": 0.27,
+          "sodium_mg": 7.0,
+          "potassium_mg": 291.0,
+          "iron_mg": 2.89,
+          "calcium_mg": 49.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "soybean": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Soybeans, boiled",
+          "bn": "সয়াবিন, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "174271",
+        "per_100g": {
+          "kcal": 172.0,
+          "protein_g": 18.21,
+          "fat_g": 8.97,
+          "carb_g": 8.36,
+          "fibre_g": 6.0,
+          "sugar_g": 3.0,
+          "sat_fat_g": 1.3,
+          "sodium_mg": 1.0,
+          "potassium_mg": 515.0,
+          "iron_mg": 5.14,
+          "calcium_mg": 102.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "rajma": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Kidney beans, boiled",
+          "bn": "রাজমা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "175194",
+        "per_100g": {
+          "kcal": 127.0,
+          "protein_g": 8.67,
+          "fat_g": 0.5,
+          "carb_g": 22.8,
+          "fibre_g": 7.4,
+          "sugar_g": 0.32,
+          "sat_fat_g": 0.07,
+          "sodium_mg": 2.0,
+          "potassium_mg": 403.0,
+          "iron_mg": 2.94,
+          "calcium_mg": 28.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "peas": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Green peas, boiled",
+          "bn": "মটরশুঁটি, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170420",
+        "per_100g": {
+          "kcal": 84.0,
+          "protein_g": 5.36,
+          "fat_g": 0.22,
+          "carb_g": 15.63,
+          "fibre_g": 5.5,
+          "sugar_g": 5.93,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 3.0,
+          "potassium_mg": 271.0,
+          "iron_mg": 1.54,
+          "calcium_mg": 27.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "peanuts": [
+      {
+        "slug": "roasted",
+        "name": {
+          "en": "Dry-roasted, unsalted",
+          "bn": "শুকনো ভাজা, লবণ ছাড়া"
+        },
+        "source": "usda-sr",
+        "source_ref": "173806",
+        "per_100g": {
+          "kcal": 587.0,
+          "protein_g": 24.35,
+          "fat_g": 49.66,
+          "carb_g": 21.26,
+          "fibre_g": 8.4,
+          "sugar_g": 4.9,
+          "sat_fat_g": 7.72,
+          "sodium_mg": 6.0,
+          "potassium_mg": 634.0,
+          "iron_mg": 1.58,
+          "calcium_mg": 58.0
+        },
+        "method": "roasted"
+      }
+    ],
+    "nuts": [
+      {
+        "slug": "almonds",
+        "name": {
+          "en": "Almonds",
+          "bn": "কাঠবাদাম"
+        },
+        "source": "usda-sr",
+        "source_ref": "170567",
+        "per_100g": {
+          "kcal": 579.0,
+          "protein_g": 21.15,
+          "fat_g": 49.93,
+          "carb_g": 21.55,
+          "fibre_g": 12.5,
+          "sugar_g": 4.35,
+          "sat_fat_g": 3.8,
+          "sodium_mg": 1.0,
+          "potassium_mg": 733.0,
+          "iron_mg": 3.71,
+          "calcium_mg": 269.0
+        },
+        "method": null
+      },
+      {
+        "slug": "walnuts",
+        "name": {
+          "en": "Walnuts",
+          "bn": "আখরোট"
+        },
+        "source": "usda-sr",
+        "source_ref": "170187",
+        "per_100g": {
+          "kcal": 654.0,
+          "protein_g": 15.23,
+          "fat_g": 65.21,
+          "carb_g": 13.71,
+          "fibre_g": 6.7,
+          "sugar_g": 2.61,
+          "sat_fat_g": 6.13,
+          "sodium_mg": 2.0,
+          "potassium_mg": 441.0,
+          "iron_mg": 2.91,
+          "calcium_mg": 98.0
+        },
+        "method": null
+      }
+    ],
+    "flax-chia": [
+      {
+        "slug": "chia",
+        "name": {
+          "en": "Chia seeds",
+          "bn": "চিয়া বীজ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170554",
+        "per_100g": {
+          "kcal": 486.0,
+          "protein_g": 16.54,
+          "fat_g": 30.74,
+          "carb_g": 42.12,
+          "fibre_g": 34.4,
+          "sat_fat_g": 3.33,
+          "sodium_mg": 16.0,
+          "potassium_mg": 407.0,
+          "iron_mg": 7.72,
+          "calcium_mg": 631.0
+        },
+        "method": null
+      }
+    ],
+    "sesame": [
+      {
+        "slug": "whole",
+        "name": {
+          "en": "Sesame seeds",
+          "bn": "তিল"
+        },
+        "source": "usda-sr",
+        "source_ref": "170150",
+        "per_100g": {
+          "kcal": 573.0,
+          "protein_g": 17.73,
+          "fat_g": 49.67,
+          "carb_g": 23.45,
+          "fibre_g": 11.8,
+          "sugar_g": 0.3,
+          "sat_fat_g": 6.96,
+          "sodium_mg": 11.0,
+          "potassium_mg": 468.0,
+          "iron_mg": 14.55,
+          "calcium_mg": 975.0
+        },
+        "method": null
+      }
+    ],
+    "lal-shak": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Amaranth leaves, raw",
+          "bn": "লাল শাক, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168385",
+        "per_100g": {
+          "kcal": 23.0,
+          "protein_g": 2.46,
+          "fat_g": 0.33,
+          "carb_g": 4.02,
+          "sat_fat_g": 0.09,
+          "sodium_mg": 20.0,
+          "potassium_mg": 611.0,
+          "iron_mg": 2.32,
+          "calcium_mg": 215.0
+        },
+        "method": "raw"
+      }
+    ],
+    "palong-shak": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Spinach, raw",
+          "bn": "পালং শাক, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168462",
+        "per_100g": {
+          "kcal": 23.0,
+          "protein_g": 2.86,
+          "fat_g": 0.39,
+          "carb_g": 3.63,
+          "fibre_g": 2.2,
+          "sugar_g": 0.42,
+          "sat_fat_g": 0.06,
+          "sodium_mg": 79.0,
+          "potassium_mg": 558.0,
+          "iron_mg": 2.71,
+          "calcium_mg": 99.0
+        },
+        "method": "raw"
+      },
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Spinach, boiled",
+          "bn": "পালং শাক, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168463",
+        "per_100g": {
+          "kcal": 23.0,
+          "protein_g": 2.97,
+          "fat_g": 0.26,
+          "carb_g": 3.75,
+          "fibre_g": 2.4,
+          "sugar_g": 0.43,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 70.0,
+          "potassium_mg": 466.0,
+          "iron_mg": 3.57,
+          "calcium_mg": 136.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "pui-shak": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Malabar spinach (basella), raw",
+          "bn": "পুঁই শাক, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170474",
+        "per_100g": {
+          "kcal": 19.0,
+          "protein_g": 1.8,
+          "fat_g": 0.3,
+          "carb_g": 3.4,
+          "sodium_mg": 24.0,
+          "potassium_mg": 510.0,
+          "iron_mg": 1.2,
+          "calcium_mg": 109.0
+        },
+        "method": "raw"
+      }
+    ],
+    "shorshe-shak": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Mustard greens, raw",
+          "bn": "সরিষা শাক, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169256",
+        "per_100g": {
+          "kcal": 27.0,
+          "protein_g": 2.86,
+          "fat_g": 0.42,
+          "carb_g": 4.67,
+          "fibre_g": 3.2,
+          "sugar_g": 1.32,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 20.0,
+          "potassium_mg": 384.0,
+          "iron_mg": 1.64,
+          "calcium_mg": 115.0
+        },
+        "method": "raw"
+      }
+    ],
+    "korola": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Bitter gourd, boiled",
+          "bn": "করলা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168394",
+        "per_100g": {
+          "kcal": 19.0,
+          "protein_g": 0.84,
+          "fat_g": 0.18,
+          "carb_g": 4.32,
+          "fibre_g": 2.0,
+          "sugar_g": 1.95,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 6.0,
+          "potassium_mg": 319.0,
+          "iron_mg": 0.38,
+          "calcium_mg": 9.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "lau": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Bottle gourd, boiled",
+          "bn": "লাউ, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "169233",
+        "per_100g": {
+          "kcal": 15.0,
+          "protein_g": 0.6,
+          "fat_g": 0.02,
+          "carb_g": 3.69,
+          "fibre_g": 1.2,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 2.0,
+          "potassium_mg": 170.0,
+          "iron_mg": 0.25,
+          "calcium_mg": 24.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "jhinga": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Ridge gourd, boiled",
+          "bn": "ঝিঙা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168415",
+        "per_100g": {
+          "kcal": 56.0,
+          "protein_g": 0.66,
+          "fat_g": 0.34,
+          "carb_g": 14.34,
+          "fibre_g": 2.9,
+          "sugar_g": 5.17,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 21.0,
+          "potassium_mg": 453.0,
+          "iron_mg": 0.36,
+          "calcium_mg": 9.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "dherosh": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Okra, boiled",
+          "bn": "ঢেঁড়স, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "169261",
+        "per_100g": {
+          "kcal": 22.0,
+          "protein_g": 1.87,
+          "fat_g": 0.21,
+          "carb_g": 4.51,
+          "fibre_g": 2.5,
+          "sugar_g": 2.4,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 6.0,
+          "potassium_mg": 135.0,
+          "iron_mg": 0.28,
+          "calcium_mg": 77.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "sajna": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Drumstick pods, raw",
+          "bn": "সজনে ডাঁটা, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170483",
+        "per_100g": {
+          "kcal": 37.0,
+          "protein_g": 2.1,
+          "fat_g": 0.2,
+          "carb_g": 8.53,
+          "fibre_g": 3.2,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 42.0,
+          "potassium_mg": 461.0,
+          "iron_mg": 0.36,
+          "calcium_mg": 30.0
+        },
+        "method": "raw"
+      }
+    ],
+    "kacha-kola": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Green plantain, raw",
+          "bn": "কাঁচা কলা, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168215",
+        "per_100g": {
+          "kcal": 152.0,
+          "protein_g": 1.25,
+          "fat_g": 0.07,
+          "carb_g": 36.66,
+          "fibre_g": 2.2,
+          "sugar_g": 2.29,
+          "sat_fat_g": 0.12,
+          "sodium_mg": 2.0,
+          "potassium_mg": 431.0,
+          "iron_mg": 0.75,
+          "calcium_mg": 2.0
+        },
+        "method": "raw"
+      }
+    ],
+    "mishti-kumra": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Pumpkin, boiled",
+          "bn": "মিষ্টি কুমড়া, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168449",
+        "per_100g": {
+          "kcal": 20.0,
+          "protein_g": 0.72,
+          "fat_g": 0.07,
+          "carb_g": 4.9,
+          "fibre_g": 1.1,
+          "sugar_g": 2.08,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 1.0,
+          "potassium_mg": 230.0,
+          "iron_mg": 0.57,
+          "calcium_mg": 15.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "kochu": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Taro, cooked",
+          "bn": "কচু, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168486",
+        "per_100g": {
+          "kcal": 142.0,
+          "protein_g": 0.52,
+          "fat_g": 0.11,
+          "carb_g": 34.6,
+          "fibre_g": 5.1,
+          "sugar_g": 0.49,
+          "sat_fat_g": 0.02,
+          "sodium_mg": 15.0,
+          "potassium_mg": 484.0,
+          "iron_mg": 0.72,
+          "calcium_mg": 18.0
+        },
+        "method": null
+      }
+    ],
+    "begun": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Eggplant, boiled",
+          "bn": "বেগুন, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "169229",
+        "per_100g": {
+          "kcal": 35.0,
+          "protein_g": 0.83,
+          "fat_g": 0.23,
+          "carb_g": 8.73,
+          "fibre_g": 2.5,
+          "sugar_g": 3.2,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 1.0,
+          "potassium_mg": 123.0,
+          "iron_mg": 0.25,
+          "calcium_mg": 6.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "cabbage": [
+      {
+        "slug": "cabbage",
+        "name": {
+          "en": "Cabbage, raw",
+          "bn": "বাঁধাকপি, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169975",
+        "per_100g": {
+          "kcal": 25.0,
+          "protein_g": 1.28,
+          "fat_g": 0.1,
+          "carb_g": 5.8,
+          "fibre_g": 2.5,
+          "sugar_g": 3.2,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 18.0,
+          "potassium_mg": 170.0,
+          "iron_mg": 0.47,
+          "calcium_mg": 40.0
+        },
+        "method": "raw"
+      },
+      {
+        "slug": "cauliflower",
+        "name": {
+          "en": "Cauliflower, boiled",
+          "bn": "ফুলকপি, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170397",
+        "per_100g": {
+          "kcal": 23.0,
+          "protein_g": 1.84,
+          "fat_g": 0.45,
+          "carb_g": 4.11,
+          "fibre_g": 2.3,
+          "sugar_g": 2.08,
+          "sat_fat_g": 0.07,
+          "sodium_mg": 15.0,
+          "potassium_mg": 142.0,
+          "iron_mg": 0.32,
+          "calcium_mg": 16.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "potato": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Potato, boiled",
+          "bn": "আলু, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170438",
+        "per_100g": {
+          "kcal": 87.0,
+          "protein_g": 1.87,
+          "fat_g": 0.1,
+          "carb_g": 20.13,
+          "fibre_g": 1.8,
+          "sugar_g": 0.91,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 4.0,
+          "potassium_mg": 379.0,
+          "iron_mg": 0.31,
+          "calcium_mg": 5.0
+        },
+        "method": "boiled"
+      },
+      {
+        "slug": "baked",
+        "name": {
+          "en": "Baked, with skin",
+          "bn": "খোসাসহ বেক করা আলু"
+        },
+        "source": "usda-sr",
+        "source_ref": "170093",
+        "per_100g": {
+          "kcal": 93.0,
+          "protein_g": 2.5,
+          "fat_g": 0.13,
+          "carb_g": 21.15,
+          "fibre_g": 2.2,
+          "sugar_g": 1.18,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 10.0,
+          "potassium_mg": 535.0,
+          "iron_mg": 1.08,
+          "calcium_mg": 15.0
+        },
+        "method": "baked"
+      },
+      {
+        "slug": "mashed",
+        "name": {
+          "en": "Mashed, with whole milk and butter",
+          "bn": "দুধ-মাখনে চটকানো আলু"
+        },
+        "source": "usda-sr",
+        "source_ref": "168555",
+        "per_100g": {
+          "kcal": 113.0,
+          "protein_g": 1.86,
+          "fat_g": 4.22,
+          "carb_g": 16.81,
+          "fibre_g": 1.5,
+          "sugar_g": 1.43,
+          "sat_fat_g": 2.61,
+          "sodium_mg": 317.0,
+          "potassium_mg": 284.0,
+          "iron_mg": 0.26,
+          "calcium_mg": 24.0
+        },
+        "method": "mashed"
+      },
+      {
+        "slug": "french-fries",
+        "name": {
+          "en": "French fries (deep-fried)",
+          "bn": "ফ্রেঞ্চ ফ্রাই (ডুবো তেলে ভাজা)"
+        },
+        "source": "usda-sr",
+        "source_ref": "170698",
+        "per_100g": {
+          "kcal": 312.0,
+          "protein_g": 3.43,
+          "fat_g": 14.73,
+          "carb_g": 41.44,
+          "fibre_g": 3.8,
+          "sugar_g": 0.3,
+          "sat_fat_g": 2.34,
+          "sodium_mg": 210.0,
+          "potassium_mg": 579.0,
+          "iron_mg": 0.81,
+          "calcium_mg": 18.0
+        },
+        "method": "deep_fried"
+      }
+    ],
+    "sweet-potato": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Sweet potato, boiled",
+          "bn": "মিষ্টি আলু, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168484",
+        "per_100g": {
+          "kcal": 76.0,
+          "protein_g": 1.37,
+          "fat_g": 0.14,
+          "carb_g": 17.72,
+          "fibre_g": 2.5,
+          "sugar_g": 5.74,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 27.0,
+          "potassium_mg": 230.0,
+          "iron_mg": 0.72,
+          "calcium_mg": 27.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "cucumber": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Cucumber with peel",
+          "bn": "খোসাসহ শসা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168409",
+        "per_100g": {
+          "kcal": 15.0,
+          "protein_g": 0.65,
+          "fat_g": 0.11,
+          "carb_g": 3.63,
+          "fibre_g": 0.5,
+          "sugar_g": 1.67,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 2.0,
+          "potassium_mg": 147.0,
+          "iron_mg": 0.28,
+          "calcium_mg": 16.0
+        },
+        "method": "raw"
+      }
+    ],
+    "tomato": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Tomato, ripe",
+          "bn": "পাকা টমেটো"
+        },
+        "source": "usda-sr",
+        "source_ref": "170457",
+        "per_100g": {
+          "kcal": 18.0,
+          "protein_g": 0.88,
+          "fat_g": 0.2,
+          "carb_g": 3.89,
+          "fibre_g": 1.2,
+          "sugar_g": 2.63,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 5.0,
+          "potassium_mg": 237.0,
+          "iron_mg": 0.27,
+          "calcium_mg": 10.0
+        },
+        "method": "raw"
+      }
+    ],
+    "carrot": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Carrot, raw",
+          "bn": "গাজর, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170393",
+        "per_100g": {
+          "kcal": 41.0,
+          "protein_g": 0.93,
+          "fat_g": 0.24,
+          "carb_g": 9.58,
+          "fibre_g": 2.8,
+          "sugar_g": 4.74,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 69.0,
+          "potassium_mg": 320.0,
+          "iron_mg": 0.3,
+          "calcium_mg": 33.0
+        },
+        "method": "raw"
+      }
+    ],
+    "radish": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "White radish, raw",
+          "bn": "মুলা, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "168451",
+        "per_100g": {
+          "kcal": 18.0,
+          "protein_g": 0.6,
+          "fat_g": 0.1,
+          "carb_g": 4.1,
+          "fibre_g": 1.6,
+          "sugar_g": 2.5,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 21.0,
+          "potassium_mg": 227.0,
+          "iron_mg": 0.4,
+          "calcium_mg": 27.0
+        },
+        "method": "raw"
+      }
+    ],
+    "broccoli": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Broccoli, raw",
+          "bn": "ব্রকলি, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170379",
+        "per_100g": {
+          "kcal": 34.0,
+          "protein_g": 2.82,
+          "fat_g": 0.37,
+          "carb_g": 6.64,
+          "fibre_g": 2.6,
+          "sugar_g": 1.7,
+          "sat_fat_g": 0.11,
+          "sodium_mg": 33.0,
+          "potassium_mg": 316.0,
+          "iron_mg": 0.73,
+          "calcium_mg": 47.0
+        },
+        "method": "raw"
+      }
+    ],
+    "capsicum": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Green capsicum, raw",
+          "bn": "সবুজ ক্যাপসিকাম, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170427",
+        "per_100g": {
+          "kcal": 20.0,
+          "protein_g": 0.86,
+          "fat_g": 0.17,
+          "carb_g": 4.64,
+          "fibre_g": 1.7,
+          "sugar_g": 2.4,
+          "sat_fat_g": 0.06,
+          "sodium_mg": 3.0,
+          "potassium_mg": 175.0,
+          "iron_mg": 0.34,
+          "calcium_mg": 10.0
+        },
+        "method": "raw"
+      }
+    ],
+    "mushroom": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "White mushroom, raw",
+          "bn": "সাদা মাশরুম, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169251",
+        "per_100g": {
+          "kcal": 22.0,
+          "protein_g": 3.09,
+          "fat_g": 0.34,
+          "carb_g": 3.26,
+          "fibre_g": 1.0,
+          "sugar_g": 1.98,
+          "sat_fat_g": 0.05,
+          "sodium_mg": 5.0,
+          "potassium_mg": 318.0,
+          "iron_mg": 0.5,
+          "calcium_mg": 3.0
+        },
+        "method": "raw"
+      }
+    ],
+    "onion": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Onion, raw",
+          "bn": "পেঁয়াজ, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "170000",
+        "per_100g": {
+          "kcal": 40.0,
+          "protein_g": 1.1,
+          "fat_g": 0.1,
+          "carb_g": 9.34,
+          "fibre_g": 1.7,
+          "sugar_g": 4.24,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 4.0,
+          "potassium_mg": 146.0,
+          "iron_mg": 0.21,
+          "calcium_mg": 23.0
+        },
+        "method": "raw"
+      }
+    ],
+    "green-chili": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Green chilli, raw",
+          "bn": "কাঁচা মরিচ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170497",
+        "per_100g": {
+          "kcal": 40.0,
+          "protein_g": 2.0,
+          "fat_g": 0.2,
+          "carb_g": 9.46,
+          "fibre_g": 1.5,
+          "sugar_g": 5.1,
+          "sat_fat_g": 0.02,
+          "sodium_mg": 7.0,
+          "potassium_mg": 340.0,
+          "iron_mg": 1.2,
+          "calcium_mg": 18.0
+        },
+        "method": "raw"
+      }
+    ],
+    "coriander": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Coriander leaves",
+          "bn": "ধনেপাতা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169997",
+        "per_100g": {
+          "kcal": 23.0,
+          "protein_g": 2.13,
+          "fat_g": 0.52,
+          "carb_g": 3.67,
+          "fibre_g": 2.8,
+          "sugar_g": 0.87,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 46.0,
+          "potassium_mg": 521.0,
+          "iron_mg": 1.77,
+          "calcium_mg": 67.0
+        },
+        "method": "raw"
+      }
+    ],
+    "guava": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Guava",
+          "bn": "পেয়ারা"
+        },
+        "source": "usda-sr",
+        "source_ref": "173044",
+        "per_100g": {
+          "kcal": 68.0,
+          "protein_g": 2.55,
+          "fat_g": 0.95,
+          "carb_g": 14.32,
+          "fibre_g": 5.4,
+          "sugar_g": 8.92,
+          "sat_fat_g": 0.27,
+          "sodium_mg": 2.0,
+          "potassium_mg": 417.0,
+          "iron_mg": 0.26,
+          "calcium_mg": 18.0
+        },
+        "method": "raw"
+      }
+    ],
+    "papaya": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Ripe papaya",
+          "bn": "পাকা পেঁপে"
+        },
+        "source": "usda-sr",
+        "source_ref": "169926",
+        "per_100g": {
+          "kcal": 43.0,
+          "protein_g": 0.47,
+          "fat_g": 0.26,
+          "carb_g": 10.82,
+          "fibre_g": 1.7,
+          "sugar_g": 7.82,
+          "sat_fat_g": 0.08,
+          "sodium_mg": 8.0,
+          "potassium_mg": 182.0,
+          "iron_mg": 0.25,
+          "calcium_mg": 20.0
+        },
+        "method": "raw"
+      }
+    ],
+    "banana": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Banana",
+          "bn": "কলা"
+        },
+        "source": "usda-sr",
+        "source_ref": "173944",
+        "per_100g": {
+          "kcal": 89.0,
+          "protein_g": 1.09,
+          "fat_g": 0.33,
+          "carb_g": 22.84,
+          "fibre_g": 2.6,
+          "sugar_g": 12.23,
+          "sat_fat_g": 0.11,
+          "sodium_mg": 1.0,
+          "potassium_mg": 358.0,
+          "iron_mg": 0.26,
+          "calcium_mg": 5.0
+        },
+        "method": "raw"
+      }
+    ],
+    "ripe-mango": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Ripe mango",
+          "bn": "পাকা আম"
+        },
+        "source": "usda-sr",
+        "source_ref": "169910",
+        "per_100g": {
+          "kcal": 60.0,
+          "protein_g": 0.82,
+          "fat_g": 0.38,
+          "carb_g": 14.98,
+          "fibre_g": 1.6,
+          "sugar_g": 13.66,
+          "sat_fat_g": 0.09,
+          "sodium_mg": 1.0,
+          "potassium_mg": 168.0,
+          "iron_mg": 0.16,
+          "calcium_mg": 11.0
+        },
+        "method": "raw"
+      }
+    ],
+    "jackfruit": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Ripe jackfruit",
+          "bn": "পাকা কাঁঠাল"
+        },
+        "source": "usda-sr",
+        "source_ref": "174687",
+        "per_100g": {
+          "kcal": 95.0,
+          "protein_g": 1.72,
+          "fat_g": 0.64,
+          "carb_g": 23.25,
+          "fibre_g": 1.5,
+          "sugar_g": 19.08,
+          "sat_fat_g": 0.2,
+          "sodium_mg": 2.0,
+          "potassium_mg": 448.0,
+          "iron_mg": 0.23,
+          "calcium_mg": 24.0
+        },
+        "method": "raw"
+      }
+    ],
+    "lychee": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Lychee",
+          "bn": "লিচু"
+        },
+        "source": "usda-sr",
+        "source_ref": "169086",
+        "per_100g": {
+          "kcal": 66.0,
+          "protein_g": 0.83,
+          "fat_g": 0.44,
+          "carb_g": 16.53,
+          "fibre_g": 1.3,
+          "sugar_g": 15.23,
+          "sat_fat_g": 0.1,
+          "sodium_mg": 1.0,
+          "potassium_mg": 171.0,
+          "iron_mg": 0.31,
+          "calcium_mg": 5.0
+        },
+        "method": "raw"
+      }
+    ],
+    "dates": [
+      {
+        "slug": "medjool",
+        "name": {
+          "en": "Dates (medjool)",
+          "bn": "খেজুর (মেডজুল)"
+        },
+        "source": "usda-sr",
+        "source_ref": "168191",
+        "per_100g": {
+          "kcal": 277.0,
+          "protein_g": 1.81,
+          "fat_g": 0.15,
+          "carb_g": 74.97,
+          "fibre_g": 6.7,
+          "sugar_g": 66.47,
+          "sodium_mg": 1.0,
+          "potassium_mg": 696.0,
+          "iron_mg": 0.9,
+          "calcium_mg": 64.0
+        },
+        "method": null
+      }
+    ],
+    "lemon": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Lemon, without peel",
+          "bn": "লেবু, খোসা ছাড়া"
+        },
+        "source": "usda-sr",
+        "source_ref": "167746",
+        "per_100g": {
+          "kcal": 29.0,
+          "protein_g": 1.1,
+          "fat_g": 0.3,
+          "carb_g": 9.32,
+          "fibre_g": 2.8,
+          "sugar_g": 2.5,
+          "sat_fat_g": 0.04,
+          "sodium_mg": 2.0,
+          "potassium_mg": 138.0,
+          "iron_mg": 0.6,
+          "calcium_mg": 26.0
+        },
+        "method": "raw"
+      }
+    ],
+    "apple": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Apple with skin",
+          "bn": "খোসাসহ আপেল"
+        },
+        "source": "usda-sr",
+        "source_ref": "171688",
+        "per_100g": {
+          "kcal": 52.0,
+          "protein_g": 0.26,
+          "fat_g": 0.17,
+          "carb_g": 13.81,
+          "fibre_g": 2.4,
+          "sugar_g": 10.39,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 1.0,
+          "potassium_mg": 107.0,
+          "iron_mg": 0.12,
+          "calcium_mg": 6.0
+        },
+        "method": "raw"
+      }
+    ],
+    "orange": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Orange",
+          "bn": "কমলা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169097",
+        "per_100g": {
+          "kcal": 47.0,
+          "protein_g": 0.94,
+          "fat_g": 0.12,
+          "carb_g": 11.75,
+          "fibre_g": 2.4,
+          "sugar_g": 9.35,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 0.0,
+          "potassium_mg": 181.0,
+          "iron_mg": 0.1,
+          "calcium_mg": 40.0
+        },
+        "method": "raw"
+      }
+    ],
+    "pomegranate": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Pomegranate",
+          "bn": "ডালিম"
+        },
+        "source": "usda-sr",
+        "source_ref": "169134",
+        "per_100g": {
+          "kcal": 83.0,
+          "protein_g": 1.67,
+          "fat_g": 1.17,
+          "carb_g": 18.7,
+          "fibre_g": 4.0,
+          "sugar_g": 13.67,
+          "sat_fat_g": 0.12,
+          "sodium_mg": 3.0,
+          "potassium_mg": 236.0,
+          "iron_mg": 0.3,
+          "calcium_mg": 10.0
+        },
+        "method": "raw"
+      }
+    ],
+    "watermelon": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Watermelon",
+          "bn": "তরমুজ"
+        },
+        "source": "usda-sr",
+        "source_ref": "167765",
+        "per_100g": {
+          "kcal": 30.0,
+          "protein_g": 0.61,
+          "fat_g": 0.15,
+          "carb_g": 7.55,
+          "fibre_g": 0.4,
+          "sugar_g": 6.2,
+          "sat_fat_g": 0.02,
+          "sodium_mg": 1.0,
+          "potassium_mg": 112.0,
+          "iron_mg": 0.24,
+          "calcium_mg": 7.0
+        },
+        "method": "raw"
+      }
+    ],
+    "pineapple": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Pineapple",
+          "bn": "আনারস"
+        },
+        "source": "usda-sr",
+        "source_ref": "169124",
+        "per_100g": {
+          "kcal": 50.0,
+          "protein_g": 0.54,
+          "fat_g": 0.12,
+          "carb_g": 13.12,
+          "fibre_g": 1.4,
+          "sugar_g": 9.85,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 1.0,
+          "potassium_mg": 109.0,
+          "iron_mg": 0.29,
+          "calcium_mg": 13.0
+        },
+        "method": "raw"
+      }
+    ],
+    "jamun": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Black plum (jamun)",
+          "bn": "জাম"
+        },
+        "source": "usda-sr",
+        "source_ref": "168150",
+        "per_100g": {
+          "kcal": 60.0,
+          "protein_g": 0.72,
+          "fat_g": 0.23,
+          "carb_g": 15.56,
+          "sodium_mg": 14.0,
+          "potassium_mg": 79.0,
+          "iron_mg": 0.19,
+          "calcium_mg": 19.0
+        },
+        "method": "raw"
+      }
+    ],
+    "boroi": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Jujube",
+          "bn": "বরই"
+        },
+        "source": "usda-sr",
+        "source_ref": "168151",
+        "per_100g": {
+          "kcal": 79.0,
+          "protein_g": 1.2,
+          "fat_g": 0.2,
+          "carb_g": 20.23,
+          "sodium_mg": 3.0,
+          "potassium_mg": 250.0,
+          "iron_mg": 0.48,
+          "calcium_mg": 21.0
+        },
+        "method": "raw"
+      }
+    ],
+    "kamranga": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Star fruit",
+          "bn": "কামরাঙা"
+        },
+        "source": "usda-sr",
+        "source_ref": "171715",
+        "per_100g": {
+          "kcal": 31.0,
+          "protein_g": 1.04,
+          "fat_g": 0.33,
+          "carb_g": 6.73,
+          "fibre_g": 2.8,
+          "sugar_g": 3.98,
+          "sat_fat_g": 0.02,
+          "sodium_mg": 2.0,
+          "potassium_mg": 133.0,
+          "iron_mg": 0.08,
+          "calcium_mg": 3.0
+        },
+        "method": "raw"
+      }
+    ],
+    "sofeda": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Sapodilla",
+          "bn": "সফেদা"
+        },
+        "source": "usda-sr",
+        "source_ref": "167759",
+        "per_100g": {
+          "kcal": 83.0,
+          "protein_g": 0.44,
+          "fat_g": 1.1,
+          "carb_g": 19.96,
+          "fibre_g": 5.3,
+          "sat_fat_g": 0.19,
+          "sodium_mg": 12.0,
+          "potassium_mg": 193.0,
+          "iron_mg": 0.8,
+          "calcium_mg": 21.0
+        },
+        "method": "raw"
+      }
+    ],
+    "kiwi": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Kiwi",
+          "bn": "কিউই"
+        },
+        "source": "usda-sr",
+        "source_ref": "168153",
+        "per_100g": {
+          "kcal": 61.0,
+          "protein_g": 1.14,
+          "fat_g": 0.52,
+          "carb_g": 14.66,
+          "fibre_g": 3.0,
+          "sugar_g": 8.99,
+          "sat_fat_g": 0.03,
+          "sodium_mg": 3.0,
+          "potassium_mg": 312.0,
+          "iron_mg": 0.31,
+          "calcium_mg": 34.0
+        },
+        "method": "raw"
+      }
+    ],
+    "avocado": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Avocado",
+          "bn": "অ্যাভোকাডো"
+        },
+        "source": "usda-sr",
+        "source_ref": "171705",
+        "per_100g": {
+          "kcal": 160.0,
+          "protein_g": 2.0,
+          "fat_g": 14.66,
+          "carb_g": 8.53,
+          "fibre_g": 6.7,
+          "sugar_g": 0.66,
+          "sat_fat_g": 2.13,
+          "sodium_mg": 7.0,
+          "potassium_mg": 485.0,
+          "iron_mg": 0.55,
+          "calcium_mg": 12.0
+        },
+        "method": "raw"
+      }
+    ],
+    "raisins": [
+      {
+        "slug": "dark",
+        "name": {
+          "en": "Raisins",
+          "bn": "কিশমিশ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168165",
+        "per_100g": {
+          "kcal": 299.0,
+          "protein_g": 3.3,
+          "fat_g": 0.25,
+          "carb_g": 79.32,
+          "fibre_g": 4.5,
+          "sugar_g": 65.18,
+          "sat_fat_g": 0.09,
+          "sodium_mg": 26.0,
+          "potassium_mg": 744.0,
+          "iron_mg": 1.79,
+          "calcium_mg": 62.0
+        },
+        "method": null
+      }
+    ],
+    "milk": [
+      {
+        "slug": "whole",
+        "name": {
+          "en": "Whole milk",
+          "bn": "ফুল ক্রিম দুধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "171265",
+        "per_100g": {
+          "kcal": 61.0,
+          "protein_g": 3.15,
+          "fat_g": 3.25,
+          "carb_g": 4.8,
+          "fibre_g": 0.0,
+          "sugar_g": 5.05,
+          "sat_fat_g": 1.86,
+          "sodium_mg": 43.0,
+          "potassium_mg": 132.0,
+          "iron_mg": 0.03,
+          "calcium_mg": 113.0
+        },
+        "method": null
+      }
+    ],
+    "doi": [
+      {
+        "slug": "low-fat",
+        "name": {
+          "en": "Plain yogurt, low fat",
+          "bn": "টক দই, কম চর্বি"
+        },
+        "source": "usda-sr",
+        "source_ref": "170886",
+        "per_100g": {
+          "kcal": 63.0,
+          "protein_g": 5.25,
+          "fat_g": 1.55,
+          "carb_g": 7.04,
+          "fibre_g": 0.0,
+          "sugar_g": 7.04,
+          "sat_fat_g": 1.0,
+          "sodium_mg": 70.0,
+          "potassium_mg": 234.0,
+          "iron_mg": 0.08,
+          "calcium_mg": 183.0
+        },
+        "method": null
+      }
+    ],
+    "ghee": [
+      {
+        "slug": "butter-oil",
+        "name": {
+          "en": "Ghee (butter oil)",
+          "bn": "ঘি (বাটার অয়েল)"
+        },
+        "source": "usda-sr",
+        "source_ref": "173412",
+        "per_100g": {
+          "kcal": 876.0,
+          "protein_g": 0.28,
+          "fat_g": 99.48,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 61.92,
+          "sodium_mg": 2.0,
+          "potassium_mg": 5.0,
+          "iron_mg": 0.0,
+          "calcium_mg": 4.0
+        },
+        "method": null
+      }
+    ],
+    "cheese": [
+      {
+        "slug": "blue",
+        "name": {
+          "en": "Blue cheese",
+          "bn": "ব্লু চিজ"
+        },
+        "source": "usda-sr",
+        "source_ref": "172175",
+        "per_100g": {
+          "kcal": 353.0,
+          "protein_g": 21.4,
+          "fat_g": 28.74,
+          "carb_g": 2.34,
+          "fibre_g": 0.0,
+          "sugar_g": 0.5,
+          "sat_fat_g": 18.67,
+          "sodium_mg": 1146.0,
+          "potassium_mg": 256.0,
+          "iron_mg": 0.31,
+          "calcium_mg": 528.0
+        },
+        "method": null
+      }
+    ],
+    "ghol": [
+      {
+        "slug": "lowfat",
+        "name": {
+          "en": "Buttermilk, low fat",
+          "bn": "ঘোল, কম চর্বি"
+        },
+        "source": "usda-sr",
+        "source_ref": "170874",
+        "per_100g": {
+          "kcal": 40.0,
+          "protein_g": 3.31,
+          "fat_g": 1.07,
+          "carb_g": 4.79,
+          "fibre_g": 0.0,
+          "sugar_g": 5.36,
+          "sat_fat_g": 0.66,
+          "sodium_mg": 148.0,
+          "potassium_mg": 151.0,
+          "iron_mg": 0.05,
+          "calcium_mg": 116.0
+        },
+        "method": null
+      }
+    ],
+    "condensed-milk": [
+      {
+        "slug": "sweetened",
+        "name": {
+          "en": "Sweetened condensed milk",
+          "bn": "মিষ্টি কনডেন্সড মিল্ক"
+        },
+        "source": "usda-sr",
+        "source_ref": "171275",
+        "per_100g": {
+          "kcal": 321.0,
+          "protein_g": 7.91,
+          "fat_g": 8.7,
+          "carb_g": 54.4,
+          "fibre_g": 0.0,
+          "sugar_g": 54.4,
+          "sat_fat_g": 5.49,
+          "sodium_mg": 127.0,
+          "potassium_mg": 371.0,
+          "iron_mg": 0.19,
+          "calcium_mg": 284.0
+        },
+        "method": null
+      }
+    ],
+    "powdered-milk": [
+      {
+        "slug": "whole",
+        "name": {
+          "en": "Whole milk powder",
+          "bn": "ফুল ক্রিম গুঁড়া দুধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "170876",
+        "per_100g": {
+          "kcal": 496.0,
+          "protein_g": 26.32,
+          "fat_g": 26.71,
+          "carb_g": 38.42,
+          "fibre_g": 0.0,
+          "sugar_g": 38.42,
+          "sat_fat_g": 16.74,
+          "sodium_mg": 371.0,
+          "potassium_mg": 1330.0,
+          "iron_mg": 0.47,
+          "calcium_mg": 912.0
+        },
+        "method": null
+      }
+    ],
+    "honey": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Honey",
+          "bn": "মধু"
+        },
+        "source": "usda-sr",
+        "source_ref": "169640",
+        "per_100g": {
+          "kcal": 304.0,
+          "protein_g": 0.3,
+          "fat_g": 0.0,
+          "carb_g": 82.4,
+          "fibre_g": 0.2,
+          "sugar_g": 82.12,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 4.0,
+          "potassium_mg": 52.0,
+          "iron_mg": 0.42,
+          "calcium_mg": 6.0
+        },
+        "method": null
+      }
+    ],
+    "sugar-gur": [
+      {
+        "slug": "white",
+        "name": {
+          "en": "White sugar",
+          "bn": "সাদা চিনি"
+        },
+        "source": "usda-sr",
+        "source_ref": "169655",
+        "per_100g": {
+          "kcal": 387.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carb_g": 99.98,
+          "fibre_g": 0.0,
+          "sugar_g": 99.8,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 1.0,
+          "potassium_mg": 2.0,
+          "iron_mg": 0.05,
+          "calcium_mg": 1.0
+        },
+        "method": null
+      }
+    ],
+    "chocolate": [
+      {
+        "slug": "dark",
+        "name": {
+          "en": "Dark chocolate 70–85%",
+          "bn": "ডার্ক চকলেট ৭০–৮৫%"
+        },
+        "source": "usda-sr",
+        "source_ref": "170273",
+        "per_100g": {
+          "kcal": 598.0,
+          "protein_g": 7.79,
+          "fat_g": 42.63,
+          "carb_g": 45.9,
+          "fibre_g": 10.9,
+          "sugar_g": 23.99,
+          "sat_fat_g": 24.49,
+          "sodium_mg": 20.0,
+          "potassium_mg": 715.0,
+          "iron_mg": 11.9,
+          "calcium_mg": 73.0
+        },
+        "method": null
+      }
+    ],
+    "ice-cream": [
+      {
+        "slug": "vanilla",
+        "name": {
+          "en": "Vanilla ice cream",
+          "bn": "ভ্যানিলা আইসক্রিম"
+        },
+        "source": "usda-sr",
+        "source_ref": "167575",
+        "per_100g": {
+          "kcal": 207.0,
+          "protein_g": 3.5,
+          "fat_g": 11.0,
+          "carb_g": 23.6,
+          "fibre_g": 0.7,
+          "sugar_g": 21.22,
+          "sat_fat_g": 6.79,
+          "sodium_mg": 80.0,
+          "potassium_mg": 199.0,
+          "iron_mg": 0.09,
+          "calcium_mg": 128.0
+        },
+        "method": null
+      }
+    ],
+    "coffee": [
+      {
+        "slug": "brewed",
+        "name": {
+          "en": "Black coffee, brewed",
+          "bn": "চিনি ছাড়া কফি"
+        },
+        "source": "usda-sr",
+        "source_ref": "171890",
+        "per_100g": {
+          "kcal": 1.0,
+          "protein_g": 0.12,
+          "fat_g": 0.02,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 2.0,
+          "potassium_mg": 49.0,
+          "iron_mg": 0.01,
+          "calcium_mg": 2.0
+        },
+        "method": null
+      }
+    ],
+    "black-tea": [
+      {
+        "slug": "black",
+        "name": {
+          "en": "Black tea, brewed",
+          "bn": "রং চা"
+        },
+        "source": "usda-sr",
+        "source_ref": "173227",
+        "per_100g": {
+          "kcal": 1.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carb_g": 0.3,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 3.0,
+          "potassium_mg": 37.0,
+          "iron_mg": 0.02,
+          "calcium_mg": 0.0
+        },
+        "method": null
+      },
+      {
+        "slug": "green",
+        "name": {
+          "en": "Green tea, brewed",
+          "bn": "গ্রিন টি"
+        },
+        "source": "usda-sr",
+        "source_ref": "171917",
+        "per_100g": {
+          "kcal": 1.0,
+          "protein_g": 0.22,
+          "fat_g": 0.0,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 1.0,
+          "potassium_mg": 8.0,
+          "iron_mg": 0.02,
+          "calcium_mg": 0.0
+        },
+        "method": null
+      }
+    ],
+    "soft-drinks": [
+      {
+        "slug": "cola",
+        "name": {
+          "en": "Cola",
+          "bn": "কোলা"
+        },
+        "source": "usda-sr",
+        "source_ref": "174852",
+        "per_100g": {
+          "kcal": 42.0,
+          "protein_g": 0.0,
+          "fat_g": 0.25,
+          "carb_g": 10.36,
+          "fibre_g": 0.0,
+          "sugar_g": 9.94,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 3.0,
+          "potassium_mg": 5.0,
+          "iron_mg": 0.02,
+          "calcium_mg": 1.0
+        },
+        "method": null
+      }
+    ],
+    "daab": [
+      {
+        "slug": "water",
+        "name": {
+          "en": "Coconut water",
+          "bn": "ডাবের পানি"
+        },
+        "source": "usda-sr",
+        "source_ref": "170174",
+        "per_100g": {
+          "kcal": 19.0,
+          "protein_g": 0.72,
+          "fat_g": 0.2,
+          "carb_g": 3.71,
+          "fibre_g": 1.1,
+          "sugar_g": 2.61,
+          "sat_fat_g": 0.18,
+          "sodium_mg": 105.0,
+          "potassium_mg": 250.0,
+          "iron_mg": 0.29,
+          "calcium_mg": 24.0
+        },
+        "method": null
+      }
+    ],
+    "fresh-juice": [
+      {
+        "slug": "orange",
+        "name": {
+          "en": "Orange juice, fresh",
+          "bn": "কমলার রস, তাজা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169098",
+        "per_100g": {
+          "kcal": 45.0,
+          "protein_g": 0.7,
+          "fat_g": 0.2,
+          "carb_g": 10.4,
+          "fibre_g": 0.2,
+          "sugar_g": 8.4,
+          "sat_fat_g": 0.02,
+          "sodium_mg": 1.0,
+          "potassium_mg": 200.0,
+          "iron_mg": 0.2,
+          "calcium_mg": 11.0
+        },
+        "method": "raw"
+      }
+    ],
+    "mustard-oil": [
+      {
+        "slug": "oil",
+        "name": {
+          "en": "Mustard oil",
+          "bn": "সরিষার তেল"
+        },
+        "source": "usda-sr",
+        "source_ref": "172337",
+        "per_100g": {
+          "kcal": 884.0,
+          "protein_g": 0.0,
+          "fat_g": 100.0,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sat_fat_g": 11.58,
+          "sodium_mg": 0.0,
+          "potassium_mg": 0.0,
+          "iron_mg": 0.0,
+          "calcium_mg": 0.0
+        },
+        "method": null
+      }
+    ],
+    "olive-oil": [
+      {
+        "slug": "oil",
+        "name": {
+          "en": "Olive oil",
+          "bn": "অলিভ অয়েল"
+        },
+        "source": "usda-sr",
+        "source_ref": "171413",
+        "per_100g": {
+          "kcal": 884.0,
+          "protein_g": 0.0,
+          "fat_g": 100.0,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 13.81,
+          "sodium_mg": 2.0,
+          "potassium_mg": 1.0,
+          "iron_mg": 0.56,
+          "calcium_mg": 1.0
+        },
+        "method": null
+      }
+    ],
+    "iodized-salt": [
+      {
+        "slug": "table",
+        "name": {
+          "en": "Table salt",
+          "bn": "খাবার লবণ"
+        },
+        "source": "usda-sr",
+        "source_ref": "173468",
+        "per_100g": {
+          "kcal": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 38758.0,
+          "potassium_mg": 8.0,
+          "iron_mg": 0.33,
+          "calcium_mg": 24.0
+        },
+        "method": null
+      }
+    ],
+    "ginger-garlic": [
+      {
+        "slug": "garlic",
+        "name": {
+          "en": "Garlic, raw",
+          "bn": "রসুন, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169230",
+        "per_100g": {
+          "kcal": 149.0,
+          "protein_g": 6.36,
+          "fat_g": 0.5,
+          "carb_g": 33.06,
+          "fibre_g": 2.1,
+          "sugar_g": 1.0,
+          "sat_fat_g": 0.09,
+          "sodium_mg": 17.0,
+          "potassium_mg": 401.0,
+          "iron_mg": 1.7,
+          "calcium_mg": 181.0
+        },
+        "method": "raw"
+      },
+      {
+        "slug": "ginger",
+        "name": {
+          "en": "Ginger, raw",
+          "bn": "আদা, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169231",
+        "per_100g": {
+          "kcal": 80.0,
+          "protein_g": 1.82,
+          "fat_g": 0.75,
+          "carb_g": 17.77,
+          "fibre_g": 2.0,
+          "sugar_g": 1.7,
+          "sat_fat_g": 0.2,
+          "sodium_mg": 13.0,
+          "potassium_mg": 415.0,
+          "iron_mg": 0.6,
+          "calcium_mg": 16.0
+        },
+        "method": "raw"
+      }
+    ],
+    "turmeric": [
+      {
+        "slug": "ground",
+        "name": {
+          "en": "Turmeric, ground",
+          "bn": "হলুদ গুঁড়া"
+        },
+        "source": "usda-sr",
+        "source_ref": "172231",
+        "per_100g": {
+          "kcal": 312.0,
+          "protein_g": 9.68,
+          "fat_g": 3.25,
+          "carb_g": 67.14,
+          "fibre_g": 22.7,
+          "sugar_g": 3.21,
+          "sat_fat_g": 1.84,
+          "sodium_mg": 27.0,
+          "potassium_mg": 2080.0,
+          "iron_mg": 55.0,
+          "calcium_mg": 168.0
+        },
+        "method": null
+      }
+    ],
+    "cinnamon": [
+      {
+        "slug": "ground",
+        "name": {
+          "en": "Cinnamon, ground",
+          "bn": "দারুচিনি গুঁড়া"
+        },
+        "source": "usda-sr",
+        "source_ref": "171320",
+        "per_100g": {
+          "kcal": 247.0,
+          "protein_g": 3.99,
+          "fat_g": 1.24,
+          "carb_g": 80.59,
+          "fibre_g": 53.1,
+          "sugar_g": 2.17,
+          "sat_fat_g": 0.34,
+          "sodium_mg": 10.0,
+          "potassium_mg": 431.0,
+          "iron_mg": 8.32,
+          "calcium_mg": 1002.0
+        },
+        "method": null
+      }
+    ],
+    "fenugreek": [
+      {
+        "slug": "seed",
+        "name": {
+          "en": "Fenugreek seed",
+          "bn": "মেথি"
+        },
+        "source": "usda-sr",
+        "source_ref": "171324",
+        "per_100g": {
+          "kcal": 323.0,
+          "protein_g": 23.0,
+          "fat_g": 6.41,
+          "carb_g": 58.35,
+          "fibre_g": 24.6,
+          "sat_fat_g": 1.46,
+          "sodium_mg": 67.0,
+          "potassium_mg": 770.0,
+          "iron_mg": 33.53,
+          "calcium_mg": 176.0
+        },
+        "method": null
+      }
+    ],
+    "soy-sauce": [
+      {
+        "slug": "shoyu",
+        "name": {
+          "en": "Soy sauce",
+          "bn": "সয়া সস"
+        },
+        "source": "usda-sr",
+        "source_ref": "174277",
+        "per_100g": {
+          "kcal": 53.0,
+          "protein_g": 8.14,
+          "fat_g": 0.57,
+          "carb_g": 4.93,
+          "fibre_g": 0.8,
+          "sugar_g": 0.4,
+          "sat_fat_g": 0.07,
+          "sodium_mg": 5493.0,
+          "potassium_mg": 435.0,
+          "iron_mg": 1.45,
+          "calcium_mg": 33.0
+        },
+        "method": null
+      }
+    ],
+    "ketchup": [
+      {
+        "slug": "catsup",
+        "name": {
+          "en": "Tomato ketchup",
+          "bn": "টমেটো কেচাপ"
+        },
+        "source": "usda-sr",
+        "source_ref": "168556",
+        "per_100g": {
+          "kcal": 101.0,
+          "protein_g": 1.04,
+          "fat_g": 0.1,
+          "carb_g": 27.4,
+          "fibre_g": 0.3,
+          "sugar_g": 21.27,
+          "sat_fat_g": 0.01,
+          "sodium_mg": 907.0,
+          "potassium_mg": 281.0,
+          "iron_mg": 0.35,
+          "calcium_mg": 15.0
+        },
+        "method": null
+      }
+    ],
+    "mayonnaise": [
+      {
+        "slug": "regular",
+        "name": {
+          "en": "Mayonnaise",
+          "bn": "মেয়োনেজ"
+        },
+        "source": "usda-sr",
+        "source_ref": "171009",
+        "per_100g": {
+          "kcal": 680.0,
+          "protein_g": 0.96,
+          "fat_g": 74.85,
+          "carb_g": 0.57,
+          "fibre_g": 0.0,
+          "sugar_g": 0.57,
+          "sat_fat_g": 11.7,
+          "sodium_mg": 635.0,
+          "potassium_mg": 20.0,
+          "iron_mg": 0.21,
+          "calcium_mg": 8.0
+        },
+        "method": null
+      }
+    ],
+    "suji": [
+      {
+        "slug": "dry",
+        "name": {
+          "en": "Semolina, dry",
+          "bn": "সুজি, শুকনো"
+        },
+        "source": "usda-sr",
+        "source_ref": "169715",
+        "per_100g": {
+          "kcal": 360.0,
+          "protein_g": 12.68,
+          "fat_g": 1.05,
+          "carb_g": 72.83,
+          "fibre_g": 3.9,
+          "sat_fat_g": 0.15,
+          "sodium_mg": 1.0,
+          "potassium_mg": 186.0,
+          "iron_mg": 4.36,
+          "calcium_mg": 17.0
+        },
+        "method": null
+      }
+    ],
+    "pasta": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Pasta, cooked",
+          "bn": "পাস্তা, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "169737",
+        "per_100g": {
+          "kcal": 158.0,
+          "protein_g": 5.8,
+          "fat_g": 0.93,
+          "carb_g": 30.86,
+          "fibre_g": 1.8,
+          "sugar_g": 0.56,
+          "sat_fat_g": 0.18,
+          "sodium_mg": 1.0,
+          "potassium_mg": 44.0,
+          "iron_mg": 1.28,
+          "calcium_mg": 7.0
+        },
+        "method": null
+      }
+    ],
+    "corn": [
+      {
+        "slug": "boiled",
+        "name": {
+          "en": "Sweet corn, boiled",
+          "bn": "মিষ্টি ভুট্টা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "169999",
+        "per_100g": {
+          "kcal": 96.0,
+          "protein_g": 3.41,
+          "fat_g": 1.5,
+          "carb_g": 20.98,
+          "fibre_g": 2.4,
+          "sugar_g": 4.54,
+          "sat_fat_g": 0.2,
+          "sodium_mg": 1.0,
+          "potassium_mg": 218.0,
+          "iron_mg": 0.45,
+          "calcium_mg": 3.0
+        },
+        "method": "boiled"
+      }
+    ],
+    "popcorn": [
+      {
+        "slug": "air",
+        "name": {
+          "en": "Popcorn, air-popped",
+          "bn": "পপকর্ন, তেল ছাড়া"
+        },
+        "source": "usda-sr",
+        "source_ref": "167959",
+        "per_100g": {
+          "kcal": 387.0,
+          "protein_g": 12.94,
+          "fat_g": 4.54,
+          "carb_g": 77.78,
+          "fibre_g": 14.5,
+          "sugar_g": 0.87,
+          "sat_fat_g": 0.64,
+          "sodium_mg": 8.0,
+          "potassium_mg": 329.0,
+          "iron_mg": 3.19,
+          "calcium_mg": 7.0
+        },
+        "method": null
+      }
+    ],
+    "fried-rice": [
+      {
+        "slug": "restaurant",
+        "name": {
+          "en": "Fried rice (restaurant)",
+          "bn": "ফ্রাইড রাইস (রেস্তোরাঁ)"
+        },
+        "source": "usda-sr",
+        "source_ref": "167668",
+        "per_100g": {
+          "kcal": 174.0,
+          "protein_g": 4.05,
+          "fat_g": 2.96,
+          "carb_g": 32.79,
+          "fibre_g": 1.1,
+          "sugar_g": 0.56,
+          "sat_fat_g": 0.54,
+          "sodium_mg": 387.0,
+          "potassium_mg": 76.0,
+          "iron_mg": 0.66,
+          "calcium_mg": 12.0
+        },
+        "method": "fried"
+      }
+    ],
+    "tilapia": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Tilapia, cooked",
+          "bn": "তেলাপিয়া, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "175177",
+        "per_100g": {
+          "kcal": 128.0,
+          "protein_g": 26.15,
+          "fat_g": 2.65,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.94,
+          "sodium_mg": 56.0,
+          "potassium_mg": 380.0,
+          "iron_mg": 0.69,
+          "calcium_mg": 14.0
+        },
+        "method": "dry_heat"
+      }
+    ],
+    "tuna": [
+      {
+        "slug": "canned-water",
+        "name": {
+          "en": "Tuna, canned in water",
+          "bn": "টুনা, পানিতে টিনজাত"
+        },
+        "source": "usda-sr",
+        "source_ref": "171986",
+        "per_100g": {
+          "kcal": 116.0,
+          "protein_g": 25.51,
+          "fat_g": 0.82,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.23,
+          "sodium_mg": 50.0,
+          "potassium_mg": 237.0,
+          "iron_mg": 1.53,
+          "calcium_mg": 11.0
+        },
+        "method": null
+      }
+    ],
+    "crab": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Crab, cooked",
+          "bn": "কাঁকড়া, রান্না করা"
+        },
+        "source": "usda-sr",
+        "source_ref": "174205",
+        "per_100g": {
+          "kcal": 83.0,
+          "protein_g": 17.88,
+          "fat_g": 0.74,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 0.2,
+          "sodium_mg": 395.0,
+          "potassium_mg": 259.0,
+          "iron_mg": 0.5,
+          "calcium_mg": 91.0
+        },
+        "method": null
+      }
+    ],
+    "duck": [
+      {
+        "slug": "roasted",
+        "name": {
+          "en": "Duck meat, roasted",
+          "bn": "হাঁসের মাংস, রোস্ট"
+        },
+        "source": "usda-sr",
+        "source_ref": "172411",
+        "per_100g": {
+          "kcal": 201.0,
+          "protein_g": 23.48,
+          "fat_g": 11.2,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 3.95,
+          "sodium_mg": 65.0,
+          "potassium_mg": 252.0,
+          "iron_mg": 2.7,
+          "calcium_mg": 12.0
+        },
+        "method": "roasted"
+      }
+    ],
+    "duck-egg": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Duck egg, raw",
+          "bn": "হাঁসের ডিম, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "172189",
+        "per_100g": {
+          "kcal": 185.0,
+          "protein_g": 12.81,
+          "fat_g": 13.77,
+          "carb_g": 1.45,
+          "fibre_g": 0.0,
+          "sugar_g": 0.93,
+          "sat_fat_g": 3.68,
+          "sodium_mg": 146.0,
+          "potassium_mg": 222.0,
+          "iron_mg": 3.85,
+          "calcium_mg": 64.0
+        },
+        "method": "raw"
+      }
+    ],
+    "quail-egg": [
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Quail egg, raw",
+          "bn": "কোয়েলের ডিম, কাঁচা"
+        },
+        "source": "usda-sr",
+        "source_ref": "172191",
+        "per_100g": {
+          "kcal": 158.0,
+          "protein_g": 13.05,
+          "fat_g": 11.09,
+          "carb_g": 0.41,
+          "fibre_g": 0.0,
+          "sugar_g": 0.4,
+          "sat_fat_g": 3.56,
+          "sodium_mg": 141.0,
+          "potassium_mg": 132.0,
+          "iron_mg": 3.65,
+          "calcium_mg": 64.0
+        },
+        "method": "raw"
+      }
+    ],
+    "liver": [
+      {
+        "slug": "chicken",
+        "name": {
+          "en": "Chicken liver, simmered",
+          "bn": "মুরগির কলিজা, সেদ্ধ"
+        },
+        "source": "usda-sr",
+        "source_ref": "171061",
+        "per_100g": {
+          "kcal": 167.0,
+          "protein_g": 24.46,
+          "fat_g": 6.51,
+          "carb_g": 0.87,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 2.06,
+          "sodium_mg": 76.0,
+          "potassium_mg": 263.0,
+          "iron_mg": 11.63,
+          "calcium_mg": 11.0
+        },
+        "method": null
+      }
+    ],
+    "energy-drink": [
+      {
+        "slug": "citrus",
+        "name": {
+          "en": "Energy drink (citrus)",
+          "bn": "এনার্জি ড্রিংক"
+        },
+        "source": "usda-sr",
+        "source_ref": "174108",
+        "per_100g": {
+          "kcal": 45.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carb_g": 11.27,
+          "fibre_g": 0.0,
+          "sugar_g": 10.42,
+          "sat_fat_g": 0.0,
+          "sodium_mg": 10.0,
+          "potassium_mg": 4.0,
+          "iron_mg": 0.0,
+          "calcium_mg": 8.0
+        },
+        "method": null
+      }
+    ],
+    "rui-fish": [
+      {
+        "slug": "cooked",
+        "name": {
+          "en": "Carp, cooked without oil (closest USDA match to rui)",
+          "bn": "কার্প মাছ, তেল ছাড়া রান্না (রুইয়ের নিকটতম USDA তথ্য)"
+        },
+        "source": "usda-sr",
+        "source_ref": "174185",
+        "per_100g": {
+          "kcal": 162.0,
+          "protein_g": 22.86,
+          "fat_g": 7.17,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": null,
+          "sat_fat_g": 1.39,
+          "sodium_mg": 63.0,
+          "potassium_mg": 427.0,
+          "iron_mg": 1.59,
+          "calcium_mg": 52.0
+        },
+        "method": "dry_heat"
+      },
+      {
+        "slug": "raw",
+        "name": {
+          "en": "Carp, raw (closest USDA match to rui)",
+          "bn": "কার্প মাছ, কাঁচা (রুইয়ের নিকটতম USDA তথ্য)"
+        },
+        "source": "usda-sr",
+        "source_ref": "171952",
+        "per_100g": {
+          "kcal": 127.0,
+          "protein_g": 17.83,
+          "fat_g": 5.6,
+          "carb_g": 0.0,
+          "fibre_g": 0.0,
+          "sugar_g": 0.0,
+          "sat_fat_g": 1.08,
+          "sodium_mg": 49.0,
+          "potassium_mg": 333.0,
+          "iron_mg": 1.24,
+          "calcium_mg": 41.0
+        },
+        "method": "raw"
+      }
+    ]
+  },
+  "season": {
+    "ripe-mango": [
+      5,
+      6,
+      7
+    ],
+    "jackfruit": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "lychee": [
+      5,
+      6
+    ],
+    "jamun": [
+      5,
+      6
+    ],
+    "pineapple": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "watermelon": [
+      3,
+      4,
+      5
+    ],
+    "boroi": [
+      1,
+      2,
+      3
+    ],
+    "guava": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "kamranga": [
+      9,
+      10,
+      11
+    ],
+    "bel": [
+      3,
+      4,
+      5
+    ],
+    "sofeda": [
+      10,
+      11,
+      12,
+      1
+    ],
+    "orange": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "amloki": [
+      10,
+      11,
+      12
+    ],
+    "strawberry": [
+      12,
+      1,
+      2
+    ],
+    "dragon-fruit": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "banana": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "papaya": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "lemon": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  }
+}

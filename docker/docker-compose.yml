@@ -1,0 +1,44 @@
+# Everything Docker lives in docker/: `make up` (prod-like) / `make dev` (+ Vite hot reload).
+# PostgreSQL and Redis are external (docker-commons on common-net) and never part of this compose.
+name: ${COMPOSE_PROJECT_NAME:-food}
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: runtime
+      args:
+        VERSION: ${VERSION:-dev}
+    image: ${FOOD_IMAGE:-food-suggest:local}
+    container_name: ${COMPOSE_PROJECT_NAME:-food}-app
+    env_file: .envs/app.env
+    environment:
+      APP_PORT: "8080"
+      TZ: ${TZ:-Asia/Dhaka}
+    # Loopback only. Never "8100:8080".
+    ports:
+      - "127.0.0.1:${APP_PUBLISH_PORT:-8100}:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - storage:/app/storage
+    networks: [default, common-net]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: ${APP_MEM_LIMIT:-512m}
+    cpus: ${APP_CPUS:-1.0}
+    pids_limit: 128
+    stop_grace_period: 10s
+    logging:
+      driver: local
+      options: { max-size: 20m, max-file: "5" }
+    restart: unless-stopped
+
+volumes:
+  storage: {}
+
+networks:
+  common-net:
+    external: true

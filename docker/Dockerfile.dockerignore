@@ -1,0 +1,17 @@
+# Build context for docker/Dockerfile (BuildKit reads this file, next to the Dockerfile, instead of the root .dockerignore).
+# Only what the image needs: the two code folders, minus builds, caches, generated bindings, secrets and local files.
+**
+!codes/backend/
+!codes/frontend/
+codes/backend/target/
+codes/backend/storage/
+codes/backend/bindings/
+codes/backend/tests/
+codes/frontend/node_modules/
+codes/frontend/dist/
+codes/frontend/.vite/
+**/.env
+**/.env.*
+**/*.log
+**/.DS_Store
+**/coverage/

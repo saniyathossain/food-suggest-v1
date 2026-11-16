@@ -1,0 +1,17 @@
+# Same as docker/Dockerfile.dockerignore (that one wins for docker/Dockerfile); kept for tools that only read the root file.
+# Only what the image needs: the two code folders, minus builds, caches, generated bindings, secrets and local files.
+**
+!codes/backend/
+!codes/frontend/
+codes/backend/target/
+codes/backend/storage/
+codes/backend/bindings/
+codes/backend/tests/
+codes/frontend/node_modules/
+codes/frontend/dist/
+codes/frontend/.vite/
+**/.env
+**/.env.*
+**/*.log
+**/.DS_Store
+**/coverage/
