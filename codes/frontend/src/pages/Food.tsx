@@ -5,6 +5,7 @@ import { Icon, MealIcon, Utensils, VerdictIcon } from '@/components/icons';
 import { Clock, Repeat, Stethoscope } from '@/components/icons/page';
 import { Crumbs } from '@/components/journey/Crumbs';
 import { PlanNext } from '@/components/journey/NextStep';
+import { LinkedWith } from '@/components/links/LinkedWith';
 import { FoodHero } from '@/components/food/FoodHero';
 import { Nutrition } from '@/components/food/Nutrition';
 import { FoodThumb } from '@/components/FoodRow';
@@ -133,6 +134,7 @@ export default function Food({ slug }: { slug: string }) {
                 </div>
               </section>
             )}
+            <LinkedWith from={`food:${data.slug}`} />
             <PlanNext kind="food" />
             <Sources items={data.sources} />
             <Disclaimer />

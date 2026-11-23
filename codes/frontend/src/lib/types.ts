@@ -92,8 +92,6 @@ export type { PaymentAdminDto as PaymentAdmin } from '../generated/PaymentAdminD
 // external sync (codes/backend/src/app/dtos/sync.rs)
 export type { SyncKind } from '../generated/SyncKind';
 export type { SyncMethod } from '../generated/SyncMethod';
-export type { SyncMode } from '../generated/SyncMode';
-export type { SyncPlatformDto as SyncPlatform } from '../generated/SyncPlatformDto';
 export type { SyncStatus } from '../generated/SyncStatus';
 export type { SyncHeaderDto as SyncHeader } from '../generated/SyncHeaderDto';
 export type { SyncHeaderInputDto as SyncHeaderInput } from '../generated/SyncHeaderInputDto';
@@ -155,3 +153,18 @@ export type { OptionDto } from '../generated/OptionDto';
 export type { OptionsPageDto } from '../generated/OptionsPageDto';
 export type { BrandDto as Brand } from '../generated/BrandDto';
 export type { MedicineDetailDto as MedicineDetail } from '../generated/MedicineDetailDto';
+
+// links between foods, conditions, medicines, allergens and readings (codes/backend/src/app/dtos/links.rs)
+export type { LinkKind } from '../generated/LinkKind';
+export type { LinkVerdict } from '../generated/LinkVerdict';
+export type { LinkOrigin } from '../generated/LinkOrigin';
+export type { LinkEndDto as LinkEnd } from '../generated/LinkEndDto';
+export type { LinkDto as Link } from '../generated/LinkDto';
+export type { LinkCountDto as LinkCount } from '../generated/LinkCountDto';
+export type { LinksPageDto as LinksPage } from '../generated/LinksPageDto';
+export type { AdminLinkDto as AdminLink } from '../generated/AdminLinkDto';
+export type { AdminLinksPageDto as AdminLinksPage } from '../generated/AdminLinksPageDto';
+export type { LinkRefDto as LinkRef } from '../generated/LinkRefDto';
+export type { LinkInputDto as LinkInput } from '../generated/LinkInputDto';
+export type { LinkPatchDto as LinkPatch } from '../generated/LinkPatchDto';
+export type { LinkSavedDto as LinkSaved } from '../generated/LinkSavedDto';

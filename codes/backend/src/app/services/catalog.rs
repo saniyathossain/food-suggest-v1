@@ -3,7 +3,7 @@ use crate::app::dtos::catalog::{
     FoodConditionVerdictDto, SearchIndexDto, SearchMedicineDto, FoodDetailDto, FoodSearchDto, FoodSwapDto, FoodVerdictDto, HabitDto,
     MealSlotBriefDto, SourceDto, TimingDto, VerdictCounts,
 };
-use crate::app::enums::{AgeGroup, Gender, Locale, Verdict};
+use crate::app::enums::{AgeGroup, Allergen, Gender, Locale, Verdict};
 use crate::app::exceptions::AppError;
 use crate::app::repositories::CatalogSnapshot;
 use crate::app::services::{content, diet_mode, preparation, CatalogIndex};
@@ -74,6 +74,7 @@ impl CatalogService {
             age_groups: AgeGroup::ALL,
             genders: Gender::ALL,
             verdicts: Verdict::ALL,
+            allergens: Allergen::ALL,
         }
     }
 

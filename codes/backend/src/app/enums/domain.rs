@@ -565,6 +565,10 @@ pub enum Allergen {
     Sesame,
 }
 
+impl Allergen {
+    pub const ALL: [Self; 9] = [Self::Milk, Self::Egg, Self::Peanut, Self::TreeNut, Self::Gluten, Self::Soy, Self::Fish, Self::Shellfish, Self::Sesame];
+}
+
 /// What a person can spend on food: shapes which suggestions come first (never a verdict).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
 #[ts(export)]
@@ -771,6 +775,153 @@ impl Locale {
             Some("bn") => Self::Bn,
             Some("en") => Self::En,
             _ => fallback,
+        }
+    }
+}
+
+/// What a link joins: a food, a condition, a medicine generic, an allergen, or a criterion (a band of a reading, or an audience).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum LinkKind {
+    #[sea_orm(string_value = "food")]
+    Food,
+    #[sea_orm(string_value = "condition")]
+    Condition,
+    #[sea_orm(string_value = "medicine")]
+    Medicine,
+    #[sea_orm(string_value = "allergen")]
+    Allergen,
+    #[sea_orm(string_value = "criterion")]
+    Criterion,
+}
+
+impl LinkKind {
+    pub const ALL: [Self; 5] = [Self::Food, Self::Condition, Self::Medicine, Self::Allergen, Self::Criterion];
+
+    /// The word used in `kind:key` and in `?to=`; also the storage order of a pair (alphabetical, as the table's CHECK expects).
+    pub const fn word(self) -> &'static str {
+        match self {
+            Self::Food => "food",
+            Self::Condition => "condition",
+            Self::Medicine => "medicine",
+            Self::Allergen => "allergen",
+            Self::Criterion => "criterion",
+        }
+    }
+
+    pub fn parse(word: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|kind| kind.word() == word.trim())
+    }
+}
+
+/// How strongly a link speaks: the food verdicts (recommended, ok, limit, avoid) and the medicine severities (caution, serious)
+/// in one list. When two links join the same pair and disagree, the safer (stricter) one wins.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum LinkVerdict {
+    #[sea_orm(string_value = "recommended")]
+    Recommended,
+    #[sea_orm(string_value = "ok")]
+    Ok,
+    #[sea_orm(string_value = "limit")]
+    Limit,
+    #[sea_orm(string_value = "avoid")]
+    Avoid,
+    #[sea_orm(string_value = "caution")]
+    Caution,
+    #[sea_orm(string_value = "serious")]
+    Serious,
+}
+
+impl LinkVerdict {
+    pub const ALL: [Self; 6] = [Self::Serious, Self::Avoid, Self::Caution, Self::Limit, Self::Recommended, Self::Ok];
+
+    /// Higher is safer to follow: serious > avoid > caution > limit > recommended > ok (the engine's order for foods, with the
+    /// medicine severities slotted beside their food equivalents).
+    pub const fn strictness(self) -> u8 {
+        match self {
+            Self::Serious => 5,
+            Self::Avoid => 4,
+            Self::Caution => 3,
+            Self::Limit => 2,
+            Self::Recommended => 1,
+            Self::Ok => 0,
+        }
+    }
+
+    pub fn parse(word: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|verdict| verdict.word() == word.trim())
+    }
+
+    pub const fn word(self) -> &'static str {
+        match self {
+            Self::Recommended => "recommended",
+            Self::Ok => "ok",
+            Self::Limit => "limit",
+            Self::Avoid => "avoid",
+            Self::Caution => "caution",
+            Self::Serious => "serious",
+        }
+    }
+}
+
+impl From<Verdict> for LinkVerdict {
+    fn from(value: Verdict) -> Self {
+        match value {
+            Verdict::Avoid => Self::Avoid,
+            Verdict::Limit => Self::Limit,
+            Verdict::Allowed => Self::Ok,
+            Verdict::Recommended => Self::Recommended,
+        }
+    }
+}
+
+impl From<Severity> for LinkVerdict {
+    fn from(value: Severity) -> Self {
+        match value {
+            Severity::Caution => Self::Caution,
+            Severity::Serious => Self::Serious,
+        }
+    }
+}
+
+/// Which table a link came from. Links from the first five are read from the tables the engine already uses; `Link` rows are the
+/// `links` table itself.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "snake_case")]
+pub enum LinkOrigin {
+    /// a condition's verdict on a food (food_rules)
+    Rule,
+    /// a medicine with a food or drink (medicine_food_interactions)
+    MedicineFood,
+    /// two medicines that conflict (medicine_interactions)
+    MedicinePair,
+    /// a food that carries an allergen (food_allergens)
+    Allergen,
+    /// a criterion band that points to a condition (criteria_notes)
+    CriteriaNote,
+    /// an audience (age group, sex) with a condition (audience_notes)
+    AudienceNote,
+    /// the links table
+    Link,
+}
+
+impl LinkOrigin {
+    /// Which origin keeps the say when two links tie on strictness: the sourced, reviewed tables first.
+    pub const fn priority(self) -> u8 {
+        match self {
+            Self::Rule => 0,
+            Self::MedicineFood => 1,
+            Self::MedicinePair => 2,
+            Self::Allergen => 3,
+            Self::CriteriaNote => 4,
+            Self::AudienceNote => 5,
+            Self::Link => 6,
         }
     }
 }

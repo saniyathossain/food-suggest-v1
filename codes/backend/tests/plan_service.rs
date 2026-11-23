@@ -35,12 +35,13 @@ fn snapshot() -> CatalogSnapshot {
         reviewed_on: None,
     };
     CatalogSnapshot {
+        links: vec![],
         countries: vec![country::Model { id: 1, code: "BD".to_owned(), name: text("Bangladesh"), active: true, sort: 0 }],
         conditions: vec![condition(1, "diabetes"), condition(2, "insomnia")],
         categories: vec![food_category::Model { id: 1, slug: "drinks".to_owned(), name: text("Drinks"), sort: 0, media_id: None }],
         foods: vec![
-            food::Model { id: 1, slug: "milk".to_owned(), category_id: 1, name: text("Milk"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None },
-            food::Model { id: 2, slug: "cola".to_owned(), category_id: 1, name: text("Cola"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None },
+            food::Model { id: 1, slug: "milk".to_owned(), category_id: 1, name: text("Milk"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None, age_from_months: None },
+            food::Model { id: 2, slug: "cola".to_owned(), category_id: 1, name: text("Cola"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None, age_from_months: None },
         ],
         rules: vec![
             rule(1, 1, 1, Verdict::Limit),

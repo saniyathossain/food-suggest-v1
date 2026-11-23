@@ -3,7 +3,7 @@ use crate::app::dtos::admin::{ConditionPatchDto, FoodCreateDto, FoodPatchDto, Ru
 use crate::app::dtos::mode::DietModePatchDto;
 use crate::app::exceptions::AppError;
 use crate::app::models::{
-    audience_note, condition, criteria_note, food_allergen, country, diet_mode, diet_mode_condition, diet_mode_slot, diet_mode_tip, food, food_subcategory, medicine_food_interaction, medicine_generic, medicine_interaction, post, post_source, recipe, recipe_food, tier, tier_feature, food_category, food_media, food_rule, food_variant, food_variant_rule, habit, meal_slot, source,
+    audience_note, condition, criteria_note, food_allergen, country, diet_mode, diet_mode_condition, diet_mode_slot, diet_mode_tip, food, food_subcategory, medicine_food_interaction, medicine_generic, medicine_interaction, post, post_source, recipe, recipe_food, tier, tier_feature, food_category, food_media, food_rule, food_variant, food_variant_rule, habit, link, meal_slot, source,
     source_link, timing_rule,
 };
 use crate::app::support::cache::remember;
@@ -68,12 +68,15 @@ pub struct CatalogSnapshot {
     pub food_allergens: Vec<food_allergen::Model>,
     #[serde(default)]
     pub criteria_notes: Vec<criteria_note::Model>,
+    /// the `links` table (pairs with no table of their own); the other link sources are read from the fields above
+    #[serde(default)]
+    pub links: Vec<link::Model>,
 }
 
-const SNAPSHOT_KEY: &str = "catalog:snapshot:v12";
+const SNAPSHOT_KEY: &str = "catalog:snapshot:v13";
 
 pub struct CatalogRepository {
-    db: DatabaseConnection,
+    pub(super) db: DatabaseConnection,
     cache: Arc<dyn CacheStore>,
     ttl: Duration,
 }
@@ -134,7 +137,7 @@ impl CatalogRepository {
             post_source::Entity::find().order_by_asc(post_source::Column::Sort).all(db),
             food_media::Entity::find().order_by_asc(food_media::Column::Sort).all(db),
         )?;
-        let (tiers, tier_features, generics, medicine_interactions, medicine_foods, food_allergens, criteria_notes) = tokio::try_join!(
+        let (tiers, tier_features, generics, medicine_interactions, medicine_foods, food_allergens, criteria_notes, links) = tokio::try_join!(
             tier::Entity::find().order_by_asc(tier::Column::Sort).all(db),
             tier_feature::Entity::find().all(db),
             medicine_generic::Entity::find().order_by_asc(medicine_generic::Column::Name).all(db),
@@ -142,6 +145,7 @@ impl CatalogRepository {
             medicine_food_interaction::Entity::find().order_by_asc(medicine_food_interaction::Column::Sort).all(db),
             food_allergen::Entity::find().all(db),
             criteria_note::Entity::find().order_by_asc(criteria_note::Column::Id).all(db),
+            link::Entity::find().order_by_asc(link::Column::Id).all(db),
         )?;
         Ok(CatalogSnapshot {
             countries,
@@ -174,6 +178,7 @@ impl CatalogRepository {
             medicine_foods,
             food_allergens,
             criteria_notes,
+            links,
         })
     }
 

@@ -1,5 +1,5 @@
 use ts_rs::TS;
-use crate::app::enums::{AgeGroup, CookingFat, CookingMethod, FoodOrigin, GlycemicBand, Gender, Locale, TimingKind, Verdict};
+use crate::app::enums::{AgeGroup, Allergen, CookingFat, CookingMethod, FoodOrigin, GlycemicBand, Gender, Locale, TimingKind, Verdict};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, TS)]
@@ -17,6 +17,8 @@ pub struct BootstrapDto {
     pub age_groups: [AgeGroup; 4],
     pub genders: [Gender; 3],
     pub verdicts: [Verdict; 4],
+    /// the allergens a person may name (a closed list; foods carry them through links)
+    pub allergens: [Allergen; 9],
 }
 
 #[derive(Debug, Serialize, TS)]

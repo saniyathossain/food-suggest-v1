@@ -5,6 +5,7 @@ pub mod billing;
 pub mod catalog;
 pub mod health;
 pub mod library;
+pub mod links;
 pub mod me;
 pub mod ops;
 pub mod options;

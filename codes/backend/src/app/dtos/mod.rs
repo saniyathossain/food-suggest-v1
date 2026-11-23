@@ -6,6 +6,7 @@ pub mod billing;
 pub mod catalog;
 pub mod content;
 pub mod library;
+pub mod links;
 pub mod meal;
 pub mod mode;
 pub mod options;

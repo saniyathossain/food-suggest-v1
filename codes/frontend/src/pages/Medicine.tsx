@@ -8,6 +8,7 @@ import { ErrorBox } from '@/components/kit/loaderror';
 import { PageBones } from '@/components/kit/routeskeleton';
 import { MedicineCardView } from '@/pages/Medicines';
 import { buttonClass } from '@/components/ui/button-styles';
+import { LinkedWith } from '@/components/links/LinkedWith';
 import { Disclaimer } from '@/components/Sources';
 import { useResource } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -137,6 +138,7 @@ export default function Medicine({ slug }: { slug: string }) {
           </div>
         </section>
       )}
+      <LinkedWith from={`medicine:${generic.slug}`} />
       <Disclaimer />
     </main>
   );

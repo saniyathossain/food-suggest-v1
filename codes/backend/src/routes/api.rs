@@ -1,4 +1,4 @@
-use crate::app::http::controllers::{sync, admin, auth, billing, catalog, family, health, insights, library, me, meals, ops, options, plan, staff};
+use crate::app::http::controllers::{sync, admin, auth, billing, catalog, family, health, insights, library, links, me, meals, ops, options, plan, staff};
 use crate::app::http::middleware::require_admin;
 use crate::bootstrap::AppState;
 use crate::app::services::media::MAX_UPLOAD_BYTES;
@@ -12,6 +12,8 @@ pub fn router(state: &AppState) -> Router<AppState> {
     let admin = Router::new()
         .route("/catalog", get(admin::catalog))
         .route("/options/{kind}", get(options::list))
+        .route("/links", get(links::admin_list).post(links::create))
+        .route("/links/{id}", patch(links::update).delete(links::delete))
         .route("/food-rules", put(admin::upsert_rule))
         .route("/food-rules/bulk", post(ops::bulk_rules))
         .route("/food-rules/export", get(ops::export_rules))
@@ -70,6 +72,7 @@ pub fn router(state: &AppState) -> Router<AppState> {
         .route("/search-index", get(catalog::search_index))
         .route("/conditions/{slug}", get(catalog::condition))
         .route("/foods", get(catalog::foods))
+        .route("/links", get(links::list))
         .route("/library/medicines", get(library::list))
         .route("/library/medicines/{slug}", get(library::detail))
         .route("/foods/{slug}", get(catalog::food))
@@ -118,6 +121,11 @@ pub const ROUTES: &[(&str, &str, &str, &str)] = &[
     ("GET", "/api/v1/search-index", "public", "habits and medicine generics for the in-app search (one language)"),
     ("GET", "/api/v1/conditions/{slug}", "public", "condition: foods, timing, habits, sources"),
     ("GET", "/api/v1/foods", "public", "food search"),
+    ("GET", "/api/v1/links", "public", "what is linked to X: ?from=food:rice (kind:key, required) &to=condition|medicine|allergen|criterion|food &verdict= &q= &cursor= &limit= (cursor-paged, stricter verdict wins per pair, counts per kind)"),
+    ("GET", "/api/v1/admin/links", "admin", "every link, both ends and both languages: ?from= &to= &verdict= &q= &page= &per_page="),
+    ("POST", "/api/v1/admin/links", "editor", "add a link; written to the table that holds that kind of pair (rules, medicine notes, allergens, else links)"),
+    ("PATCH", "/api/v1/admin/links/{id}", "editor", "change a link's verdict, reason, source or on/off (id from the list: link:12, rule:55 …)"),
+    ("DELETE", "/api/v1/admin/links/{id}", "editor", "delete a link"),
     ("GET", "/api/v1/library/medicines", "public", "medicine library: ?q= &group= &timing= &sort=az|conflicts &cursor= &limit= (cursor-paged, groups with live counts)"),
     ("GET", "/api/v1/library/medicines/{slug}", "public", "one medicine: how it is taken, food notes, medicine conflicts, brands, same-group medicines"),
     ("POST", "/api/v1/plan", "public", "merged day plan"),

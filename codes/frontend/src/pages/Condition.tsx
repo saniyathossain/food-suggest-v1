@@ -5,6 +5,7 @@ import { Icon, Utensils } from '@/components/icons';
 import { Clock, HeartHandshake } from '@/components/icons/page';
 import { Crumbs } from '@/components/journey/Crumbs';
 import { PlanNext } from '@/components/journey/NextStep';
+import { LinkedWith } from '@/components/links/LinkedWith';
 import { FoodRow } from '@/components/FoodRow';
 import { Insight } from '@/components/Insight';
 import { Lane, Lanes } from '@/components/Lanes';
@@ -89,6 +90,7 @@ function Body({ data }: { data: ConditionDetail }) {
         {tab === 'timing' && <TimingList items={data.timing} />}
         {tab === 'habits' && <HabitGrid items={data.habits} />}
       </FadeIn>
+      <LinkedWith from={`condition:${data.slug}`} />
       <Sources items={data.sources} />
       <PlanNext kind="condition" />
       <Disclaimer />

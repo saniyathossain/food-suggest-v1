@@ -2,6 +2,7 @@
 mod accounts;
 mod billing;
 mod catalog;
+mod links;
 mod meals;
 mod medicines;
 mod profiles;
@@ -16,5 +17,5 @@ pub use meals::{MealFields, MealLogRepository, MAX_PER_DAY};
 pub use medicines::{slug_of, ImportRow, MedicineRepository};
 pub use shares::ShareRepository;
 pub use stats::StatsRepository;
-pub use sync::{PlatformRow, RunFilter, RunResult, RunRow, SourceConfig, SourceRow, SyncRepository};
+pub use sync::{RunFilter, RunResult, RunRow, SourceConfig, SourceRow, SyncRepository};
 pub use profiles::{FullProfile, MedicineFields, ProfileFields, ProfileRepository};

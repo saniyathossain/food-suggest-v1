@@ -146,6 +146,53 @@ paths:
         - { name: cursor, in: query, schema: { type: string } }
         - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 60 } }
       responses: { '200': { description: 'MedicinePageDto: { items[MedicineCardDto], next_cursor, total, groups[], timings[] }' } }
+  /api/v1/links:
+    get:
+      summary: 'What is linked to X: foods, conditions, medicines, allergens and readings, cursor-paged (public, one language, cacheable)'
+      description: 'from is required: kind:key, such as food:rice, condition:diabetes, medicine:metformin, allergen:gluten, criterion:blood_pressure:high (a reading''s band) or criterion:age:senior / criterion:sex:female / criterion:pregnancy:pregnant. to narrows the other end by kind (food, condition, medicine, allergen, criterion; several with | or ,). verdict narrows by recommended, ok, limit, avoid, caution, serious (several allowed). q matches words in the other end''s name (either language), group or key. Rows are read from the tables the plan already uses (food rules, medicine food notes, medicine conflicts, allergens, reading notes, age and sex notes) plus the links table; when several join the same pair the stricter verdict wins (serious > avoid > caution > limit > recommended > ok) and `merged` counts the rest. Order: strictest first, then kind, then name. cursor is the previous page''s next_cursor; limit 1-60 (24). The answer carries `counts` per kind before the `to` filter so a client can draw live chips. An allergen or a criterion has no label here: the app words it. Every reason is general guidance with its source, never a diagnosis or a dose.'
+      parameters:
+        - { name: from, in: query, required: true, schema: { type: string, example: 'food:rice' } }
+        - { name: to, in: query, schema: { type: string, example: 'condition|medicine' } }
+        - { name: verdict, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 60 } }
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+      responses: { '200': { description: 'LinksPageDto: { from: LinkEndDto, items[LinkDto { id, other: LinkEndDto { kind, key, label, hint }, verdict, reason, source, origin, merged }], next_cursor, total, counts[{ kind, count }] }' }, '404': { description: Unknown or inactive subject }, '422': { description: 'Field errors: from, to, verdict or cursor' } }
+  /api/v1/admin/links:
+    get:
+      summary: 'Every link, both ends and both languages, by page number (editor and up)'
+      description: 'Same filters as /api/v1/links but from is optional (it then matches either end, and to matches either end''s kind); page from 0 and per_page 10-100 (25). Inactive foods, conditions and medicines are included. Each row has `editable` (false for reading and age or sex notes, which are edited elsewhere) and `origin`. The answer carries `counts` and `criteria`, the closed list of keys a criterion may take.'
+      security: [{ admin: [] }, { session: [] }]
+      parameters:
+        - { name: from, in: query, schema: { type: string } }
+        - { name: to, in: query, schema: { type: string } }
+        - { name: verdict, in: query, schema: { type: string } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, minimum: 0 } }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 10, maximum: 100 } }
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+      responses: { '200': { description: 'AdminLinksPageDto: { items[AdminLinkDto], total, page, per_page, counts[], criteria[] }' } }
+    post:
+      summary: 'Add a link (editor)'
+      description: 'Body { first: { kind, key }, second: { kind, key }, verdict, reason: { en, bn }, source? (a source key) }. The link is written to the table that holds that kind of pair, so the plan and the links never disagree: food and condition go to the food rules (avoid, limit, ok or recommended), food and allergen to the allergen list (avoid; no words needed), medicine and food to the medicine food notes (caution or serious), two medicines to the medicine conflicts (caution or serious); every other pair goes to the links table. Both ends must exist and differ. Answer { id } (link:12, rule:55, medfood:7:rice …).'
+      security: [{ admin: [] }, { session: [] }]
+      requestBody: { content: { application/json: { schema: { type: object, required: [first, second, verdict, reason], properties: { first: { type: object, properties: { kind: { type: string, enum: [food, condition, medicine, allergen, criterion] }, key: { type: string } } }, second: { type: object, properties: { kind: { type: string, enum: [food, condition, medicine, allergen, criterion] }, key: { type: string } } }, verdict: { type: string, enum: [recommended, ok, limit, avoid, caution, serious] }, reason: { type: object, properties: { en: { type: string }, bn: { type: string } } }, source: { type: string } } } } } }
+      responses: { '201': { description: LinkSavedDto }, '422': { description: 'Field errors: a verdict the pair does not take, an end that is not there, a pair already linked' } }
+  /api/v1/admin/links/{id}:
+    patch:
+      summary: 'Change a link''s verdict, reason, source (null removes it) or on/off (editor)'
+      description: 'id comes from the list: link:12, rule:55, medfood:7:rice, medpair:3, allergen:rice:gluten. A food rule edit asks for review again. A medicine food note holds severity, advice and source for every food it lists. An allergen link is added or deleted, not edited; reading and age or sex notes are read-only here (422).'
+      security: [{ admin: [] }, { session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody: { content: { application/json: { schema: { type: object, properties: { verdict: { type: string, enum: [recommended, ok, limit, avoid, caution, serious] }, reason: { type: object, properties: { en: { type: string }, bn: { type: string } } }, source: { type: string, nullable: true }, active: { type: boolean } } } } } }
+      responses: { '200': { description: LinkSavedDto }, '404': { description: Unknown link }, '422': { description: Field errors or read-only row } }
+    delete:
+      summary: 'Delete a link (editor)'
+      description: 'A medicine food note made for one food goes with it; a note that lists several foods keeps the others.'
+      security: [{ admin: [] }, { session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses: { '204': { description: Deleted }, '404': { description: Unknown link }, '422': { description: Read-only row } }
   /api/v1/library/medicines/{slug}:
     get:
       summary: 'One medicine: how it is taken, photo, food notes, medicine conflicts, brands, same-group medicines'
@@ -519,7 +566,7 @@ paths:
     post:
       tags: [admin]
       security: [{ admin: [] }]
-      summary: 'One fetch with the settings sent (no retries, nothing saved). Send the slug of a saved source to reuse its stored secret headers. A PUT, PATCH or DELETE test sends the real request and needs confirm_write; a passed test of a saved source lets it run.'
+      summary: 'One fetch with the settings sent (no retries, nothing saved). Send the slug of a saved source to reuse its stored secret headers.'
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSourceInput' } } } }
       responses: { '200': { description: What was read, content: { application/json: { schema: { $ref: '#/components/schemas/SyncTest' } } } }, '422': { $ref: '#/components/responses/Error' } }
   /api/v1/admin/sync-sources/{slug}:
@@ -920,12 +967,9 @@ components:
         name: { type: string }
         kind: { type: string, enum: [medicines, foods, conditions, allergies, custom] }
         base_url: { type: string, description: 'http or https only; loopback, link-local and private addresses are refused after DNS resolution' }
-        method: { type: string, enum: [get, post, put, patch, delete], description: 'PUT, PATCH and DELETE are never redirected and run only after their exact request passed /sync-sources/test' }
+        method: { type: string, enum: [get, post] }
         headers: { type: array, items: { $ref: '#/components/schemas/SyncHeader' } }
-        query_template: { type: string, description: 'the address query string, every method. {today} = the date' }
-        body: { type: string, description: 'request body, any method but GET: JSON if it starts with { or [, else form text' }
-        mode: { type: string, enum: [update, append], description: 'update: add new rows and refresh known ones; append: only add new rows' }
-        platform: { type: [string, 'null'], description: 'slug of the platform preset it was set up from' }
+        query_template: { type: string, description: 'GET: the query string; POST: the body. {today} = the date' }
         timeout_ms: { type: integer, minimum: 500, maximum: 120000 }
         max_retries: { type: integer, minimum: 0, maximum: 10 }
         backoff_base_ms: { type: integer }
@@ -938,14 +982,9 @@ components:
         last_status: { type: [string, 'null'], enum: [running, ok, failed, null] }
         last_error: { type: [string, 'null'] }
         can_save: { type: boolean, description: 'false = the kind has no mapper yet' }
-        needs_test: { type: boolean, description: 'a PUT / PATCH / DELETE source whose current request has not passed Test: a run answers 422' }
-    SyncPlatform:
-      type: object
-      description: 'A platform preset (data: sync_platforms). Secret headers carry no value.'
-      properties: { slug: { type: string }, name: { type: string }, kind: { type: string }, base_url: { type: string }, method: { type: string }, headers: { type: array, items: { $ref: '#/components/schemas/SyncHeader' } }, query_template: { type: string }, body: { type: string }, mode: { type: string }, docs_url: { type: string }, note: { type: object, properties: { en: { type: string }, bn: { type: string } } }, can_save: { type: boolean } }
     SyncSetup:
       type: object
-      properties: { sources: { type: array, items: { $ref: '#/components/schemas/SyncSource' } }, platforms: { type: array, items: { $ref: '#/components/schemas/SyncPlatform' } }, vault_ready: { type: boolean } }
+      properties: { sources: { type: array, items: { $ref: '#/components/schemas/SyncSource' } }, vault_ready: { type: boolean } }
     SyncSourceInput:
       type: object
       properties:
@@ -953,13 +992,9 @@ components:
         name: { type: string }
         kind: { type: string, enum: [medicines, foods, conditions, allergies, custom] }
         base_url: { type: string }
-        method: { type: string, enum: [get, post, put, patch, delete], description: 'PUT, PATCH and DELETE are never redirected and run only after their exact request passed /sync-sources/test' }
+        method: { type: string, enum: [get, post] }
         headers: { type: array, items: { type: object, required: [name, value, secret], properties: { name: { type: string }, value: { type: string }, secret: { type: boolean } } } }
         query_template: { type: string }
-        body: { type: string }
-        mode: { type: string, enum: [update, append] }
-        platform: { type: [string, 'null'] }
-        confirm_write: { type: boolean, description: 'test only: required for PUT, PATCH and DELETE, which send the real request' }
         timeout_ms: { type: integer }
         max_retries: { type: integer }
         backoff_base_ms: { type: integer }

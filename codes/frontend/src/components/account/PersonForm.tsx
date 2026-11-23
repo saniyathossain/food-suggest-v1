@@ -15,7 +15,6 @@ import { cn, tone } from '@/lib/utils';
 const RELATIONS: Kinship[] = ['me', 'spouse', 'child', 'parent', 'sibling', 'other'];
 const ACTIVITIES: Activity[] = ['sedentary', 'light', 'moderate', 'active'];
 const BUDGETS: Budget[] = ['low', 'medium', 'high'];
-const ALLERGENS: Allergen[] = ['milk', 'egg', 'peanut', 'tree_nut', 'gluten', 'soy', 'fish', 'shellfish', 'sesame'];
 
 export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me: Me; person: Person | null; onSaved: (id: number) => void }) {
   const { t } = useI18n();
@@ -160,7 +159,7 @@ export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me:
         <div className="grid gap-2">
           <span className="text-subhead font-semibold">{t.account.allergensLabel}</span>
           <ul className="flex flex-wrap gap-2">
-            {ALLERGENS.map((kind) => {
+            {boot.allergens.map((kind) => {
               const on = allergens.includes(kind);
               return (
                 <li key={kind}>

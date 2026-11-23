@@ -2,7 +2,7 @@
 // conditions one level deeper, /admin/conditions/:slug), with a breadcrumb built from the address. Every change goes live at once.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { KeyRound } from '@/components/icons';
-import { ArrowRight, BookOpen, CalendarClock, ChartLine, ChefHat, Clock, CreditCard, Crown, Database, HardDrive, ListChecks, Lock, Pill, Plus, Repeat, Server, Stethoscope, Users, Wallet } from '@/components/icons/page';
+import { ArrowRight, BookOpen, CalendarClock, ChartLine, ChefHat, Clock, CreditCard, Crown, Database, HardDrive, Hash, ListChecks, Lock, Pill, Plus, Repeat, Server, Stethoscope, Users, Wallet } from '@/components/icons/page';
 import { ConditionSettings } from '@/components/admin/ConditionSettings';
 import { DataTable, type Column } from '@/components/admin/DataTable';
 import { Accounts } from '@/components/admin/Accounts';
@@ -12,6 +12,7 @@ import { AuditTrail } from '@/components/admin/AuditTrail';
 import { ContentCalendar } from '@/components/admin/ContentCalendar';
 import { Coverage } from '@/components/admin/Coverage';
 import { Insights } from '@/components/admin/Insights';
+import { Links } from '@/components/admin/Links';
 import { MediaUsage } from '@/components/admin/MediaUsage';
 import { RulesIO } from '@/components/admin/RulesIO';
 import { TiersEditor } from '@/components/admin/TiersEditor';
@@ -76,6 +77,7 @@ function useSections(): Section[] {
   return [
     { key: 'conditions', label: t.nav.conditions, lead: t.admin.sectionLeads.conditions, Glyph: Stethoscope },
     { key: 'coverage', label: t.admin.ops.sections.coverage, lead: t.admin.ops.leads.coverage, Glyph: ListChecks },
+    { key: 'links', label: t.admin.ops.sections.links, lead: t.admin.ops.leads.links, Glyph: Hash },
     { key: 'rulesio', label: t.admin.ops.sections.rulesio, lead: t.admin.ops.leads.rulesio, Glyph: Database },
     { key: 'foods', label: t.nav.foods, lead: t.admin.sectionLeads.foods, Glyph: Plus },
     { key: 'accounts', label: t.admin.users, lead: t.admin.usersLead, Glyph: Users },
@@ -95,7 +97,7 @@ function useSections(): Section[] {
 }
 
 const GROUPS: { key: 'content' | 'people' | 'health' | 'system'; sections: string[] }[] = [
-  { key: 'content', sections: ['conditions', 'foods', 'recipes', 'posts', 'calendar', 'media', 'rulesio', 'coverage'] },
+  { key: 'content', sections: ['conditions', 'foods', 'recipes', 'posts', 'calendar', 'media', 'rulesio', 'coverage', 'links'] },
   { key: 'people', sections: ['accounts', 'tiers', 'payments', 'gateways'] },
   { key: 'health', sections: ['medicines', 'modes'] },
   { key: 'system', sections: ['insights', 'audit', 'sync'] },
@@ -308,6 +310,7 @@ export default function Admin() {
         )}
         {section?.key === 'coverage' && <Coverage admin={admin} />}
         {section?.key === 'rulesio' && <RulesIO admin={admin} />}
+        {section?.key === 'links' && <Links admin={admin} />}
         {section?.key === 'calendar' && <ContentCalendar admin={admin} />}
         {section?.key === 'media' && <MediaUsage admin={admin} />}
         {section?.key === 'insights' && <Insights admin={admin} />}

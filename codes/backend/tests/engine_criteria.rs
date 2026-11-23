@@ -27,6 +27,7 @@ fn snapshot() -> CatalogSnapshot {
         origin: food_api::app::enums::FoodOrigin::Local,
         season: None,
         cost_band: cost,
+        age_from_months: None,
     };
     let rule = |id: i32, condition_id: i32, food_id: i32, verdict: Verdict, source_id: Option<i32>| food_rule::Model { id, condition_id, food_id, verdict, reason: text("because"), source_id, reviewed_by: None, reviewed_on: Some("2026-11-15".to_owned()) };
     let condition = |id: i32, slug: &str| condition::Model { id, slug: slug.to_owned(), name: text(slug), summary: text(""), icon: "circle".to_owned(), color: "#000000".to_owned(), media_id: None, active: true, sort: id, reviewed_by: None, reviewed_on: Some("2026-11-15".to_owned()) };

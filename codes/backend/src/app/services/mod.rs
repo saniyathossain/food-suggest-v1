@@ -7,6 +7,7 @@ pub mod diet_mode;
 pub mod entitlements;
 pub mod home;
 pub mod library;
+pub mod links;
 mod index;
 pub mod meals;
 pub mod media;

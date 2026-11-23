@@ -18,6 +18,7 @@ pub mod food_variant;
 pub mod food_variant_rule;
 pub mod habit;
 pub mod lab_result;
+pub mod link;
 pub mod meal_log;
 pub mod meal_slot;
 pub mod media;
