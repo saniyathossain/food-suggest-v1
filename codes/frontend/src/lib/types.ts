@@ -88,3 +88,89 @@ export type { GatewayInputDto as GatewayInput } from '../generated/GatewayInputD
 export type { GatewaySetupDto as GatewaySetup } from '../generated/GatewaySetupDto';
 export type { GatewayCheckDto as GatewayCheck } from '../generated/GatewayCheckDto';
 export type { PaymentAdminDto as PaymentAdmin } from '../generated/PaymentAdminDto';
+
+// external sync (codes/backend/src/app/dtos/sync.rs)
+export type { SyncKind } from '../generated/SyncKind';
+export type { SyncMethod } from '../generated/SyncMethod';
+export type { SyncStatus } from '../generated/SyncStatus';
+export type { SyncHeaderDto as SyncHeader } from '../generated/SyncHeaderDto';
+export type { SyncHeaderInputDto as SyncHeaderInput } from '../generated/SyncHeaderInputDto';
+export type { SyncSourceDto as SyncSource } from '../generated/SyncSourceDto';
+export type { SyncSourceInputDto as SyncSourceInput } from '../generated/SyncSourceInputDto';
+export type { SyncSetupDto as SyncSetup } from '../generated/SyncSetupDto';
+export type { SyncTestDto as SyncTest } from '../generated/SyncTestDto';
+export type { SyncRunDto as SyncRun } from '../generated/SyncRunDto';
+
+// meal log, reports, sharing (codes/backend/src/app/dtos/{meal,share}.rs)
+export type { MealTime } from '../generated/MealTime';
+export type { MeterKey } from '../generated/MeterKey';
+export type { MeterKind } from '../generated/MeterKind';
+export type { MeterDto as Meter } from '../generated/MeterDto';
+export type { MealInputDto as MealInput } from '../generated/MealInputDto';
+export type { MealEntryDto as MealEntry } from '../generated/MealEntryDto';
+export type { MealTotalDto as MealTotal } from '../generated/MealTotalDto';
+export type { DayLogDto as DayLog } from '../generated/DayLogDto';
+export type { DaySummaryDto as DaySummary } from '../generated/DaySummaryDto';
+export type { MealRangeDto as MealRange } from '../generated/MealRangeDto';
+export type { WeeklyReportDto as WeeklyReport } from '../generated/WeeklyReportDto';
+export type { WeekFoodDto as WeekFood } from '../generated/WeekFoodDto';
+export type { OverDaysDto as OverDays } from '../generated/OverDaysDto';
+export type { ShareDto as Share } from '../generated/ShareDto';
+export type { SharedProfileDto as SharedProfile } from '../generated/SharedProfileDto';
+export type { ExportDto as DataExport } from '../generated/ExportDto';
+export type { Activity } from '../generated/Activity';
+export type { Allergen } from '../generated/Allergen';
+export type { Budget } from '../generated/Budget';
+export type { Criterion } from '../generated/Criterion';
+export type { Band } from '../generated/Band';
+export type { InsightDto as Insight } from '../generated/InsightDto';
+export type { WhyDto as Why } from '../generated/WhyDto';
+export type { WhyBasis } from '../generated/WhyBasis';
+export type { CoverageDto as Coverage } from '../generated/CoverageDto';
+export type { CoverageRowDto as CoverageRow } from '../generated/CoverageRowDto';
+export type { AuditRowDto as AuditRow } from '../generated/AuditRowDto';
+export type { RuleBulkDto as RuleBulk } from '../generated/RuleBulkDto';
+export type { RuleBulkResultDto as RuleBulkResult } from '../generated/RuleBulkResultDto';
+export type { RuleImportResultDto as RuleImportResult } from '../generated/RuleImportResultDto';
+export type { ImportIssueDto as ImportIssue } from '../generated/ImportIssueDto';
+export type { CalendarItemDto as CalendarItem } from '../generated/CalendarItemDto';
+export type { CalendarState } from '../generated/CalendarState';
+export type { TierPreviewDto as TierPreview } from '../generated/TierPreviewDto';
+export type { MediaUsageDto as MediaUsage } from '../generated/MediaUsageDto';
+export type { TrafficDto as Traffic } from '../generated/TrafficDto';
+export type { PlanMixDto as PlanMix } from '../generated/PlanMixDto';
+export type { ReviewDto as Review } from '../generated/ReviewDto';
+export type { SearchIndexDto as SearchIndex } from '../generated/SearchIndexDto';
+
+// the medicine library (codes/backend/src/app/dtos/library.rs)
+export type { MedicineGroupDto as MedicineGroup } from '../generated/MedicineGroupDto';
+export type { MedicineCardDto as MedicineCard } from '../generated/MedicineCardDto';
+export type { MedicineWhenDto as MedicineWhen } from '../generated/MedicineWhenDto';
+export type { MedicinePageDto as MedicinePage } from '../generated/MedicinePageDto';
+export type { SectionCountsDto } from '../generated/SectionCountsDto';
+export type { FoodPatchDto as FoodPatch } from '../generated/FoodPatchDto';
+export type { OptionDto } from '../generated/OptionDto';
+export type { OptionsPageDto } from '../generated/OptionsPageDto';
+export type { BrandDto as Brand } from '../generated/BrandDto';
+export type { MedicineDetailDto as MedicineDetail } from '../generated/MedicineDetailDto';
+
+// links between foods, conditions, medicines, allergens and readings (codes/backend/src/app/dtos/links.rs)
+export type { LinkKind } from '../generated/LinkKind';
+export type { LinkVerdict } from '../generated/LinkVerdict';
+export type { LinkOrigin } from '../generated/LinkOrigin';
+export type { LinkEndDto as LinkEnd } from '../generated/LinkEndDto';
+export type { LinkDto as Link } from '../generated/LinkDto';
+export type { LinkCountDto as LinkCount } from '../generated/LinkCountDto';
+export type { LinksPageDto as LinksPage } from '../generated/LinksPageDto';
+export type { AdminLinkDto as AdminLink } from '../generated/AdminLinkDto';
+export type { AdminLinksPageDto as AdminLinksPage } from '../generated/AdminLinksPageDto';
+export type { LinkRefDto as LinkRef } from '../generated/LinkRefDto';
+export type { LinkInputDto as LinkInput } from '../generated/LinkInputDto';
+export type { LinkPatchDto as LinkPatch } from '../generated/LinkPatchDto';
+export type { LinkSavedDto as LinkSaved } from '../generated/LinkSavedDto';
+
+// a condition's details: symptoms, causes, warning signs (codes/backend/src/app/dtos/{catalog,details}.rs)
+export type { DetailKind } from '../generated/DetailKind';
+export type { DetailGroupDto as DetailGroup } from '../generated/DetailGroupDto';
+export type { DetailsPutDto as DetailsPut } from '../generated/DetailsPutDto';
+export type { DetailsSavedDto as DetailsSaved } from '../generated/DetailsSavedDto';

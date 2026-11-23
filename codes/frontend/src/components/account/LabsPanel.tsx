@@ -1,8 +1,10 @@
 // A person's results over time: add a dated value (HbA1c, fasting sugar, TSH, ALT, haemoglobin, weight, blood pressure);
 // each measure shows its latest value, the change since the first, and a small line of every reading. Values are the
 // person's own; the app does not judge them.
+import { Select } from '@/components/ui/select';
 import { useState } from 'react';
 import { UpgradeCard } from '@/components/account/Upgrade';
+import { DatePicker } from '@/components/kit/datepicker';
 import { CountUp } from '@/components/kit/countup';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -83,11 +85,11 @@ export function LabsPanel({ me, person, onChanged }: { me: Me; person: Person; o
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="grid gap-1.5">
             <Label htmlFor="lab-kind">{t.labs.title}</Label>
-            <select id="lab-kind" value={kind} onChange={(event) => setKind(event.target.value as LabKind)} className="field h-11 rounded-xl px-3 text-subhead">
+            <Select id="lab-kind" value={kind} onChange={(event) => setKind(event.target.value as LabKind)} className="field h-11 rounded-xl px-3 text-subhead">
               {KINDS.map((item) => (
                 <option key={item} value={item}>{t.labs.kinds[item]}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="lab-value">{t.labs.value}</Label>
@@ -95,7 +97,7 @@ export function LabsPanel({ me, person, onChanged }: { me: Me; person: Person; o
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="lab-date">{t.labs.date}</Label>
-            <Input id="lab-date" type="date" value={date} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setDate(event.target.value)} />
+            <DatePicker id="lab-date" label={t.labs.date} value={date} max={new Date().toISOString().slice(0, 10)} onChange={setDate} />
           </div>
         </div>
         {error && <p role="alert" className="text-footnote text-avoid-ink">{error}</p>}

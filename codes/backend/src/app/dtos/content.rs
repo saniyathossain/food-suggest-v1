@@ -103,6 +103,10 @@ pub struct PostQuery {
 #[ts(export)]
 pub struct PublishPatchDto {
     pub published: bool,
+    /// the day it goes live (YYYY-MM-DD); empty text clears the schedule; absent leaves it
+    #[serde(default)]
+    #[ts(optional)]
+    pub publish_on: Option<String>,
 }
 
 /// Admin listing row for recipes and articles (both languages, published or not).
@@ -116,4 +120,8 @@ pub struct ContentAdminDto {
     pub group: String,
     pub published: bool,
     pub has_image: bool,
+    /// the scheduled day, when there is one
+    pub publish_on: Option<String>,
+    /// the date shown on the item (articles)
+    pub date: Option<String>,
 }

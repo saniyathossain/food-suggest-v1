@@ -30,7 +30,7 @@ pub fn iso_date(value: &str) -> bool {
     year.len() == 4 && month.len() == 2 && day.len() == 2 && number(year, 1900, 2100) && number(month, 1, 12) && number(day, 1, 31)
 }
 
-async fn brands_for(state: &AppState, people: &[FullProfile]) -> Result<Vec<crate::app::models::medicine::Model>, AppError> {
+pub(crate) async fn brands_for(state: &AppState, people: &[FullProfile]) -> Result<Vec<crate::app::models::medicine::Model>, AppError> {
     let ids: Vec<i32> = people.iter().flat_map(|person| person.medicines.iter().filter_map(|row| row.medicine_id)).collect();
     state.medicines.brands(&ids).await
 }
@@ -64,6 +64,16 @@ fn fields(index: &CatalogIndex<'_>, input: &ProfileInputDto) -> Result<ProfileFi
     }
     let mode = input.mode.clone().filter(|slug| index.snapshot.modes.iter().any(|mode| mode.active && &mode.slug == slug)).unwrap_or_else(|| "everyday".to_owned());
     let country = input.country.clone().map(|code| code.trim().to_uppercase()).filter(|code| index.snapshot.countries.iter().any(|country| country.active && country.code == *code)).unwrap_or_else(|| "BD".to_owned());
+    let within = |value: Option<i16>, low: i16, high: i16| value.is_none_or(|number| (low..=high).contains(&number));
+    if !within(input.height_cm, 50, 250) {
+        return Err(AppError::field("height_cm", "enter the height in centimetres (50 to 250)"));
+    }
+    if !within(input.waist_cm, 30, 250) {
+        return Err(AppError::field("waist_cm", "enter the waist in centimetres (30 to 250)"));
+    }
+    if input.sleep_hours.is_some_and(|hours| !(0.0..=24.0).contains(&hours)) {
+        return Err(AppError::field("sleep_hours", "enter the hours slept (0 to 24)"));
+    }
     Ok(ProfileFields {
         name: name.to_owned(),
         relation: input.relation,
@@ -75,6 +85,12 @@ fn fields(index: &CatalogIndex<'_>, input: &ProfileInputDto) -> Result<ProfileFi
         allergies: input.allergies.clone(),
         surgeries: input.surgeries.clone(),
         conditions,
+        height_cm: input.height_cm,
+        waist_cm: input.waist_cm,
+        activity: input.activity,
+        sleep_hours: input.sleep_hours,
+        budget: input.budget,
+        allergens: input.allergens.clone(),
     })
 }
 
@@ -103,7 +119,7 @@ pub async fn delete_profile(State(state): State<AppState>, Viewer(viewer): Viewe
     Ok(StatusCode::NO_CONTENT)
 }
 
-async fn require(state: &AppState, viewer: &user::Model, feature: FeatureKey, name: &'static str) -> Result<(), AppError> {
+pub(crate) async fn require(state: &AppState, viewer: &user::Model, feature: FeatureKey, name: &'static str) -> Result<(), AppError> {
     let snapshot = state.catalog.snapshot().await?;
     let index = CatalogIndex::new(&snapshot, Locale::En);
     if Entitlements::of(&index, billing::effective_tier(&viewer)).allows(feature) { Ok(()) } else { Err(AppError::Upgrade(name)) }

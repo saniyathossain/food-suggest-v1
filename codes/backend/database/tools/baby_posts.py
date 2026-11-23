@@ -1,0 +1,164 @@
+"""Writes database/seeders/posts_baby.sql: three short, sourced articles for the baby health section (starting solid foods, breastfeeding
+and the first two years, foods to keep away from babies). Every statement is from the pages opened on 2026-11-23 (NHS, WHO); the
+NHS pages are UK guidance, so each article says to follow the local doctor or health worker. No doses. Idempotent.
+
+    python3 baby_posts.py > ../seeders/posts_baby.sql
+"""
+import json
+
+
+def q(text):
+    return "'" + text.replace("'", "''") + "'"
+
+
+SOURCES = [
+    ("nhs-first-solids", "Your baby's first solid foods", "শিশুর প্রথম শক্ত খাবার", "NHS", "https://www.nhs.uk/conditions/baby/weaning-and-feeding/babys-first-solid-foods/", 2026),
+    ("nhs-foods-to-avoid-babies", "Foods to avoid giving babies and young children", "শিশুদের যেসব খাবার দেওয়া উচিত নয়", "NHS", "https://www.nhs.uk/conditions/baby/weaning-and-feeding/foods-to-avoid-giving-babies-and-young-children/", 2026),
+    ("who-iycf", "Infant and young child feeding (fact sheet)", "শিশু ও ছোট বাচ্চার খাওয়ানো (তথ্যপত্র)", "WHO", "https://www.who.int/news-room/fact-sheets/detail/infant-and-young-child-feeding", 2026),
+    ("nhs-breastfeeding-benefits", "Benefits of breastfeeding", "বুকের দুধ খাওয়ানোর উপকারিতা", "NHS", "https://www.nhs.uk/conditions/baby/breastfeeding-and-bottle-feeding/breastfeeding/benefits/", 2026),
+]
+
+DOC = "This is general guidance from the NHS and WHO, not medical advice. Your doctor or local health worker knows your baby; follow their advice, especially for a premature baby, an allergy in the family, or any worry about feeding or growth."
+DOC_BN = "এটি NHS ও WHO-র সাধারণ পরামর্শ, চিকিৎসা-পরামর্শ নয়। আপনার ডাক্তার বা স্থানীয় স্বাস্থ্যকর্মী আপনার শিশুকে চেনেন; তাঁদের কথা মানুন, বিশেষ করে অপরিণত শিশু, পরিবারে অ্যালার্জি বা খাওয়ানো বা বৃদ্ধি নিয়ে কোনো দুশ্চিন্তা থাকলে।"
+
+POSTS = [
+    dict(
+        slug="starting-solid-foods",
+        title=("Starting solid foods: what, when and how", "শক্ত খাবার শুরু: কী, কখন আর কীভাবে"),
+        excerpt=("Around six months, a baby is ready to start tasting food. Here is how to begin calmly, with soft, single foods, safe textures and no added salt or sugar.", "প্রায় ছয় মাসে শিশু খাবারের স্বাদ নিতে তৈরি হয়। নরম, একটি একটি খাবার, নিরাপদ গঠন আর বাড়তি লবণ-চিনি ছাড়া কীভাবে শান্তভাবে শুরু করবেন, এখানে দেখুন।"),
+        tags=["baby", "feeding", "weaning"],
+        minutes=3,
+        sources=["nhs-first-solids", "who-iycf"],
+        en=[
+            "Until about six months, breast milk, or first infant formula, gives your baby most of the energy and nutrients they need. Around six months, a baby starts to be ready for a first taste of other food. WHO and the NHS give the same starting point.",
+            "## Signs that your baby is ready",
+            "The NHS lists three signs that appear together from about six months:",
+            "- they can sit up and hold their head steady",
+            "- they can look at food, pick it up and put it in their mouth",
+            "- they can swallow food rather than spit it back out",
+            "Chewing fists, waking at night and wanting extra milk are common, but the NHS says they are not reliable signs of readiness.",
+            "## What to start with",
+            "- Begin with single vegetables or fruit, mashed or soft-cooked: sweet potato, potato, carrot, pumpkin, apple or pear.",
+            "- Include vegetables that are not sweet, so your baby gets used to different tastes.",
+            "- Move on from purées to mashed, lumpy and soft finger foods as soon as your baby can manage them.",
+            "- From about six months, the NHS says foods that can cause allergies, such as egg, peanut, gluten and fish, can be introduced one at a time in small amounts. If there is allergy in the family, talk to a doctor or health worker first.",
+            "- From about seven to nine months, include iron-rich foods such as meat, fish, lentils and beans, dark green vegetables and fortified cereals.",
+            "## How often and how much",
+            "WHO suggests starting with small amounts and increasing gradually: two to three meals a day at six to eight months, and three to four meals a day from nine months, with snacks if needed. Keep breastfeeding as often as your baby wants; breast milk still gives about half of a baby's energy at six to twelve months.",
+            "## Keep it safe",
+            "- Stay with your baby while they eat.",
+            "- Do not add salt or sugar to food or cooking water.",
+            "- Cut round foods, such as grapes, into quarters, and take out pips and bones. Avoid whole nuts and hard raw pieces.",
+            "- Gagging is common and normal as babies learn; choking is different and needs your immediate attention.",
+            DOC,
+        ],
+        bn=[
+            "প্রায় ছয় মাস পর্যন্ত বুকের দুধ, বা প্রথম ধাপের ফর্মুলা দুধ, শিশুর প্রয়োজনীয় বেশিরভাগ শক্তি ও পুষ্টি জোগায়। প্রায় ছয় মাসে শিশু অন্য খাবারের প্রথম স্বাদ নিতে তৈরি হতে শুরু করে। WHO ও NHS দুজনেই একই সূচনার কথা বলে।",
+            "## শিশু তৈরি কি না, বুঝবেন যেভাবে",
+            "NHS তিনটি লক্ষণের কথা বলে, যা প্রায় ছয় মাস থেকে একসঙ্গে দেখা যায়:",
+            "- সে সোজা হয়ে বসতে পারে এবং মাথা স্থির রাখতে পারে",
+            "- সে খাবারের দিকে তাকাতে, তুলে নিতে আর মুখে দিতে পারে",
+            "- সে খাবার গিলে ফেলতে পারে, ঠেলে বের করে দেয় না",
+            "মুঠো চিবানো, রাতে জেগে ওঠা আর বাড়তি দুধ চাওয়া সাধারণ, কিন্তু NHS বলে এগুলো তৈরি হওয়ার নির্ভরযোগ্য লক্ষণ নয়।",
+            "## কী দিয়ে শুরু করবেন",
+            "- একটি একটি সবজি বা ফল দিয়ে শুরু করুন, চটকে বা নরম সেদ্ধ করে: মিষ্টি আলু, আলু, গাজর, মিষ্টি কুমড়া, আপেল বা নাশপাতি।",
+            "- মিষ্টি নয় এমন সবজিও দিন, যাতে শিশু নানা স্বাদে অভ্যস্ত হয়।",
+            "- শিশু সামলাতে পারলেই পিউরি থেকে চটকানো, দানাদার আর নরম আঙুল-খাবারে যান।",
+            "- NHS বলে, প্রায় ছয় মাস থেকে ডিম, চীনাবাদাম, গ্লুটেন আর মাছের মতো অ্যালার্জি হতে পারে এমন খাবার একটি একটি করে অল্প পরিমাণে দেওয়া যায়। পরিবারে অ্যালার্জি থাকলে আগে ডাক্তার বা স্বাস্থ্যকর্মীর সঙ্গে কথা বলুন।",
+            "- প্রায় সাত থেকে নয় মাস থেকে আয়রনসমৃদ্ধ খাবার দিন, যেমন মাংস, মাছ, ডাল ও শিম, গাঢ় সবুজ সবজি আর পুষ্টি-মেশানো সিরিয়াল।",
+            "## কতবার, কতটা",
+            "WHO অল্প পরিমাণে শুরু করে ধীরে ধীরে বাড়াতে বলে: ছয় থেকে আট মাসে দিনে দুই-তিনবার, নয় মাস থেকে দিনে তিন-চারবার, দরকারে নাস্তাসহ। শিশু যতবার চায় বুকের দুধ চালিয়ে যান; ছয় থেকে বারো মাসে বুকের দুধ এখনও শিশুর শক্তির প্রায় অর্ধেক জোগায়।",
+            "## নিরাপদে খাওয়ান",
+            "- শিশু খাওয়ার সময় তার সঙ্গে থাকুন।",
+            "- খাবারে বা রান্নার পানিতে লবণ-চিনি দেবেন না।",
+            "- আঙুরের মতো গোল খাবার চার টুকরা করুন, বিচি ও কাঁটা বের করুন। গোটা বাদাম আর শক্ত কাঁচা টুকরা এড়ান।",
+            "- শিশু শেখার সময় ওক ওঠা স্বাভাবিক; দম আটকে যাওয়া ভিন্ন, তাতে এখনই মনোযোগ দিতে হয়।",
+            DOC_BN,
+        ],
+    ),
+    dict(
+        slug="breastfeeding-first-two-years",
+        title=("Breastfeeding in the first two years", "প্রথম দুই বছরে বুকের দুধ"),
+        excerpt=("WHO advises breast milk only for the first six months, then breast milk alongside safe food up to two years or beyond. Here is what that means day to day.", "WHO প্রথম ছয় মাস শুধু বুকের দুধ, তারপর দুই বছর বা তার বেশি পর্যন্ত নিরাপদ খাবারের সঙ্গে বুকের দুধের পরামর্শ দেয়। দৈনন্দিন জীবনে এর মানে কী, দেখুন।"),
+        tags=["baby", "breastfeeding", "mother"],
+        minutes=2,
+        sources=["who-iycf", "nhs-breastfeeding-benefits"],
+        en=[
+            "WHO advises starting breastfeeding within the first hour after birth, giving only breast milk for the first six months, and then continuing to breastfeed up to two years or beyond, with safe food added from six months.",
+            "## Why it matters",
+            "The NHS notes that breastfed babies have fewer infections, less diarrhoea and vomiting, and a lower risk of sudden infant death and of obesity later on. It says any amount of breast milk has a positive effect, and lists lower risks of breast and ovarian cancer, osteoporosis, heart disease, obesity and diabetes for the mother.",
+            "## Alongside food",
+            "- At six to twelve months, breast milk still gives about half of your baby's energy; at twelve to twenty-four months, about one third.",
+            "- Keep breastfeeding often as you add food; breast milk or formula stays the main drink in the first year.",
+            "- Respond to your baby's signs of hunger and fullness, and keep hands, utensils and food clean.",
+            "## If feeding is hard",
+            "Pain, a baby who is not gaining weight, or any worry about feeding is a reason to talk to a doctor, nurse or trained breastfeeding supporter early; help works best sooner.",
+            DOC,
+        ],
+        bn=[
+            "WHO জন্মের পর প্রথম এক ঘণ্টার মধ্যে বুকের দুধ শুরু করতে, প্রথম ছয় মাস শুধু বুকের দুধ দিতে, আর তারপর ছয় মাস থেকে নিরাপদ খাবার যোগ করে দুই বছর বা তার বেশি পর্যন্ত বুকের দুধ চালিয়ে যেতে পরামর্শ দেয়।",
+            "## কেন জরুরি",
+            "NHS বলে বুকের দুধ খাওয়া শিশুর সংক্রমণ কম হয়, ডায়রিয়া-বমি কম হয়, আর হঠাৎ শিশুমৃত্যু ও পরে স্থূলতার ঝুঁকি কমে। যেকোনো পরিমাণ বুকের দুধেই উপকার আছে, আর মায়ের স্তন ও ডিম্বাশয়ের ক্যান্সার, হাড়ক্ষয়, হৃদরোগ, স্থূলতা ও ডায়াবেটিসের ঝুঁকি কমে বলে তারা উল্লেখ করে।",
+            "## খাবারের পাশাপাশি",
+            "- ছয় থেকে বারো মাসে বুকের দুধ এখনও শিশুর শক্তির প্রায় অর্ধেক জোগায়; বারো থেকে চব্বিশ মাসে প্রায় এক-তৃতীয়াংশ।",
+            "- খাবার যোগ করলেও ঘন ঘন বুকের দুধ চালিয়ে যান; প্রথম বছরে বুকের দুধ বা ফর্মুলাই মূল পানীয়।",
+            "- শিশুর ক্ষুধা ও পেট ভরার ইঙ্গিতে সাড়া দিন, আর হাত, বাসনপত্র ও খাবার পরিষ্কার রাখুন।",
+            "## খাওয়ানো কঠিন হলে",
+            "ব্যথা, শিশুর ওজন না বাড়া বা খাওয়ানো নিয়ে যেকোনো দুশ্চিন্তায় আগেই ডাক্তার, নার্স বা প্রশিক্ষিত সহায়তাকারীর সঙ্গে কথা বলুন; আগে সাহায্য নিলে ভালো কাজ হয়।",
+            DOC_BN,
+        ],
+    ),
+    dict(
+        slug="foods-to-avoid-for-babies",
+        title=("Foods to keep away from babies and young children", "শিশু ও ছোট বাচ্চাদের যে খাবার দেওয়া ঠিক নয়"),
+        excerpt=("Honey before one year, added salt and sugar, whole nuts and a few other foods are not safe for little ones. Here is the NHS list, in plain words.", "এক বছরের আগে মধু, বাড়তি লবণ-চিনি, গোটা বাদামসহ কিছু খাবার ছোটদের জন্য নিরাপদ নয়। NHS-এর তালিকা সহজ ভাষায় দেখুন।"),
+        tags=["baby", "safety", "feeding"],
+        minutes=2,
+        sources=["nhs-foods-to-avoid-babies", "nhs-first-solids"],
+        en=[
+            "Some foods are fine for the family but not for a baby. The NHS gives this list.",
+            "## Do not give",
+            "- Honey until your baby is over one year old: it can cause infant botulism.",
+            "- Added salt: babies should not have much salt because it is hard on their kidneys. Salty foods such as sausages, crisps, ready meals and takeaways are best avoided.",
+            "- Added sugar, syrup and sweeteners for children aged four and under. This includes fruit juice and smoothies; whole fruit is fine.",
+            "- Whole nuts for children under five, because they can cause choking. Ground nuts or nut butter spread thinly on food are fine from about six months, unless a doctor has said otherwise because of allergy in the family.",
+            "- Rice drinks for children under five.",
+            "- Raw or lightly cooked shellfish, and raw jelly cubes.",
+            "## Take care with",
+            "- Eggs: from about six months, cooked until solid unless they carry the British Lion stamp.",
+            "- Cheese: pasteurised full-fat cheese is fine from six months; check the label.",
+            "- Round, hard or slippery foods: cut grapes into quarters and take out pips and bones.",
+            DOC,
+        ],
+        bn=[
+            "কিছু খাবার পরিবারের জন্য ঠিক, কিন্তু শিশুর জন্য নয়। NHS এই তালিকা দেয়।",
+            "## দেবেন না",
+            "- শিশুর বয়স এক বছর পেরোনোর আগে মধু: এতে শিশুর বটুলিজম হতে পারে।",
+            "- বাড়তি লবণ: শিশুর বেশি লবণ খাওয়া উচিত নয় কারণ এতে কিডনির ওপর চাপ পড়ে। সসেজ, চিপস, তৈরি খাবার আর বাইরের খাবারের মতো লবণাক্ত খাবার এড়ানোই ভালো।",
+            "- চার বছর বা তার কম বয়সীদের বাড়তি চিনি, সিরাপ ও মিষ্টি দেওয়ার উপাদান। ফলের রস ও স্মুদিও এর মধ্যে পড়ে; আস্ত ফল দেওয়া যায়।",
+            "- পাঁচ বছরের কম বয়সীদের গোটা বাদাম, কারণ এতে দম আটকাতে পারে। গুঁড়া বাদাম বা পাতলা করে মাখানো বাদামের মাখন প্রায় ছয় মাস থেকে দেওয়া যায়, তবে পরিবারে অ্যালার্জির কারণে ডাক্তার অন্যথা বললে নয়।",
+            "- পাঁচ বছরের কম বয়সীদের চালের পানীয়।",
+            "- কাঁচা বা আধা-সেদ্ধ শামুক-ঝিনুক-চিংড়িজাতীয় খাবার, আর কাঁচা জেলির টুকরা।",
+            "## সতর্ক থাকুন",
+            "- ডিম: প্রায় ছয় মাস থেকে, শক্ত হওয়া পর্যন্ত সেদ্ধ করে।",
+            "- পনির: পাস্তুরিত পূর্ণ-চর্বির পনির ছয় মাস থেকে ঠিক; মোড়ক দেখে নিন।",
+            "- গোল, শক্ত বা পিচ্ছিল খাবার: আঙুর চার টুকরা করুন, বিচি ও কাঁটা বের করুন।",
+            DOC_BN,
+        ],
+    ),
+]
+
+
+if __name__ == "__main__":
+    print("-- Baby health articles (growth pass, 2026-11-23): starting solid foods, breastfeeding, foods to keep from babies. Sourced from NHS and")
+    print("-- WHO pages opened 2026-11-23; general guidance with a note to follow the local doctor. Generated by database/tools/baby_posts.py. Idempotent.\n")
+    print("INSERT INTO sources (key, title, publisher, url, year, kind) VALUES")
+    print(",\n".join(f"  ({q(k)}, jsonb_build_object('en', {q(en)}, 'bn', {q(bn)}), {q(pub)}, {q(url)}, {year}, 'patient_info')" for k, en, bn, pub, url, year in SOURCES))
+    print("ON CONFLICT (key) DO NOTHING;\n")
+    for p in POSTS:
+        title = json.dumps({"en": p["title"][0], "bn": p["title"][1]}, ensure_ascii=False)
+        excerpt = json.dumps({"en": p["excerpt"][0], "bn": p["excerpt"][1]}, ensure_ascii=False)
+        body = json.dumps({"en": p["en"], "bn": p["bn"]}, ensure_ascii=False)
+        print(f"INSERT INTO posts (slug, title, excerpt, body, tags, reading_minutes, published_on) VALUES ({q(p['slug'])}, {q(title)}::jsonb, {q(excerpt)}::jsonb, {q(body)}::jsonb, {q(json.dumps(p['tags']))}::jsonb, {p['minutes']}, '2026-11-23') ON CONFLICT (slug) DO NOTHING;")
+        for n, key in enumerate(p["sources"]):
+            print(f"INSERT INTO post_sources (post_id, source_id, sort) SELECT p.id, s.id, {n} FROM posts p JOIN sources s ON s.key = {q(key)} WHERE p.slug = {q(p['slug'])} ON CONFLICT DO NOTHING;")

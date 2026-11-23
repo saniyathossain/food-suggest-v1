@@ -19,6 +19,9 @@ pub struct Model {
     pub reading_minutes: i16,
     pub media_id: Option<i32>,
     pub published: bool,
+    /// the day it goes live (published flips on that day); None = no schedule
+    #[serde(default)]
+    pub publish_on: Option<String>,
     /// ISO date (YYYY-MM-DD)
     pub published_on: String,
 }

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { CategoryIcon } from '@/components/icons';
 import { MacroStrip } from '@/components/food/MacroStrip';
 import { Cutout } from '@/components/kit/cutout';
+import { Artwork } from '@/components/kit/artwork';
 import { Photo } from '@/components/kit/photo';
 import { useI18n } from '@/lib/i18n';
 import { onLink } from '@/lib/router';
@@ -13,7 +14,7 @@ import { cn } from '@/lib/utils';
 type Props = { food: FoodSearch; category?: string | undefined; sizes: string; ratio?: string | undefined; className?: string | undefined; children?: ReactNode };
 
 /** Badges laid over a photo: frosted pills that stay readable on any picture, each with a coloured dot for what it says. */
-export function FoodBadges({ inSeason, imported, gi = null }: { inSeason: boolean; imported: boolean; gi?: number | null | undefined }) {
+export function FoodBadges({ inSeason, imported, gi = null, age = null }: { inSeason: boolean; imported: boolean; gi?: number | null | undefined; age?: number | null | undefined }) {
   const { t, num } = useI18n();
   return (
     <>
@@ -25,6 +26,12 @@ export function FoodBadges({ inSeason, imported, gi = null }: { inSeason: boolea
       {imported && (
         <span className="photo-badge">
           <i aria-hidden style={{ background: 'var(--tone-sky)' }} /> {t.foods.imported}
+        </span>
+      )}
+      {age !== null && (
+        <span className="photo-badge">
+          <i aria-hidden style={{ background: 'var(--tone-rose)' }} />
+          {age === 0 ? t.baby.fromBirth : t.baby.fromMonths.replace('{n}', num(age))}
         </span>
       )}
       {gi !== null && (
@@ -52,13 +59,11 @@ export function FoodCard({ food, category, sizes, ratio = '4 / 3', className, ch
               <Photo src={food.image} alt={food.name} ratio="auto" sizes={sizes} zoom className="size-full" />
             </span>
           ) : (
-            <span aria-hidden className="grid place-items-center text-muted-foreground">
-              <CategoryIcon slug={food.category} size={40} />
-            </span>
+            <Artwork category={food.category} name={food.name} />
           )}
         </div>
         <span className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5">
-          <FoodBadges inSeason={food.in_season} imported={food.origin === 'imported'} gi={food.gi} />
+          <FoodBadges inSeason={food.in_season} imported={food.origin === 'imported'} gi={food.gi} age={food.age_from_months} />
         </span>
       </div>
       <div className="grid flex-1 content-start gap-1 px-2 pb-2 pt-2">

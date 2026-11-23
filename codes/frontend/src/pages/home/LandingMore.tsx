@@ -2,6 +2,7 @@
 // built on, and common questions. Its own chunk, loaded after the first paint.
 import { ArrowRight, BookOpen, Check, ShieldKey } from '@/components/icons/page';
 import { Carousel } from '@/components/kit/carousel';
+import { GlowBars, GlowCard, GlowLine } from '@/components/kit/glow';
 import { SectionTitle } from '@/components/kit/section';
 import { ArticleCard } from '@/pages/Read';
 import { endpoints, useResource } from '@/lib/api';
@@ -15,26 +16,42 @@ function Inside({ boot }: { boot: Bootstrap }) {
   const { t, lang, num } = useI18n();
   const { data: foods } = useResource<FoodSearch[]>(endpoints.foods(lang, '', ''));
   const { data: recipes } = useResource<RecipeCard[]>(endpoints.recipes(lang));
-  const stats = [
-    { value: boot.conditions.length, label: t.more.conditions, tile: 'var(--tint-blush)' },
-    { value: foods?.length, label: t.more.foods, tile: 'var(--tint-mint)' },
-    { value: recipes?.length, label: t.more.recipes, tile: 'var(--tint-butter)' },
-    { value: boot.modes.length, label: t.more.modes, tile: 'var(--tint-sky)' },
-  ];
+  const month = new Date().getMonth();
+  const monthName = (index: number) => new Date(2026, index, 1).toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-GB', { month: 'short' });
+  const perMonth = Array.from({ length: 12 }, (_, index) => foods?.filter((food) => food.season.includes(index + 1)).length ?? 0);
+  const rules = boot.conditions.map((item) => item.counts.avoid + item.counts.limit + item.counts.ok + item.counts.recommended);
+  const minutes = (recipes ?? []).map((recipe) => recipe.minutes);
+  const videos = recipes?.filter((recipe) => recipe.has_video).length ?? 0;
+  const topRules = Math.max(0, ...rules);
   return (
     <section aria-labelledby="inside-title" className="grid gap-8">
       <div className="grid gap-2">
         <h2 id="inside-title" className="text-[clamp(28px,3vw,40px)]">{t.more.insideTitle}</h2>
         <p className="text-callout text-muted-foreground">{t.more.insideLead}</p>
       </div>
-      <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
-        {stats.map((stat) => (
-          <div key={stat.label} className="pastel grid gap-2 p-6" style={{ ['--tile' as string]: stat.tile }}>
-            <dd className="text-[clamp(36px,4vw,52px)] font-extrabold leading-none tabular-nums">{stat.value === undefined ? '—' : num(stat.value)}</dd>
-            <dt className="text-subhead font-semibold">{stat.label}</dt>
-          </div>
-        ))}
-      </dl>
+      <div className="grid gap-5 md:grid-cols-3 xl:gap-7">
+        <GlowCard
+          glow="green"
+          label={t.more.foodsLabel.replace('{n}', num(foods?.length ?? 0)).replace('{m}', num(perMonth[month] ?? 0))}
+          statement={t.more.foodsLine}
+          word={t.more.foodsWord}
+          chart={foods && <GlowLine values={perMonth} mark={month} markLabel={`${monthName(month)} · ${num(perMonth[month] ?? 0)}`} title={t.dash.perMonth} />}
+        />
+        <GlowCard
+          glow="violet"
+          label={t.more.conditionsLabel.replace('{n}', num(boot.conditions.length))}
+          statement={t.more.conditionsLine}
+          word={t.more.conditionsWord}
+          chart={<GlowBars values={rules} labels={boot.conditions.map((item) => item.name)} title={t.more.rulesTitle} markLabel={t.more.rules.replace('{n}', num(topRules))} />}
+        />
+        <GlowCard
+          glow="amber"
+          label={t.more.recipesLabel.replace('{n}', num(recipes?.length ?? 0)).replace('{m}', num(videos))}
+          statement={t.more.recipesLine}
+          word={t.more.recipesWord}
+          chart={recipes && <GlowBars values={minutes} labels={recipes.map((recipe) => recipe.title)} title={t.more.minutesTitle} markLabel={`${num(Math.max(0, ...minutes))} ${t.recipes.minutes}`} />}
+        />
+      </div>
     </section>
   );
 }
@@ -52,7 +69,7 @@ function Articles() {
       </SectionTitle>
       <Carousel label={t.more.readTitle} previous={t.common.previous} next={t.common.next}>
         {data.slice(0, 8).map((post) => (
-          <div key={post.slug} className="w-[min(82vw,340px)]">
+          <div key={post.slug} className="flex w-[min(82vw,340px)] flex-col *:flex-1">
             <ArticleCard post={post} />
           </div>
         ))}

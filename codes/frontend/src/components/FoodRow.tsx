@@ -1,7 +1,7 @@
 // One food in a list: its cut-out on a soft tile (else its photo, else its category's icon), its name linking to /food/:slug, and a line under it. Every food mention in
 // the app goes through this or FoodChip, so every food is a link.
 import type { ReactNode } from 'react';
-import { CategoryIcon } from '@/components/icons';
+import { Artwork } from '@/components/kit/artwork';
 import { Cutout } from '@/components/kit/cutout';
 import { Photo } from '@/components/kit/photo';
 import { onLink } from '@/lib/router';
@@ -14,15 +14,15 @@ type ThumbProps = { image: string | null; cutout?: string | null | undefined; na
 export function FoodThumb({ image, cutout, name, category, size = 'size-12' }: ThumbProps) {
   if (cutout) {
     return (
-      <span className={`${size} grid shrink-0 place-items-center`}>
-        <Cutout src={cutout} alt="" ratio="1 / 1" sizes="64px" shadow={false} className="size-full" />
+      <span className={`${size} thumb-tile grid shrink-0 place-items-center`}>
+        <Cutout src={cutout} alt="" ratio="1 / 1" sizes="64px" shadow={false} className="size-[88%]" />
       </span>
     );
   }
-  if (image) return <Photo src={image} alt={name} ratio="1 / 1" sizes="56px" className={`${size} shrink-0 rounded-md`} />;
+  if (image) return <Photo src={image} alt={name} ratio="1 / 1" sizes="56px" className={`${size} thumb-tile shrink-0`} />;
   return (
-    <span aria-hidden className={`${size} grid shrink-0 place-items-center rounded-md bg-muted text-muted-foreground`}>
-      <CategoryIcon slug={category} size={20} />
+    <span aria-hidden className={`${size} thumb-tile relative shrink-0 overflow-hidden`}>
+      <Artwork category={category} small />
     </span>
   );
 }

@@ -5,8 +5,16 @@ pub mod admin;
 pub mod billing;
 pub mod catalog;
 pub mod content;
+pub mod details;
+pub mod library;
+pub mod links;
+pub mod meal;
 pub mod mode;
+pub mod options;
+pub mod ops;
 pub mod plan;
+pub mod share;
+pub mod sync;
 
 use crate::app::enums::Locale;
 use serde::Deserialize;

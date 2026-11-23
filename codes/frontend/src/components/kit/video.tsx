@@ -133,7 +133,7 @@ function Ring({ fraction }: { fraction: number }) {
 
 const barShape = 'press grid size-8 shrink-0 cursor-pointer place-items-center rounded-full transition-colors';
 const barButton = `${barShape} text-foreground hover:bg-accent`;
-const playButton = `${barShape} bg-foreground text-background hover:opacity-85`;
+const playButton = `${barShape} bg-ink text-ink-foreground hover:opacity-85`;
 
 function frameStyle(mode: Mode, box: Box | null): CSSProperties | undefined {
   if (mode !== 'inline') return undefined;

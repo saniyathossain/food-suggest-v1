@@ -4,7 +4,7 @@ pub mod console;
 use crate::app::contracts::{CacheStore, StorageDisk};
 use crate::app::http::middleware::request_log;
 use crate::app::providers;
-use crate::app::repositories::{AccountRepository, CatalogRepository, MedicineRepository, ProfileRepository};
+use crate::app::repositories::{AccountRepository, CatalogRepository, MealLogRepository, MedicineRepository, ProfileRepository, ShareRepository, StatsRepository};
 use crate::app::services::MediaService;
 use crate::config::AppConfig;
 use crate::routes;
@@ -30,6 +30,11 @@ pub struct AppState {
     pub accounts: Arc<AccountRepository>,
     pub profiles: Arc<ProfileRepository>,
     pub medicines: Arc<MedicineRepository>,
+    pub meals: Arc<MealLogRepository>,
+    pub shares: Arc<ShareRepository>,
+    pub stats: Arc<StatsRepository>,
+    pub sync_repo: Arc<crate::app::repositories::SyncRepository>,
+    pub sync: Arc<crate::app::services::sync::SyncService>,
     pub billing: Arc<crate::app::repositories::BillingRepository>,
     pub mailer: Arc<dyn crate::app::contracts::Mailer>,
     /// failed sign-ins per email in the last 15 minutes (memory; resets on restart)
@@ -45,10 +50,29 @@ pub async fn container(config: AppConfig) -> Result<AppState, String> {
     let accounts = Arc::new(AccountRepository::new(db.clone()));
     let profiles = Arc::new(ProfileRepository::new(db.clone()));
     let medicines = Arc::new(MedicineRepository::new(db.clone()));
+    let meals = Arc::new(MealLogRepository::new(db.clone()));
+    let shares = Arc::new(ShareRepository::new(db.clone()));
+    let stats = Arc::new(StatsRepository::new(db.clone()));
+    spawn_traffic_flush(stats.clone());
     let billing = Arc::new(crate::app::repositories::BillingRepository::new(db.clone()));
+    let sync_repo = Arc::new(crate::app::repositories::SyncRepository::new(db.clone()));
+    let sync = Arc::new(crate::app::services::sync::SyncService::new(sync_repo.clone(), medicines.clone(), catalog.clone(), config.auth.app_key, config.app.sync_allow_private));
     let mailer = providers::mail::make(&config.auth.mail_driver);
     let throttle = Arc::new(std::sync::Mutex::new(std::collections::HashMap::new()));
-    Ok(AppState { config: Arc::new(config), db, cache, disk, catalog, media, accounts, profiles, medicines, billing, mailer, throttle })
+    Ok(AppState { config: Arc::new(config), db, cache, disk, catalog, media, accounts, profiles, medicines, meals, shares, stats, sync_repo, sync, billing, mailer, throttle })
+}
+
+/// Write the counted hits to the database every five minutes (the admin dashboard also flushes before it reads).
+fn spawn_traffic_flush(stats: Arc<StatsRepository>) {
+    tokio::spawn(async move {
+        let mut tick = tokio::time::interval(Duration::from_secs(300));
+        loop {
+            tick.tick().await;
+            if let Err(error) = stats.add_traffic(&crate::app::support::traffic::drain()).await {
+                tracing::warn!(what = "traffic.flush_failed", why = %error);
+            }
+        }
+    });
 }
 
 pub fn app(state: AppState) -> Router {
@@ -62,6 +86,7 @@ pub fn app(state: AppState) -> Router {
         .route("/sitemap.xml", axum::routing::get(crate::app::http::controllers::seo::sitemap))
         .merge(routes::web::router(&state.config.app.web_root))
         .with_state(state)
+        .layer(axum::middleware::from_fn(crate::app::http::middleware::sanitize_json))
         .layer(axum::middleware::from_fn(request_log))
         .layer(CompressionLayer::new())
         .layer(cors)

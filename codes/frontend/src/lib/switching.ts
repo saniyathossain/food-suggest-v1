@@ -2,10 +2,13 @@
 //   theme    — the new look grows as a circle from the control that was pressed (~450 ms, ease-out);
 //   language — the new dictionary and the new language's data for everything on screen load first (the old text stays up,
 //              ~1.5 s at most), then one soft crossfade (blur + 4 px rise, 300 ms) lands straight on the translated page.
+//              The Bangla face is fetched before the swap too (never a font jump), and if all that takes a moment the page settles back a
+//              little (html[data-lang-busy], styles/lens.css) so the press is answered at once.
 // Without view transitions, or under reduced motion, colours ease over 250 ms instead (html.theme-fade, styles/motion.css).
 import { flushSync } from 'react-dom';
 import { prepareLanguage } from '@/lib/api';
 import { loadLanguage } from '@/lib/i18n';
+import { banglaFontReady } from '@/lib/warm';
 import { readPrefs, setPrefs } from '@/lib/prefs';
 import type { Lang, ThemeMode } from '@/lib/types';
 import { reducedMotion } from '@/lib/utils';
@@ -42,8 +45,17 @@ export function switchTheme(next: ThemeMode, event?: { currentTarget: EventTarge
   withTransition('theme', () => setPrefs({ theme: next }));
 }
 
+const BUSY_AFTER_MS = 140;
+
 export function switchLang(next: Lang): void {
   const current = readPrefs().lang;
   if (current === next) return;
-  void Promise.all([loadLanguage(next), prepareLanguage(current, next)]).then(() => withTransition('lang', () => setPrefs({ lang: next })));
+  const root = document.documentElement;
+  const busy = window.setTimeout(() => root.setAttribute('data-lang-busy', ''), BUSY_AFTER_MS);
+  void Promise.all([loadLanguage(next), prepareLanguage(current, next), next === 'bn' ? banglaFontReady() : Promise.resolve()])
+    .finally(() => {
+      window.clearTimeout(busy);
+      root.removeAttribute('data-lang-busy');
+    })
+    .then(() => withTransition('lang', () => setPrefs({ lang: next })));
 }

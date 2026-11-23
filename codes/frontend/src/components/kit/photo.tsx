@@ -4,6 +4,7 @@
 // An `eager` photo is the page's largest paint: it shows as soon as it decodes, with no preview and no fade (a fade delays LCP).
 // Inside a `group` (a card that links somewhere) the picture zooms to 1.04 under the pointer.
 import { useEffect, useRef, useState } from 'react';
+import { Artwork } from '@/components/kit/artwork';
 import { cn, tone as toneStyle } from '@/lib/utils';
 
 // the widths the media library stores (services/media.rs WIDTHS); asking for another width gets the next one up
@@ -52,10 +53,12 @@ type Props = {
   ratio?: string | undefined;
   eager?: boolean | undefined;
   zoom?: boolean | undefined;
+  /** the food group (or nothing) the artwork stands in with when there is no picture */
+  category?: string | undefined;
   className?: string | undefined;
 };
 
-export function Photo({ src, alt = '', tone = '#16a34a', sizes, ratio = '16 / 9', eager = false, zoom = false, className }: Props) {
+export function Photo({ src, alt = '', tone = '#16a34a', sizes, ratio = '16 / 9', eager = false, zoom = false, category, className }: Props) {
   const { ref, near } = useNearViewport<HTMLDivElement>();
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -67,6 +70,7 @@ export function Photo({ src, alt = '', tone = '#16a34a', sizes, ratio = '16 / 9'
       style={{ ...toneStyle(tone), aspectRatio: ratio }}
       aria-hidden={alt === '' ? true : undefined}
     >
+      {(!src || failed) && <Artwork category={category} name={alt} />}
       {show && src && (
         <span
           className={cn('absolute inset-0 block', zoom && 'transition-[scale] duration-700 ease-[var(--ease-out)] group-hover:scale-[1.04] motion-reduce:transition-none')}

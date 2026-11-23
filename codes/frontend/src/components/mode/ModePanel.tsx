@@ -1,6 +1,6 @@
 // The plan's way of eating: the day as a timeline (the mode's own meals, or the everyday ones) with the gap between meals, which
 // food to eat first, do / go easy / safety tips with their sources, and how each chosen condition fits the mode.
-import { CategoryIcon, TriangleAlert } from '@/components/icons';
+import { CategoryIcon, MealIcon, TriangleAlert } from '@/components/icons';
 import { Check, ExternalLink } from '@/components/icons/page';
 import { clock, digits, useI18n } from '@/lib/i18n';
 import type { DietMode, ModeStance, Source } from '@/lib/types';
@@ -48,7 +48,7 @@ function Timeline({ moments }: { moments: Moment[] }) {
           <li key={moment.slug} className="contents">
             <div className="grid grid-cols-[28px_1fr] gap-3">
               <span className="mt-0.5 grid size-7 place-items-center rounded-full bg-primary-soft text-primary">
-                <CategoryIcon slug={moment.slug} size={15} />
+                <MealIcon slug={moment.slug} size={15} />
               </span>
               <div className="grid gap-0.5 pb-1">
                 <p className="flex flex-wrap items-baseline gap-x-2 text-callout font-semibold">
@@ -100,7 +100,8 @@ export function ModePanel({ mode, everyday }: { mode: DietMode; everyday: Moment
   const lists = (['do', 'dont', 'safety'] as const).map((kind) => ({ kind, items: mode.tips.filter((tip) => tip.kind === kind) })).filter((group) => group.items.length > 0);
   return (
     <div className="grid gap-6">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
+      {/* a masonry: the timeline, the eating order and each tip list are blocks that flow into two balanced columns, so no column is left with a hole */}
+      <div className="gap-5 lg:columns-2 [&>*]:mb-5 [&>*]:break-inside-avoid">
         <div className="grid content-start gap-4 rounded-2xl border bg-card p-5">
           <div>
             <h3 className="text-headline">{mode.name}</h3>
@@ -113,27 +114,23 @@ export function ModePanel({ mode, everyday }: { mode: DietMode; everyday: Moment
           </div>
           <Timeline moments={moments} />
         </div>
-        <div className="grid content-start gap-6">
-          {order && <EatingOrder text={order.text} source={order.source} />}
-          <div className="grid gap-3 sm:grid-cols-2">
-            {lists.map((group) => (
-              <div key={group.kind} className={cn('grid content-start gap-2 rounded-2xl border p-4', group.kind === 'safety' ? 'border-coral/40 bg-[color-mix(in_srgb,var(--coral)_7%,var(--card))] sm:col-span-2' : 'bg-card')}>
-                <h4 className="flex items-center gap-1.5 text-subhead font-semibold">
-                  {group.kind === 'safety' ? <TriangleAlert size={16} className="text-coral" /> : <Check size={16} className={group.kind === 'do' ? 'text-leaf' : 'text-saffron'} />}
-                  {t.modes.tips[group.kind]}
-                </h4>
-                <ul className="grid gap-2">
-                  {group.items.map((tip) => (
-                    <li key={tip.text} className="grid gap-0.5 text-subhead">
-                      <span>{tip.text}</span>
-                      <SourceLink source={tip.source} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        {order && <EatingOrder text={order.text} source={order.source} />}
+        {lists.map((group) => (
+          <div key={group.kind} className={cn('grid content-start gap-2 rounded-2xl border p-4', group.kind === 'safety' ? 'border-coral/40 bg-[color-mix(in_srgb,var(--coral)_7%,var(--card))]' : 'bg-card')}>
+            <h4 className="flex items-center gap-1.5 text-subhead font-semibold">
+              {group.kind === 'safety' ? <TriangleAlert size={16} className="text-coral" /> : <Check size={16} className={group.kind === 'do' ? 'text-leaf' : 'text-saffron'} />}
+              {t.modes.tips[group.kind]}
+            </h4>
+            <ul className="grid gap-2">
+              {group.items.map((tip) => (
+                <li key={tip.text} className="grid gap-0.5 text-subhead">
+                  <span>{tip.text}</span>
+                  <SourceLink source={tip.source} />
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
+        ))}
       </div>
       {mode.conditions.length > 0 && (
         <div className="grid gap-3">

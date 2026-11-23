@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { Save, Trash, Plus } from '@/components/icons/page';
 import { toast } from '@/components/kit/toast';
+import { RemoteSelect } from '@/components/kit/remoteselect';
 import { Select, Textarea } from '@/components/ui/input';
 import { IconButton } from '@/components/ui/icon-button';
 import { VERDICTS } from '@/components/Verdict';
 import { send } from '@/lib/api';
+import { confirmDialog } from '@/lib/confirm';
 import { useI18n } from '@/lib/i18n';
 import type { RuleUpsert, Verdict } from '@/lib/types';
 import { refusalText, type Admin, type RawCondition, type RawFood, type RawRule } from './useAdmin';
@@ -38,9 +40,9 @@ async function upsert(admin: Admin, rule: RuleUpsert) {
 function RuleRow({ admin, rule, food, condition }: { admin: Admin; rule: RawRule; food: RawFood | undefined; condition: RawCondition }) {
   const { t, lang } = useI18n();
   const [draft, setDraft] = useState(rule);
-  const [confirming, setConfirming] = useState(false);
   const dirty = JSON.stringify(draft) !== JSON.stringify(rule);
   const remove = async () => {
+    if (!(await confirmDialog({ title: t.admin.deleteRuleTitle, body: food ? (food.name[lang] || food.name.en) : undefined, tone: 'danger' }))) return;
     await send(`/api/v1/admin/food-rules/${rule.id}`, 'DELETE', undefined, admin.token);
     admin.saved();
   };
@@ -59,15 +61,15 @@ function RuleRow({ admin, rule, food, condition }: { admin: Admin; rule: RawRule
       <td className={`${cell} whitespace-nowrap`}>
         <span className="flex gap-1">
           <IconButton icon={Save} label={t.admin.save} tone="soft" disabled={!dirty} onClick={() => void upsert(admin, { condition: condition.slug, food: food?.slug ?? '', verdict: draft.verdict, reason: draft.reason })} />
-          <IconButton icon={Trash} label={confirming ? t.admin.confirmDelete : t.admin.delete} tone={confirming ? 'confirm' : 'danger'} onBlur={() => setConfirming(false)} onClick={() => (confirming ? void remove() : setConfirming(true))} />
+          <IconButton icon={Trash} label={t.admin.delete} tone="danger" onClick={() => void remove()} />
         </span>
       </td>
     </tr>
   );
 }
 
-function NewRule({ admin, condition, unused }: { admin: Admin; condition: RawCondition; unused: RawFood[] }) {
-  const { t, lang } = useI18n();
+function NewRule({ admin, condition }: { admin: Admin; condition: RawCondition }) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState({ food: '', verdict: 'limit' as Verdict, en: '', bn: '' });
   const add = async () => {
     await upsert(admin, { condition: condition.slug, food: draft.food, verdict: draft.verdict, reason: { en: draft.en, bn: draft.bn } });
@@ -76,14 +78,7 @@ function NewRule({ admin, condition, unused }: { admin: Admin; condition: RawCon
   return (
     <tr className="border-t bg-muted/50">
       <td className={cell}>
-        <Select aria-label={t.admin.addRule} value={draft.food} onChange={(event) => setDraft({ ...draft, food: event.target.value })}>
-          <option value="">+ {t.admin.food}</option>
-          {unused.map((food) => (
-            <option key={food.id} value={food.slug}>
-              {food.name[lang] || food.name.en}
-            </option>
-          ))}
-        </Select>
+        <RemoteSelect kind="foods" token={admin.token} aria-label={t.admin.addRule} value={draft.food} placeholder={`+ ${t.admin.food}`} onChange={(food) => setDraft({ ...draft, food })} />
       </td>
       <td className={cell}>
         <VerdictSelect value={draft.verdict} onChange={(verdict) => setDraft({ ...draft, verdict })} />
@@ -107,7 +102,6 @@ export function RuleTable({ admin, condition }: { admin: Admin; condition: RawCo
   if (!snapshot) return null;
   const foods = new Map(snapshot.foods.map((food) => [food.id, food]));
   const rules = snapshot.rules.filter((rule) => rule.condition_id === condition.id);
-  const unused = snapshot.foods.filter((food) => !rules.some((rule) => rule.food_id === food.id));
   return (
     <section className="surface grid gap-4 rounded-2xl p-5 sm:p-6">
       <h2 className="text-title-3">
@@ -130,7 +124,7 @@ export function RuleTable({ admin, condition }: { admin: Admin; condition: RawCo
             {rules.map((rule) => (
               <RuleRow key={`${rule.id}-${rule.verdict}-${rule.reason.en}`} admin={admin} rule={rule} food={foods.get(rule.food_id)} condition={condition} />
             ))}
-            <NewRule admin={admin} condition={condition} unused={unused} />
+            <NewRule admin={admin} condition={condition} />
           </tbody>
         </table>
       </div>

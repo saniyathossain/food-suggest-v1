@@ -8,6 +8,7 @@ import { Preferences } from '@/components/Preferences';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { onLink, usePath } from '@/lib/router';
+import { sectionOf } from '@/lib/section';
 import type { Bootstrap } from '@/lib/types';
 import { tone } from '@/lib/utils';
 
@@ -34,7 +35,7 @@ export function MenuSheet({ boot, links, onClose }: { boot: Bootstrap | undefine
     <div id="menu-sheet" role="dialog" aria-label={t.nav.menu} data-lenis-prevent className="glass glass-dense anim-drop mt-2 max-h-[calc(100dvh-96px-96px)] lg:max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain rounded-2xl p-3 xl:hidden">
       <nav aria-label={t.nav.main} className="grid gap-1 sm:grid-cols-2">
         {links.map((link) => (
-          <a key={link.href} href={link.href} onClick={onLink} className={row} aria-current={path === link.href ? 'page' : undefined}>
+          <a key={link.href} href={link.href} onClick={onLink} className={row} aria-current={sectionOf(path) === link.href ? 'page' : undefined}>
             <span className="grid size-9 place-items-center rounded-md bg-accent">
               <link.Glyph size={19} />
             </span>

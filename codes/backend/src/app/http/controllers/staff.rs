@@ -8,6 +8,7 @@ use crate::app::http::middleware::AdminActor;
 use crate::app::models::{tier, tier_feature};
 use crate::app::repositories::{ImportRow, UserFilter};
 use crate::app::services::{entitlements, CatalogIndex};
+use crate::app::support::csv::cells;
 use crate::bootstrap::AppState;
 use axum::extract::{Path, Query, State};
 use axum::{Extension, Json};
@@ -16,7 +17,6 @@ use sea_orm::ActiveValue::Set;
 use sea_orm::{ActiveModelTrait, EntityTrait};
 use serde_json::json;
 
-const PER_PAGE: u64 = 25;
 
 pub async fn users(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Query(query): Query<UserQuery>) -> Result<Json<PageDto<UserAdminDto>>, AppError> {
     actor.require(Role::Editor)?;
@@ -24,10 +24,11 @@ pub async fn users(State(state): State<AppState>, Extension(actor): Extension<Ad
     let tier_id = query.tier.as_deref().and_then(|slug| snapshot.tiers.iter().find(|item| item.slug == slug)).map(|item| item.id);
     let role = query.role.as_deref().and_then(|value| serde_json::from_value::<Role>(json!(value)).ok());
     let page = query.page.unwrap_or(0);
-    let (rows, total) = state.accounts.list(&UserFilter { query: query.q, role, tier_id, page, per_page: PER_PAGE }).await?;
+    let per_page = crate::app::support::page::per_page(query.per_page);
+    let (rows, total) = state.accounts.list(&UserFilter { query: query.q, role, tier_id, page, per_page }).await?;
     let tier_slug = |id: Option<i32>| id.and_then(|id| snapshot.tiers.iter().find(|item| item.id == id)).map(|item| item.slug.clone());
     let items = rows.into_iter().map(|row| UserAdminDto { id: row.id, tier: tier_slug(row.tier_id), email: row.email, name: row.name, role: row.role, active: row.active }).collect();
-    Ok(Json(PageDto { items, total, page, per_page: PER_PAGE }))
+    Ok(Json(PageDto { items, total, page, per_page }))
 }
 
 pub async fn update_user(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(id): Path<i32>, Json(input): Json<UserPatchDto>) -> Result<Json<SavedDto>, AppError> {
@@ -111,9 +112,26 @@ pub async fn generics(State(state): State<AppState>, Extension(actor): Extension
                 food_timing: item.food_timing,
                 conflicts: snapshot.medicine_foods.iter().filter(|row| row.generic_id == item.id).count() + snapshot.medicine_interactions.iter().filter(|row| row.first_id == item.id || row.second_id == item.id).count(),
                 label_synced: item.label_synced.clone(),
+                media_id: item.media_id,
+                image: item.media_id.map(|id| format!("/media/{id}")),
             })
             .collect(),
     ))
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct GenericMediaDto {
+    /// a media library id; 0 clears the photo
+    pub media_id: i32,
+}
+
+/// Give a medicine a photo from the media library (or take it away).
+pub async fn set_generic_media(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>, Json(input): Json<GenericMediaDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
+    let id = state.medicines.set_media(&slug, input.media_id).await?;
+    state.catalog.flush().await;
+    state.accounts.audit(actor.user_id, "medicine.photo", &slug, json!({ "media_id": input.media_id })).await;
+    Ok(Json(SavedDto { id }))
 }
 
 pub async fn medicines(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Query(query): Query<MedicineQuery>) -> Result<Json<PageDto<MedicineAdminDto>>, AppError> {
@@ -121,31 +139,11 @@ pub async fn medicines(State(state): State<AppState>, Extension(actor): Extensio
     let snapshot = state.catalog.snapshot().await?;
     let generic_id = query.generic.as_deref().and_then(|slug| snapshot.generics.iter().find(|item| item.slug == slug)).map(|item| item.id);
     let page = query.page.unwrap_or(0);
-    let (rows, total) = state.medicines.page(query.q.as_deref(), generic_id, page, PER_PAGE).await?;
+    let per_page = crate::app::support::page::per_page(query.per_page);
+    let (rows, total) = state.medicines.page(query.q.as_deref(), generic_id, page, per_page).await?;
     let name = |id: i32| snapshot.generics.iter().find(|item| item.id == id).map(|item| item.name.clone()).unwrap_or_default();
     let items = rows.into_iter().map(|row| MedicineAdminDto { id: row.id, generic: name(row.generic_id), brand: row.brand, company: row.company, strength: row.strength, form: row.form }).collect();
-    Ok(Json(PageDto { items, total, page, per_page: PER_PAGE }))
-}
-
-/// Split one CSV line, honouring double quotes.
-fn cells(line: &str) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut current = String::new();
-    let mut quoted = false;
-    let mut chars = line.chars().peekable();
-    while let Some(character) = chars.next() {
-        match character {
-            '"' if quoted && chars.peek() == Some(&'"') => {
-                current.push('"');
-                chars.next();
-            }
-            '"' => quoted = !quoted,
-            ',' if !quoted => out.push(std::mem::take(&mut current)),
-            _ => current.push(character),
-        }
-    }
-    out.push(current);
-    out.into_iter().map(|cell| cell.trim().to_owned()).collect()
+    Ok(Json(PageDto { items, total, page, per_page }))
 }
 
 pub fn parse_csv(text: &str) -> Result<Vec<ImportRow>, AppError> {

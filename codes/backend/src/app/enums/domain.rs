@@ -180,6 +180,18 @@ pub enum CookingFat {
     Deep,
 }
 
+impl CookingFat {
+    /// 0-100, how light the way of cooking is: no added fat 100, a little 75, added in the pan 40, deep-fried 10.
+    pub const fn score(self) -> u8 {
+        match self {
+            Self::None => 100,
+            Self::Little => 75,
+            Self::Added => 40,
+            Self::Deep => 10,
+        }
+    }
+}
+
 /// What a diet mode is: everyday eating, a religious fast (Ramadan), or time-restricted eating (16:8).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
 #[ts(export)]
@@ -308,13 +320,16 @@ pub enum Role {
     Admin,
     #[sea_orm(string_value = "editor")]
     Editor,
+    /// marks rules and conditions reviewed; reads the admin, cannot publish or edit content
+    #[sea_orm(string_value = "medical_reviewer")]
+    MedicalReviewer,
     #[sea_orm(string_value = "user")]
     User,
 }
 
 impl Role {
     pub const fn can_admin(self) -> bool {
-        matches!(self, Self::SuperAdmin | Self::Admin | Self::Editor)
+        matches!(self, Self::SuperAdmin | Self::Admin | Self::Editor | Self::MedicalReviewer)
     }
 }
 
@@ -347,14 +362,47 @@ pub enum FeatureKey {
     History,
     #[sea_orm(string_value = "reports")]
     Reports,
+    /// the daily meal log (what was eaten, with totals against the day's limits)
+    #[sea_orm(string_value = "meal_log")]
+    MealLog,
+    /// the extra graphs (day against limits, goal coverage, trends)
+    #[sea_orm(string_value = "charts_pack")]
+    ChartsPack,
+    /// the weekly report
+    #[sea_orm(string_value = "weekly_report")]
+    WeeklyReport,
+    /// share a profile with another account
+    #[sea_orm(string_value = "family_sharing")]
+    FamilySharing,
+    /// download your own data
+    #[sea_orm(string_value = "data_export")]
+    DataExport,
+    /// how far the search (⌘K) reaches: 1 pages and foods; 2 adds conditions, habits, recipes and articles; 3 (or unlimited) adds medicines
+    #[sea_orm(string_value = "spotlight")]
+    Spotlight,
 }
 
 impl FeatureKey {
-    pub const ALL: [Self; 8] = [Self::Profiles, Self::Conditions, Self::Suggestions, Self::MealAlternatives, Self::DietModes, Self::Medicines, Self::History, Self::Reports];
+    pub const ALL: [Self; 14] = [
+        Self::Profiles,
+        Self::Conditions,
+        Self::Suggestions,
+        Self::MealAlternatives,
+        Self::DietModes,
+        Self::Medicines,
+        Self::History,
+        Self::Reports,
+        Self::MealLog,
+        Self::ChartsPack,
+        Self::WeeklyReport,
+        Self::FamilySharing,
+        Self::DataExport,
+        Self::Spotlight,
+    ];
 
     /// switches are 0 / 1; counts may be -1 (unlimited)
     pub const fn is_switch(self) -> bool {
-        matches!(self, Self::DietModes | Self::Medicines | Self::History | Self::Reports)
+        !matches!(self, Self::Profiles | Self::Conditions | Self::Suggestions | Self::MealAlternatives | Self::Spotlight)
     }
 }
 
@@ -427,6 +475,161 @@ impl LabKind {
             Self::BpSystolic | Self::BpDiastolic => "mmHg",
         }
     }
+}
+
+/// Which meal of the day a logged food belongs to.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum MealTime {
+    #[sea_orm(string_value = "breakfast")]
+    Breakfast,
+    #[sea_orm(string_value = "lunch")]
+    Lunch,
+    #[sea_orm(string_value = "snack")]
+    Snack,
+    #[sea_orm(string_value = "dinner")]
+    Dinner,
+}
+
+impl MealTime {
+    pub const ALL: [Self; 4] = [Self::Breakfast, Self::Lunch, Self::Snack, Self::Dinner];
+}
+
+/// A number a day is measured by: energy and three nutrients to stay under, five to reach.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "snake_case")]
+pub enum MeterKey {
+    Kcal,
+    Sugar,
+    SatFat,
+    Sodium,
+    Protein,
+    Fibre,
+    Iron,
+    Calcium,
+    Potassium,
+}
+
+/// Stay under it (a limit) or reach it (a goal).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "snake_case")]
+pub enum MeterKind {
+    Limit,
+    Goal,
+}
+
+/// How active a person says they are in a usual week.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum Activity {
+    #[sea_orm(string_value = "sedentary")]
+    Sedentary,
+    #[sea_orm(string_value = "light")]
+    Light,
+    #[sea_orm(string_value = "moderate")]
+    Moderate,
+    #[sea_orm(string_value = "active")]
+    Active,
+}
+
+/// A food allergen or intolerance trigger the engine matches foods on (a closed list).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum Allergen {
+    #[sea_orm(string_value = "milk")]
+    Milk,
+    #[sea_orm(string_value = "egg")]
+    Egg,
+    #[sea_orm(string_value = "peanut")]
+    Peanut,
+    #[sea_orm(string_value = "tree_nut")]
+    TreeNut,
+    /// wheat and the other gluten grains (barley)
+    #[sea_orm(string_value = "gluten")]
+    Gluten,
+    #[sea_orm(string_value = "soy")]
+    Soy,
+    #[sea_orm(string_value = "fish")]
+    Fish,
+    #[sea_orm(string_value = "shellfish")]
+    Shellfish,
+    #[sea_orm(string_value = "sesame")]
+    Sesame,
+}
+
+impl Allergen {
+    pub const ALL: [Self; 9] = [Self::Milk, Self::Egg, Self::Peanut, Self::TreeNut, Self::Gluten, Self::Soy, Self::Fish, Self::Shellfish, Self::Sesame];
+}
+
+/// What a person can spend on food: shapes which suggestions come first (never a verdict).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum Budget {
+    #[sea_orm(string_value = "low")]
+    Low,
+    #[sea_orm(string_value = "medium")]
+    Medium,
+    #[sea_orm(string_value = "high")]
+    High,
+}
+
+/// What a finding is about: a body measure, a habit, or a lab value against its range.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum Criterion {
+    #[sea_orm(string_value = "bmi")]
+    Bmi,
+    #[sea_orm(string_value = "waist")]
+    Waist,
+    #[sea_orm(string_value = "activity")]
+    Activity,
+    #[sea_orm(string_value = "sleep")]
+    Sleep,
+    #[sea_orm(string_value = "hba1c")]
+    Hba1c,
+    #[sea_orm(string_value = "fasting_glucose")]
+    FastingGlucose,
+    #[sea_orm(string_value = "blood_pressure")]
+    BloodPressure,
+    #[sea_orm(string_value = "hemoglobin")]
+    Hemoglobin,
+}
+
+/// Where a value sits against its published range: under it, inside it, a little over it, or well over it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum Band {
+    #[sea_orm(string_value = "low")]
+    Low,
+    #[sea_orm(string_value = "typical")]
+    Typical,
+    #[sea_orm(string_value = "raised")]
+    Raised,
+    #[sea_orm(string_value = "high")]
+    High,
+}
+
+/// How a verdict came about: a condition's rule, an allergen the person named, or a criterion.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "snake_case")]
+pub enum WhyBasis {
+    Condition,
+    Allergy,
 }
 
 /// How a medicine is taken relative to food (from its label, or as the person's doctor said).
@@ -574,4 +777,174 @@ impl Locale {
             _ => fallback,
         }
     }
+}
+
+/// What a link joins: a food, a condition, a medicine generic, an allergen, or a criterion (a band of a reading, or an audience).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum LinkKind {
+    #[sea_orm(string_value = "food")]
+    Food,
+    #[sea_orm(string_value = "condition")]
+    Condition,
+    #[sea_orm(string_value = "medicine")]
+    Medicine,
+    #[sea_orm(string_value = "allergen")]
+    Allergen,
+    #[sea_orm(string_value = "criterion")]
+    Criterion,
+}
+
+impl LinkKind {
+    pub const ALL: [Self; 5] = [Self::Food, Self::Condition, Self::Medicine, Self::Allergen, Self::Criterion];
+
+    /// The word used in `kind:key` and in `?to=`; also the storage order of a pair (alphabetical, as the table's CHECK expects).
+    pub const fn word(self) -> &'static str {
+        match self {
+            Self::Food => "food",
+            Self::Condition => "condition",
+            Self::Medicine => "medicine",
+            Self::Allergen => "allergen",
+            Self::Criterion => "criterion",
+        }
+    }
+
+    pub fn parse(word: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|kind| kind.word() == word.trim())
+    }
+}
+
+/// How strongly a link speaks: the food verdicts (recommended, ok, limit, avoid) and the medicine severities (caution, serious)
+/// in one list. When two links join the same pair and disagree, the safer (stricter) one wins.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum LinkVerdict {
+    #[sea_orm(string_value = "recommended")]
+    Recommended,
+    #[sea_orm(string_value = "ok")]
+    Ok,
+    #[sea_orm(string_value = "limit")]
+    Limit,
+    #[sea_orm(string_value = "avoid")]
+    Avoid,
+    #[sea_orm(string_value = "caution")]
+    Caution,
+    #[sea_orm(string_value = "serious")]
+    Serious,
+}
+
+impl LinkVerdict {
+    pub const ALL: [Self; 6] = [Self::Serious, Self::Avoid, Self::Caution, Self::Limit, Self::Recommended, Self::Ok];
+
+    /// Higher is safer to follow: serious > avoid > caution > limit > recommended > ok (the engine's order for foods, with the
+    /// medicine severities slotted beside their food equivalents).
+    pub const fn strictness(self) -> u8 {
+        match self {
+            Self::Serious => 5,
+            Self::Avoid => 4,
+            Self::Caution => 3,
+            Self::Limit => 2,
+            Self::Recommended => 1,
+            Self::Ok => 0,
+        }
+    }
+
+    pub fn parse(word: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|verdict| verdict.word() == word.trim())
+    }
+
+    pub const fn word(self) -> &'static str {
+        match self {
+            Self::Recommended => "recommended",
+            Self::Ok => "ok",
+            Self::Limit => "limit",
+            Self::Avoid => "avoid",
+            Self::Caution => "caution",
+            Self::Serious => "serious",
+        }
+    }
+}
+
+impl From<Verdict> for LinkVerdict {
+    fn from(value: Verdict) -> Self {
+        match value {
+            Verdict::Avoid => Self::Avoid,
+            Verdict::Limit => Self::Limit,
+            Verdict::Allowed => Self::Ok,
+            Verdict::Recommended => Self::Recommended,
+        }
+    }
+}
+
+impl From<Severity> for LinkVerdict {
+    fn from(value: Severity) -> Self {
+        match value {
+            Severity::Caution => Self::Caution,
+            Severity::Serious => Self::Serious,
+        }
+    }
+}
+
+/// Which table a link came from. Links from the first five are read from the tables the engine already uses; `Link` rows are the
+/// `links` table itself.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "snake_case")]
+pub enum LinkOrigin {
+    /// a condition's verdict on a food (food_rules)
+    Rule,
+    /// a medicine with a food or drink (medicine_food_interactions)
+    MedicineFood,
+    /// two medicines that conflict (medicine_interactions)
+    MedicinePair,
+    /// a food that carries an allergen (food_allergens)
+    Allergen,
+    /// a criterion band that points to a condition (criteria_notes)
+    CriteriaNote,
+    /// an audience (age group, sex) with a condition (audience_notes)
+    AudienceNote,
+    /// the links table
+    Link,
+}
+
+impl LinkOrigin {
+    /// Which origin keeps the say when two links tie on strictness: the sourced, reviewed tables first.
+    pub const fn priority(self) -> u8 {
+        match self {
+            Self::Rule => 0,
+            Self::MedicineFood => 1,
+            Self::MedicinePair => 2,
+            Self::Allergen => 3,
+            Self::CriteriaNote => 4,
+            Self::AudienceNote => 5,
+            Self::Link => 6,
+        }
+    }
+}
+
+/// A part of a condition's detail: what it is, its symptoms, its causes and risks, when to book a visit, and when to get help now.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum DetailKind {
+    #[sea_orm(string_value = "about")]
+    About,
+    #[sea_orm(string_value = "symptoms")]
+    Symptoms,
+    #[sea_orm(string_value = "causes")]
+    Causes,
+    #[sea_orm(string_value = "see_doctor")]
+    SeeDoctor,
+    #[sea_orm(string_value = "urgent")]
+    Urgent,
+}
+
+impl DetailKind {
+    /// The order the page shows them in.
+    pub const ALL: [Self; 5] = [Self::About, Self::Symptoms, Self::Causes, Self::SeeDoctor, Self::Urgent];
 }

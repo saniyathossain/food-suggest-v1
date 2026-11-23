@@ -1,14 +1,20 @@
-use crate::app::dtos::admin::{ConditionPatchDto, FoodCreateDto, MediaCreateDto, MediaDto, RuleUpsertDto, SavedDto};
+use crate::app::dtos::admin::{ConditionPatchDto, FoodCreateDto, FoodPatchDto, MediaCreateDto, MediaDto, RuleUpsertDto, SavedDto};
 use crate::app::dtos::content::{ContentAdminDto, PublishPatchDto};
 use crate::app::dtos::mode::{DietModeAdminDto, DietModePatchDto};
+use crate::app::dtos::admin::ReviewDto;
+use crate::app::enums::Role;
 use crate::app::exceptions::AppError;
+use crate::app::http::middleware::AdminActor;
+use crate::app::services::review;
+use crate::app::support::clock::today;
 use crate::app::repositories::CatalogSnapshot;
 use crate::app::support::validate;
 use crate::bootstrap::AppState;
 use crate::app::support::i18n::LocalizedText;
 use axum::extract::{Multipart, Path, State};
 use axum::http::StatusCode;
-use axum::Json;
+use axum::{Extension, Json};
+use serde_json::json;
 
 /// Raw catalog, both languages, inactive rows included.
 pub async fn catalog(State(state): State<AppState>) -> Result<Json<CatalogSnapshot>, AppError> {
@@ -16,43 +22,92 @@ pub async fn catalog(State(state): State<AppState>) -> Result<Json<CatalogSnapsh
     Ok(Json(state.catalog.snapshot().await?))
 }
 
-pub async fn upsert_rule(State(state): State<AppState>, Json(input): Json<RuleUpsertDto>) -> Result<Json<SavedDto>, AppError> {
+pub async fn upsert_rule(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Json(input): Json<RuleUpsertDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
     validate::required("reason.en", &input.reason.en)?;
     let id = state.catalog.upsert_rule(&input).await?;
+    state.accounts.audit(actor.user_id, "rule.saved", &format!("{} / {}", input.condition, input.food), json!({ "rule": id, "verdict": input.verdict, "source": input.source, "reason_en": input.reason.en })).await;
     tracing::info!(what = "admin.rule_saved", rule = id, condition = %input.condition, food = %input.food);
     Ok(Json(SavedDto { id }))
 }
 
-pub async fn delete_rule(State(state): State<AppState>, Path(id): Path<i32>) -> Result<StatusCode, AppError> {
+pub async fn delete_rule(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(id): Path<i32>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Editor)?;
     state.catalog.delete_rule(id).await?;
+    state.accounts.audit(actor.user_id, "rule.deleted", &id.to_string(), json!({ "rule": id })).await;
     tracing::info!(what = "admin.rule_deleted", rule = id);
     Ok(StatusCode::NO_CONTENT)
 }
 
-pub async fn create_food(State(state): State<AppState>, Json(input): Json<FoodCreateDto>) -> Result<(StatusCode, Json<SavedDto>), AppError> {
+pub async fn create_food(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Json(input): Json<FoodCreateDto>) -> Result<(StatusCode, Json<SavedDto>), AppError> {
+    actor.require(Role::Editor)?;
     validate::slug("slug", &input.slug)?;
     validate::required("name.en", &input.name.en)?;
     let id = state.catalog.create_food(&input).await?;
+    state.accounts.audit(actor.user_id, "food.created", &input.slug, json!({ "category": input.category, "name_en": input.name.en })).await;
     tracing::info!(what = "admin.food_created", food = id);
     Ok((StatusCode::CREATED, Json(SavedDto { id })))
 }
 
+pub async fn update_food(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>, Json(input): Json<FoodPatchDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
+    if let Some(name) = &input.name {
+        validate::required("name.en", &name.en)?;
+    }
+    let id = state.catalog.update_food(&slug, &input).await?;
+    state.accounts.audit(actor.user_id, "food.updated", &slug, json!({ "category": input.category, "active": input.active, "name_en": input.name.as_ref().map(|name| &name.en) })).await;
+    Ok(Json(SavedDto { id }))
+}
+
+pub async fn delete_food(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Admin)?;
+    state.catalog.delete_food(&slug).await?;
+    state.accounts.audit(actor.user_id, "food.deleted", &slug, json!({})).await;
+    Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn delete_recipe(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Admin)?;
+    state.catalog.delete_recipe(&slug).await?;
+    state.accounts.audit(actor.user_id, "recipe.deleted", &slug, json!({})).await;
+    Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn delete_post(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Admin)?;
+    state.catalog.delete_post(&slug).await?;
+    state.accounts.audit(actor.user_id, "post.deleted", &slug, json!({})).await;
+    Ok(StatusCode::NO_CONTENT)
+}
+
 pub async fn update_condition(
     State(state): State<AppState>,
+    Extension(actor): Extension<AdminActor>,
     Path(slug): Path<String>,
     Json(input): Json<ConditionPatchDto>,
 ) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
+    if input.active == Some(true) {
+        // a condition ships only when reviewed and none of its rules changed since
+        let snapshot = state.catalog.snapshot().await?;
+        let found = snapshot.conditions.iter().find(|item| item.slug == slug).ok_or(AppError::NotFound("condition"))?;
+        if !found.active {
+            review::can_ship(&snapshot, found).map_err(|blocker| AppError::field("active", &blocker.message()))?;
+        }
+    }
     if let Some(color) = &input.color {
         validate::color("color", color)?;
     }
     let id = state.catalog.update_condition(&slug, &input).await?;
+    state.accounts.audit(actor.user_id, "condition.updated", &slug, json!({ "active": input.active, "name": input.name.as_ref().map(|name| &name.en), "icon": input.icon, "color": input.color })).await;
     tracing::info!(what = "admin.condition_updated", condition = %slug);
     Ok(Json(SavedDto { id }))
 }
 
-pub async fn flush_cache(State(state): State<AppState>) -> StatusCode {
+pub async fn flush_cache(State(state): State<AppState>, Extension(actor): Extension<AdminActor>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Editor)?;
     state.catalog.flush().await;
-    StatusCode::NO_CONTENT
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub async fn media_index(State(state): State<AppState>) -> Result<Json<Vec<MediaDto>>, AppError> {
@@ -60,14 +115,16 @@ pub async fn media_index(State(state): State<AppState>) -> Result<Json<Vec<Media
 }
 
 /// Register + import an image from an allowlisted license-free source into the media library.
-pub async fn media_store(State(state): State<AppState>, Json(input): Json<MediaCreateDto>) -> Result<(StatusCode, Json<MediaDto>), AppError> {
+pub async fn media_store(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Json(input): Json<MediaCreateDto>) -> Result<(StatusCode, Json<MediaDto>), AppError> {
+    actor.require(Role::Editor)?;
     let saved = state.media.create(&input.url, input.alt.as_ref()).await?;
     tracing::info!(what = "admin.media_created", media = saved.id);
     Ok((StatusCode::CREATED, Json(saved)))
 }
 
 /// Dropzone upload: multipart `file` (+ optional `alt_en`, `alt_bn`).
-pub async fn media_upload(State(state): State<AppState>, mut multipart: Multipart) -> Result<(StatusCode, Json<MediaDto>), AppError> {
+pub async fn media_upload(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, mut multipart: Multipart) -> Result<(StatusCode, Json<MediaDto>), AppError> {
+    actor.require(Role::Editor)?;
     let mut file = None;
     let mut alt = LocalizedText { en: String::new(), bn: String::new() };
     let broken = |_| AppError::field("file", "upload was interrupted");
@@ -87,7 +144,8 @@ pub async fn media_upload(State(state): State<AppState>, mut multipart: Multipar
     Ok((StatusCode::CREATED, Json(saved)))
 }
 
-pub async fn media_destroy(State(state): State<AppState>, Path(id): Path<i32>) -> Result<StatusCode, AppError> {
+pub async fn media_destroy(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(id): Path<i32>) -> Result<StatusCode, AppError> {
+    actor.require(Role::Editor)?;
     state.media.delete(id).await?;
     state.catalog.flush().await;
     tracing::info!(what = "admin.media_deleted", media = id);
@@ -116,7 +174,8 @@ pub async fn modes(State(state): State<AppState>) -> Result<Json<Vec<DietModeAdm
     Ok(Json(rows))
 }
 
-pub async fn update_mode(State(state): State<AppState>, Path(slug): Path<String>, Json(input): Json<DietModePatchDto>) -> Result<Json<SavedDto>, AppError> {
+pub async fn update_mode(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>, Json(input): Json<DietModePatchDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
     let id = state.catalog.update_mode(&slug, &input).await?;
     tracing::info!(what = "admin.mode_updated", mode = %slug, active = ?input.active);
     Ok(Json(SavedDto { id }))
@@ -136,7 +195,7 @@ pub async fn recipes(State(state): State<AppState>) -> Result<Json<Vec<ContentAd
             .iter()
             .map(|item| {
                 let (title_en, title_bn) = both(&item.title);
-                ContentAdminDto { slug: item.slug.clone(), title_en, title_bn, group: format!("{:?}", item.kind).to_lowercase(), published: item.published, has_image: item.media_id.is_some() }
+                ContentAdminDto { slug: item.slug.clone(), title_en, title_bn, group: format!("{:?}", item.kind).to_lowercase(), published: item.published, has_image: item.media_id.is_some(), publish_on: item.publish_on.clone(), date: None }
             })
             .collect(),
     ))
@@ -152,20 +211,64 @@ pub async fn posts(State(state): State<AppState>) -> Result<Json<Vec<ContentAdmi
             .map(|item| {
                 let (title_en, title_bn) = both(&item.title);
                 let group = item.tags.as_array().and_then(|tags| tags.first()).and_then(serde_json::Value::as_str).unwrap_or_default().to_owned();
-                ContentAdminDto { slug: item.slug.clone(), title_en, title_bn, group, published: item.published, has_image: item.media_id.is_some() }
+                ContentAdminDto { slug: item.slug.clone(), title_en, title_bn, group, published: item.published, has_image: item.media_id.is_some(), publish_on: item.publish_on.clone(), date: Some(item.published_on.clone()) }
             })
             .collect(),
     ))
 }
 
-pub async fn publish_recipe(State(state): State<AppState>, Path(slug): Path<String>, Json(input): Json<PublishPatchDto>) -> Result<Json<SavedDto>, AppError> {
-    let id = state.catalog.publish_recipe(&slug, input.published).await?;
+/// The schedule in a publish request: None = leave it, Some(None) = clear it, Some(Some(day)) = go live that day.
+fn schedule(input: &PublishPatchDto) -> Result<Option<Option<String>>, AppError> {
+    match input.publish_on.as_deref().map(str::trim) {
+        None => Ok(None),
+        Some("") => Ok(Some(None)),
+        Some(day) if crate::app::http::controllers::me::iso_date(day) => Ok(Some(Some(day.to_owned()))),
+        Some(_) => Err(AppError::field("publish_on", "enter the day (YYYY-MM-DD)")),
+    }
+}
+
+pub async fn publish_recipe(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>, Json(input): Json<PublishPatchDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
+    let day = schedule(&input)?;
+    let id = state.catalog.publish_recipe(&slug, input.published, day).await?;
+    state.accounts.audit(actor.user_id, "recipe.published", &slug, json!({ "published": input.published, "publish_on": input.publish_on })).await;
     tracing::info!(what = "admin.recipe_published", recipe = %slug, published = input.published);
     Ok(Json(SavedDto { id }))
 }
 
-pub async fn publish_post(State(state): State<AppState>, Path(slug): Path<String>, Json(input): Json<PublishPatchDto>) -> Result<Json<SavedDto>, AppError> {
-    let id = state.catalog.publish_post(&slug, input.published).await?;
+pub async fn publish_post(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>, Json(input): Json<PublishPatchDto>) -> Result<Json<SavedDto>, AppError> {
+    actor.require(Role::Editor)?;
+    let day = schedule(&input)?;
+    let id = state.catalog.publish_post(&slug, input.published, day).await?;
+    state.accounts.audit(actor.user_id, "post.published", &slug, json!({ "published": input.published, "publish_on": input.publish_on })).await;
     tracing::info!(what = "admin.post_published", post = %slug, published = input.published);
     Ok(Json(SavedDto { id }))
+}
+
+/// A medical reviewer marks one rule reviewed (it must be cited). Needs a named account, never the shared admin token.
+pub async fn review_rule(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(id): Path<i32>) -> Result<Json<ReviewDto>, AppError> {
+    actor.require_reviewer()?;
+    let reviewer = actor.user_id.ok_or_else(|| AppError::field("reviewer", "sign in with your own account to review"))?;
+    let snapshot = state.catalog.snapshot().await?;
+    let rule = snapshot.rules.iter().find(|item| item.id == id).ok_or(AppError::NotFound("rule"))?;
+    if rule.source_id.is_none() && !review::has_sources(&snapshot, rule.condition_id) {
+        return Err(AppError::field("rule", "this rule has no source: cite one first"));
+    }
+    let on = today();
+    state.catalog.review_rule(id, reviewer, &on).await?;
+    state.accounts.audit(Some(reviewer), "rule.reviewed", &id.to_string(), json!({ "rule": id })).await;
+    Ok(Json(ReviewDto { subject: id.to_string(), rules_marked: 1, reviewed_on: on }))
+}
+
+/// A medical reviewer marks a condition and all its rules reviewed. Every rule has to be cited first.
+pub async fn review_condition(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Path(slug): Path<String>) -> Result<Json<ReviewDto>, AppError> {
+    actor.require_reviewer()?;
+    let reviewer = actor.user_id.ok_or_else(|| AppError::field("reviewer", "sign in with your own account to review"))?;
+    let snapshot = state.catalog.snapshot().await?;
+    let found = snapshot.conditions.iter().find(|item| item.slug == slug).ok_or(AppError::NotFound("condition"))?;
+    review::can_review(&snapshot, found).map_err(|blocker| AppError::field("condition", &blocker.message()))?;
+    let on = today();
+    let marked = state.catalog.review_condition(&slug, reviewer, &on).await?;
+    state.accounts.audit(Some(reviewer), "condition.reviewed", &slug, json!({ "rules": marked })).await;
+    Ok(Json(ReviewDto { subject: slug, rules_marked: marked, reviewed_on: on }))
 }

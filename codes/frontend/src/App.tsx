@@ -20,6 +20,9 @@ import { StatusIsland } from '@/components/island/StatusIsland';
 const Condition = lazy(() => import('@/pages/Condition'));
 const Plan = lazy(() => import('@/pages/Plan'));
 const Foods = lazy(() => import('@/pages/Foods'));
+const Planner = lazy(() => import('@/pages/Planner'));
+const Medicines = lazy(() => import('@/pages/Medicines'));
+const Medicine = lazy(() => import('@/pages/Medicine'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const Bmi = lazy(() => import('@/pages/Bmi'));
 const Food = lazy(() => import('@/pages/Food'));
@@ -30,6 +33,7 @@ const Pricing = lazy(() => import('@/pages/Pricing'));
 const Recipe = lazy(() => import('@/pages/Recipe'));
 const Read = lazy(() => import('@/pages/Read'));
 const Article = lazy(() => import('@/pages/Article'));
+const ConfirmHost = lazy(() => import('@/components/kit/confirmhost').then((module) => ({ default: module.ConfirmHost })));
 const ToastLayer = lazy(() => import('@/components/kit/toast').then((module) => ({ default: module.ToastLayer })));
 const Spotlight = lazy(() => import('@/components/Spotlight').then((module) => ({ default: module.Spotlight })));
 
@@ -41,6 +45,8 @@ const chunks = [
   () => import('@/lib/switching'),
   () => import('@/pages/Condition'),
   () => import('@/pages/Plan'),
+  () => import('@/pages/Medicines'),
+  () => import('@/pages/Planner'),
   () => import('@/pages/Foods'),
   () => import('@/pages/Food'),
   () => import('@/pages/Bmi'),
@@ -84,6 +90,9 @@ function Screen({ boot, path }: { boot: Bootstrap; path: string }) {
   if (recipe?.slug) return <Recipe key={recipe.slug} slug={recipe.slug} />;
   const article = match('/read/:slug', path);
   if (article?.slug) return <Article key={article.slug} slug={article.slug} />;
+  const medicine = match('/medicines/:slug', path);
+  if (medicine?.slug) return <Medicine key={medicine.slug} slug={medicine.slug} />;
+  if (path === '/medicines') return <Medicines />;
   if (path === '/recipes') return <Recipes />;
   if (path === '/login') return <Auth mode="login" />;
   if (path === '/register') return <Auth mode="register" />;
@@ -94,6 +103,7 @@ function Screen({ boot, path }: { boot: Bootstrap; path: string }) {
   if (path === '/read') return <Read />;
   if (path === '/tools/bmi') return <Bmi />;
   if (path === '/plan') return <Plan boot={boot} />;
+  if (path === '/planner') return <Signed next={path}><Planner /></Signed>;
   if (path === '/foods') return <Foods boot={boot} />;
   if (path === '/admin' || path.startsWith('/admin/')) return <Admin />;
   return <Home boot={boot} />;
@@ -137,6 +147,7 @@ export default function App() {
       <TabBar />
       <OutageScreen />
       <Suspense fallback={null}>
+        <ConfirmHost />
         <ToastLayer />
       </Suspense>
       {spotlight && (

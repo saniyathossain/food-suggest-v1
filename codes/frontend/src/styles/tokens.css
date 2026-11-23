@@ -6,6 +6,9 @@
    from <html data-theme> (light | dark | auto → the system's). No second block to keep in step. */
 :root {
   --radius: 1.75rem;
+  /* a dark filled control (a chosen step, a play button, a number badge): near-black in light, a lifted charcoal in dark, white text on it in both */
+  --ink: light-dark(#1a1a20, #3a3a46);
+  --ink-foreground: #ffffff;
 
   /* FlavorFit: a cool pale canvas, white panels on it, near-black ink */
   --background: light-dark(#f4efee, #0f0d16);
@@ -165,6 +168,8 @@
 }
 
 @theme inline {
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
   --color-cta: var(--sun);
   --color-violet: var(--violet);
   --color-cta-hover: var(--sun-hover);

@@ -8,7 +8,9 @@
 import { Gauge } from '@/components/charts/Gauge';
 import { CategoryIcon, Utensils } from '@/components/icons';
 import { ArrowRight, Check, GlassWater, Leaf, Pill, Plus } from '@/components/icons/page';
+import { FirstRun } from '@/components/journey/FirstRun';
 import { Cutout } from '@/components/kit/cutout';
+import { GlowBars, GlowCard, type Glow } from '@/components/kit/glow';
 import { Photo } from '@/components/kit/photo';
 import { FoodThumb } from '@/components/FoodRow';
 import { useNextSlot } from '@/components/NextMeal';
@@ -93,7 +95,7 @@ function Schedule({ boot, meals }: { boot: Bootstrap; meals?: Slot[] | undefined
           const isNext = slot === next;
           return (
             <li key={slot.slug} className="grid grid-cols-[22px_1fr_auto] items-center gap-3 border-b py-2.5 last:border-0">
-              <span className={cn('grid size-[22px] place-items-center rounded-full border-2', past ? 'border-foreground bg-foreground text-background' : 'border-border')}>
+              <span className={cn('grid size-[22px] place-items-center rounded-full border-2', past ? 'border-foreground bg-ink text-ink-foreground' : 'border-border')}>
                 {past && <Check size={12} strokeWidth={2.6} />}
               </span>
               <span className="grid min-w-0 leading-tight">
@@ -364,6 +366,38 @@ export function Promo() {
   );
 }
 
+function PlanTrio({ boot, plan }: { boot: Bootstrap; plan: PersonalPlan }) {
+  const { t, num } = useI18n();
+  const names = new Map(boot.categories.map((item) => [item.slug, item.name]));
+  const lists: { key: 'recommended' | 'limit' | 'avoid'; glow: Glow }[] = [
+    { key: 'recommended', glow: 'green' },
+    { key: 'limit', glow: 'amber' },
+    { key: 'avoid', glow: 'red' },
+  ];
+  return (
+    <section aria-label={t.dash.yourPlan} className="grid gap-5 md:grid-cols-3 xl:gap-7">
+      {lists.map((list) => {
+        const items = plan.plan.foods[list.key];
+        const groups = [...new Set(items.map((item) => item.category))];
+        const counts = groups.map((group) => items.filter((item) => item.category === group).length);
+        const top = groups[counts.indexOf(Math.max(0, ...counts))];
+        return (
+          <a key={list.key} href="/plan" onClick={onLink} className="press block">
+            <GlowCard
+              glow={list.glow}
+              label={t.dash.trioLabel.replace('{n}', num(items.length))}
+              statement={items.length > 0 ? items.slice(0, 3).map((item) => item.name).join(', ') : t.overview.none}
+              word={t.verdict[list.key]}
+              chart={items.length > 0 && <GlowBars values={counts} labels={groups.map((group) => names.get(group) ?? group)} title={t.dash.groupsMine} markLabel={names.get(top ?? '') ?? ''} />}
+              className="min-h-[22rem]"
+            />
+          </a>
+        );
+      })}
+    </section>
+  );
+}
+
 export function Dashboard({ boot }: { boot: Bootstrap }) {
   const { t, lang } = useI18n();
   const { data: foods } = useResource<FoodSearch[]>(endpoints.foods(lang, '', ''));
@@ -375,6 +409,7 @@ export function Dashboard({ boot }: { boot: Bootstrap }) {
   return (
     <div className="grid gap-6 xl:gap-8">
       <Greeting />
+      <FirstRun plan={plan} noProfile={Boolean(planError)} />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.25fr)_minmax(0,1fr)] xl:gap-5">
         <div className="grid content-start gap-4 max-md:order-3 xl:gap-5">
           <Schedule boot={boot} meals={meals} />
@@ -393,6 +428,7 @@ export function Dashboard({ boot }: { boot: Bootstrap }) {
           </Card>
         </div>
       </div>
+      {plan && <PlanTrio boot={boot} plan={plan} />}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.85fr)] xl:gap-5">
         <EatMoreList boot={boot} foods={foods} mine={mine} />
         <Groups boot={boot} foods={foods} mine={mine} />

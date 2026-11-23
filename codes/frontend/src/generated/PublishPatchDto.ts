@@ -3,4 +3,8 @@
 /**
  * Admin: publish or hide a recipe or an article.
  */
-export type PublishPatchDto = { published: boolean, };
+export type PublishPatchDto = { published: boolean, 
+/**
+ * the day it goes live (YYYY-MM-DD); empty text clears the schedule; absent leaves it
+ */
+publish_on?: string, };

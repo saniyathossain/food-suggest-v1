@@ -25,6 +25,8 @@ pub struct AppSection {
     pub web_root: String,
     /// public base URL for sitemap / robots (APP_URL)
     pub url: String,
+    /// SYNC_ALLOW_PRIVATE_HOSTS: lets the external sync reach loopback / private addresses (a local mock endpoint). Development only.
+    pub sync_allow_private: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -100,6 +102,7 @@ impl AppConfig {
                 cors_origins: list("CORS_ORIGINS"),
                 web_root: text("WEB_ROOT", "/app/public"),
                 url: text("APP_URL", "http://127.0.0.1:8100").trim_end_matches('/').to_owned(),
+                sync_allow_private: flag("SYNC_ALLOW_PRIVATE_HOSTS", false),
             },
             database: DatabaseSection {
                 url: database_url(),

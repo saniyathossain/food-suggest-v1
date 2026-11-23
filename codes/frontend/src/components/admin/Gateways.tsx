@@ -2,6 +2,7 @@
 // live, on or off, and its keys. Keys are write-only: the server says only whether each is set; typing replaces it. "Test
 // connection" asks the gateway with the stored keys. Switching on is refused until every key (and, for manual, the account)
 // is there. Adding a gateway: pick a driver and a slug.
+import { Select } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
 import { refusalText, type Admin } from '@/components/admin/useAdmin';
 import { SectionTitle } from '@/components/kit/section';
@@ -122,9 +123,9 @@ export function Gateways({ admin }: { admin: Admin }) {
       <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-dashed p-4">
         <div className="grid gap-1.5">
           <Label htmlFor="gw-driver">{t.admin.driver}</Label>
-          <select id="gw-driver" value={driver} onChange={(event) => setDriver(event.target.value as PaymentDriver)} className="field h-11 rounded-xl px-3 text-subhead">
+          <Select id="gw-driver" value={driver} onChange={(event) => setDriver(event.target.value as PaymentDriver)} className="field h-11 rounded-xl px-3 text-subhead">
             {setup.drivers.map((item) => <option key={item.driver} value={item.driver}>{t.billing.drivers[item.driver]}</option>)}
-          </select>
+          </Select>
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="gw-slug">{t.admin.slug}</Label>

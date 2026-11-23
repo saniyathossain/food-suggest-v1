@@ -6,10 +6,11 @@ import { Donut } from '@/components/charts';
 import { Utensils } from '@/components/icons';
 import { ExternalLink, Info } from '@/components/icons/page';
 import { CookingNotes, CookingPicker } from '@/components/food/Cooking';
+import { Balance } from '@/components/food/Balance';
+import { Compare } from '@/components/food/Compare';
 import { GlycemicPanel } from '@/components/food/Glycemic';
 import { SectionTitle } from '@/components/kit/section';
 import { CountUp } from '@/components/kit/countup';
-import { Segmented } from '@/components/ui/segmented';
 import { useI18n } from '@/lib/i18n';
 import type { FoodVariant, Glycemic, Nutrients } from '@/lib/types';
 
@@ -130,17 +131,12 @@ export function Nutrition({ variants, bestWay, glycemic, chosen, setChosen }: Nu
   const { t } = useI18n();
   const ordered = [...variants].sort((left, right) => Number(right.is_default) - Number(left.is_default));
   const variant = ordered.find((item) => item.slug === chosen) ?? ordered[0];
-  // two or more ways of cooking: choice cards with calories and added fat instead of a plain type switch
+  // two or more ways of cooking name the picker "ways to cook it"; kinds only (rice varieties, oils) name it "kinds"
   const cooking = new Set(ordered.map((item) => item.method).filter(Boolean)).size >= 2;
+  const several = ordered.length > 1;
   return (
     <section aria-labelledby="nutrition-title" className="surface rounded-2xl p-5 sm:p-7">
-      <SectionTitle icon={Utensils} id="nutrition-title" title={t.food.nutrition} lead={t.food.nutritionLead} accent="saffron">
-        {ordered.length > 1 && !cooking && (
-          <div className="min-w-0 max-w-full">
-            <Segmented label={t.food.type} value={variant?.slug ?? ''} onChange={setChosen} options={ordered.map((item) => ({ value: item.slug, label: item.name }))} />
-          </div>
-        )}
-      </SectionTitle>
+      <SectionTitle icon={Utensils} id="nutrition-title" title={t.food.nutrition} lead={t.food.nutritionLead} accent="saffron" />
       {!variant && (
         <p className="flex items-center gap-2.5 rounded-lg bg-muted p-4 text-subhead text-muted-foreground">
           <Info size={18} /> {t.food.coming}
@@ -149,16 +145,20 @@ export function Nutrition({ variants, bestWay, glycemic, chosen, setChosen }: Nu
       {!variant && glycemic && <GlycemicPanel glycemic={glycemic} className="mt-6" />}
       {variant && (
         <div className="grid gap-6">
-          {cooking && (
-            <div className="grid gap-3">
-              <p className="text-subhead text-muted-foreground">
-                <strong className="text-foreground">{t.food.waysToCook}.</strong> {t.food.waysLead}
-              </p>
-              <CookingPicker variants={ordered} chosen={variant.slug} best={bestWay} onChoose={setChosen} />
+          {several && (
+            <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+              <div className="grid gap-3">
+                <p className="text-subhead text-muted-foreground">
+                  <strong className="text-foreground">{cooking ? t.food.waysToCook : t.food.kindsTitle}.</strong> {cooking ? t.food.waysLead : t.food.kindsLead}
+                </p>
+                <CookingPicker variants={ordered} chosen={variant.slug} best={bestWay} onChoose={setChosen} />
+              </div>
+              <Compare variants={ordered} chosen={variant.slug} onChoose={setChosen} />
             </div>
           )}
           <Panel variant={variant} />
-          {cooking && <CookingNotes variant={variant} plain={ordered[0]} />}
+          <Balance nutrients={variant.per_100g} />
+          {several && <CookingNotes variant={variant} plain={ordered[0]} />}
           {/* the chosen way of cooking's own GI, else the food's GI for the form it was measured in (the default) */}
           {(variant.glycemic ?? (variant.is_default ? glycemic : null)) && (
             <GlycemicPanel glycemic={(variant.glycemic ?? glycemic) as Glycemic} />

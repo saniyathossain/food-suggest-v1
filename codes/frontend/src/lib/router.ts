@@ -1,25 +1,57 @@
-// 40-line history router: no dependency, works with the API's SPA fallback.
+// 40-line history router: no dependency, works with the API's SPA fallback. It also tells the page transition (styles/glass.css)
+// which way the reader is going: <html data-nav> is "deeper" (list → detail), "shallower" (detail → list, back) or "peer" (tab to tab).
 import { useSyncExternalStore } from 'react';
 
 const listeners = new Set<() => void>();
 const notify = () => listeners.forEach((listener) => listener());
+
+/** How deep a path sits in the journey: Today 0, a section 1, one thing inside a section 2. */
+export function depthOf(path: string): number {
+  const clean = path.split('?')[0] ?? path;
+  if (clean === '/' || clean === '') return 0;
+  return /^\/(condition|food|recipe|read)\/[^/]+/.test(clean) || /^\/(welcome|reset)/.test(clean) ? 2 : 1;
+}
+
+let previous = location.pathname;
+let inApp = false;
+const doc = document as Document & { startViewTransition?: (callback: () => void) => unknown };
+const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function direction(from: string, to: string): 'deeper' | 'shallower' | 'peer' {
+  const a = depthOf(from);
+  const b = depthOf(to);
+  return b > a ? 'deeper' : b < a ? 'shallower' : 'peer';
+}
+
+/** Run a route change inside a view transition, tagged with its direction. */
+function transition(to: string, change: () => void): void {
+  document.documentElement.dataset.nav = direction(previous, to);
+  previous = to.split(/[?#]/)[0] ?? to;
+  if (doc.startViewTransition && !calm()) {
+    doc.startViewTransition(change);
+    return;
+  }
+  change();
+}
+
 // back and forward: the browser puts the scroll back where it was (history.scrollRestoration 'auto'); a new page starts at the top
-window.addEventListener('popstate', notify);
+window.addEventListener('popstate', () => transition(location.pathname, notify));
 
 export function navigate(to: string): void {
   if (to === location.pathname + location.search) return;
-  const go = () => {
+  inApp = true;
+  transition(to, () => {
     history.pushState(null, '', to);
     notify();
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     window.dispatchEvent(new Event('pathya:navigate'));
-  };
-  const doc = document as Document & { startViewTransition?: (callback: () => void) => unknown };
-  if (doc.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    doc.startViewTransition(go);
-    return;
-  }
-  go();
+  });
+}
+
+/** Back where the reader came from when that was inside the app; otherwise up to `parent` (a deep link has no history to go back to). */
+export function goBack(parent: string): void {
+  if (inApp && history.length > 1) history.back();
+  else navigate(parent);
 }
 
 export function usePath(): string {

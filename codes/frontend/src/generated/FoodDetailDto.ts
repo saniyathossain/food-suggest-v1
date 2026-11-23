@@ -17,6 +17,10 @@ export type FoodDetailDto = { slug: string, name: string, image: string | null,
  */
 cutout: string | null, origin: FoodOrigin, season: Array<number>, in_season: boolean, 
 /**
+ * months from birth from which the food suits a baby (0 = from birth, 6 = about six months, 12 = one year); None = no age stated
+ */
+age_from_months: number | null, 
+/**
  * the gallery: every picture of the food in order (the main photo and the cut-out first when they exist)
  */
 photos: Array<FoodPhotoDto>, variants: Array<FoodVariantDto>, 

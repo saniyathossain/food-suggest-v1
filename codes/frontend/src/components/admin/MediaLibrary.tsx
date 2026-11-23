@@ -12,6 +12,7 @@ import { ActionButton } from '@/components/ui/action-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { send } from '@/lib/api';
+import { confirmDialog } from '@/lib/confirm';
 import { useI18n } from '@/lib/i18n';
 import type { MediaItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -24,17 +25,19 @@ const ACCEPT = 'image/jpeg,image/png,image/webp';
 
 function Tile({ admin, item, condition }: { admin: Admin; item: MediaItem; condition: RawCondition | undefined }) {
   const { t } = useI18n();
-  const [confirming, setConfirming] = useState(false);
   const patch = usePatchCondition(admin, condition);
   const chosen = condition?.media_id === item.id;
-  const remove = () => void send(`/api/v1/admin/media/${item.id}`, 'DELETE', undefined, admin.token).then(admin.saved);
+  const remove = async () => {
+    if (!(await confirmDialog({ title: t.admin.deleteMediaTitle, body: t.admin.deleteMedia, tone: 'danger' }))) return;
+    await send(`/api/v1/admin/media/${item.id}`, 'DELETE', undefined, admin.token).then(admin.saved);
+  };
   return (
     <li className="group relative">
       <button type="button" aria-pressed={chosen} title={`${item.source ?? ''} · ${item.license ?? ''}`} onClick={() => void patch({ media_id: chosen ? 0 : item.id })} className={cn('press block w-full cursor-pointer overflow-hidden rounded-lg ring-offset-2 ring-offset-card', chosen && 'ring-3 ring-primary')}>
         <Photo src={item.url} tone={condition?.color} ratio="4 / 3" sizes="180px" zoom />
         <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2 py-0.5 text-caption font-semibold text-white">{t.admin.status[item.status]}</span>
       </button>
-      <button type="button" aria-label={confirming ? t.admin.confirmDelete : t.admin.delete} title={confirming ? t.admin.confirmDelete : t.admin.delete} onBlur={() => setConfirming(false)} onClick={() => (confirming ? remove() : setConfirming(true))} className={cn('press absolute right-2 top-2 grid size-8 cursor-pointer place-items-center rounded-full shadow-md transition-opacity', confirming ? 'bg-avoid text-white' : 'bg-card text-muted-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:text-avoid-ink')}>
+      <button type="button" aria-label={t.admin.delete} title={t.admin.delete} onClick={() => void remove()} className="press absolute right-2 top-2 grid size-8 cursor-pointer place-items-center rounded-full bg-card text-muted-foreground opacity-0 shadow-md transition-opacity focus-visible:opacity-100 group-hover:opacity-100 hover:text-avoid-ink">
         <Trash size={15} />
       </button>
     </li>

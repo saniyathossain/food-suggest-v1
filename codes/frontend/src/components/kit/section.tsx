@@ -23,7 +23,7 @@ type Props = Readonly<{
 export function SectionTitle({ icon: Glyph, title, lead, level = 2, id, children, className }: Props) {
   const Heading = level === 1 ? 'h1' : 'h2';
   return (
-    <div className={cn('mb-7 flex flex-wrap items-end justify-between gap-4', className)}>
+    <div data-section-title className={cn('mb-7 flex flex-wrap items-end justify-between gap-4', className)}>
       <div className="flex min-w-0 items-center gap-3.5">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl border bg-card text-foreground shadow-[var(--sh-xs)]" aria-hidden>
           <Glyph size={20} />

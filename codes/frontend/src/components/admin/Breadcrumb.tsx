@@ -18,7 +18,7 @@ export function Breadcrumb({ trail }: { trail: Crumb[] }) {
             <li key={`${crumb.label}${index}`} className="flex items-center gap-1">
               {index > 0 && <ChevronRight size={14} className="text-faint-foreground" aria-hidden />}
               {last || !crumb.href ? (
-                <span aria-current={last ? 'page' : undefined} className="max-w-[220px] truncate rounded-full bg-foreground px-3 py-1 font-semibold text-background">
+                <span aria-current={last ? 'page' : undefined} className="max-w-[220px] truncate rounded-full bg-ink px-3 py-1 font-semibold text-ink-foreground">
                   {crumb.label}
                 </span>
               ) : (

@@ -1,0 +1,403 @@
+/* The journey layer (components/journey/*): the breadcrumb's back pill, empty states, the next-step card, the first-run checklist.
+   Small paint-only styles; layout is utilities in the components. */
+
+/* the back pill: a solid pane with a lit top edge and a soft drop (not blurred: it sits in the flow, not over anything) */
+.crumb-back {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-shine) 50%, var(--card)), var(--card));
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 2px var(--shade),
+    0 6px 16px -10px var(--shade-deep);
+}
+.crumb-back:hover {
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--pane-rim));
+}
+.crumb-back .app-icon {
+  transition: transform 280ms var(--ease-spring);
+}
+.crumb-back:hover .app-icon {
+  transform: translateX(-3px);
+}
+
+/* an empty state's orb: a soft glass bead that floats a few pixels, still for reduced motion and while the tab is hidden */
+.empty-orb {
+  background:
+    radial-gradient(70% 70% at 30% 20%, var(--spec-top), transparent 60%),
+    color-mix(in srgb, var(--primary) 14%, var(--card));
+  box-shadow:
+    inset 0 8px 10px -8px var(--spec-top),
+    inset 0 -6px 10px -6px color-mix(in srgb, var(--primary) 35%, transparent),
+    0 10px 22px -12px color-mix(in srgb, var(--primary) 55%, transparent);
+  animation: orb-float 5s ease-in-out infinite;
+}
+@keyframes orb-float {
+  50% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .empty-orb {
+    animation: none;
+  }
+}
+
+/* the first-run card and the next-step card arrive with the page, then rest */
+.first-run,
+.next-step {
+  animation: card-rise 520ms var(--ease-liquid) both;
+}
+.first-run-step[aria-current='step'] {
+  box-shadow:
+    inset 0 8px 10px -8px var(--spec-top),
+    0 8px 18px -12px color-mix(in srgb, var(--primary) 55%, transparent);
+}
+
+/* ---- the phone tab bar, iOS style: 24 px glyphs, 10.5 px labels, the chosen tab in the tint colour with a softly filled glyph ---- */
+.ios-tab {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.ios-tab[aria-current='page'] {
+  font-weight: 700;
+}
+.ios-tab[aria-current='page'] svg path,
+.ios-tab[aria-current='page'] svg circle,
+.ios-tab[aria-current='page'] svg rect {
+  fill: color-mix(in srgb, currentColor 22%, transparent);
+  stroke-width: 1.9;
+}
+.ios-tab[aria-current='page'] [data-bead] {
+  transform: translateY(-1px);
+}
+@media (max-width: 1023px) {
+  .tabbar {
+    padding-inline: 10px;
+  }
+  .tabbar .glass {
+    border-radius: 30px;
+    padding: 6px 8px;
+  }
+  /* the sliding bead stays subtle behind the glyph, like iOS 26's selection */
+  .tabbar .liquid-pill {
+    opacity: 0.55;
+  }
+}
+
+/* ---- artwork for a missing picture (components/kit/artwork.tsx) ---- */
+.art {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 90% at 15% 0%, color-mix(in srgb, var(--tone) 34%, var(--card)), transparent 62%),
+    radial-gradient(90% 80% at 95% 100%, color-mix(in srgb, var(--tone) 24%, var(--muted)), transparent 70%),
+    color-mix(in srgb, var(--tone) 9%, var(--card));
+}
+.art-mark {
+  position: absolute;
+  inset: auto 6% -12% auto;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(4rem, 12cqw, 8rem);
+  line-height: 1;
+  color: color-mix(in srgb, var(--tone) 13%, transparent);
+  pointer-events: none;
+}
+.art-orb {
+  display: grid;
+  place-items: center;
+  width: clamp(3.4rem, 22%, 5.2rem);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  color: color-mix(in srgb, var(--tone) 78%, var(--foreground));
+  background:
+    radial-gradient(75% 75% at 30% 18%, var(--spec-top), transparent 62%),
+    color-mix(in srgb, var(--tone) 16%, var(--glass-dense));
+  -webkit-backdrop-filter: blur(8px) saturate(1.6);
+  backdrop-filter: blur(8px) saturate(1.6);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 8px 10px -8px var(--spec-top),
+    inset 0 -8px 14px -10px color-mix(in srgb, var(--tone) 45%, transparent),
+    0 14px 28px -14px color-mix(in srgb, var(--tone) 60%, transparent);
+}
+.art-small {
+  position: static;
+  width: 100%;
+  height: 100%;
+}
+.art-small .art-orb {
+  width: 72%;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.photo-frame {
+  container-type: inline-size;
+}
+
+/* Admin: the page header already names the section, so the section's own first title is not repeated. */
+.admin-page > [data-section-title]:first-child,
+.admin-page > :first-child > [data-section-title]:first-child {
+  display: none;
+}
+
+/* Admin sidebar as a console window: always dark, monospace, a prompt showing the path, "#" group headings, a caret on the current line. */
+.console {
+  --c-ink: oklch(0.93 0.01 270);
+  --c-dim: oklch(0.78 0.02 270);
+  --c-faint: oklch(0.66 0.02 270);
+  --c-green: oklch(0.82 0.17 150);
+  --c-line: oklch(1 0 0 / 0.1);
+  max-height: calc(100dvh - 7rem);
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--c-line);
+  background: linear-gradient(180deg, oklch(0.24 0.03 275 / 0.9), oklch(0.18 0.02 270 / 0.92));
+  color: var(--c-ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  box-shadow: 0 24px 48px -24px oklch(0.2 0.05 270 / 0.55), inset 0 1px 0 oklch(1 0 0 / 0.12);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+.console-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--c-faint);
+  font-size: 12px;
+}
+.console-bar i {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+}
+.console-bar span {
+  margin-inline-start: 8px;
+}
+.console-prompt {
+  padding: 12px 14px 4px;
+  color: var(--c-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.console-prompt b {
+  color: var(--c-green);
+  margin-inline-end: 6px;
+}
+.console-prompt em {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  margin-inline-start: 3px;
+  vertical-align: -2px;
+  background: var(--c-green);
+  animation: console-blink 1.1s steps(1) infinite;
+}
+@keyframes console-blink {
+  50% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .console-prompt em {
+    animation: none;
+  }
+}
+.console-body {
+  display: grid;
+  gap: 14px;
+  overflow-y: auto;
+  padding: 10px 8px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(1 0 0 / 0.2) transparent;
+}
+.console-group {
+  padding: 0 8px 4px;
+  color: var(--c-faint);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+.console-link {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  gap: 9px;
+  border-radius: 8px;
+  padding: 0 8px;
+  color: var(--c-dim);
+  transition: background-color 0.15s, color 0.15s;
+}
+.console-link:hover {
+  background: oklch(1 0 0 / 0.07);
+  color: var(--c-ink);
+}
+.console-link[aria-current='page'] {
+  background: oklch(0.82 0.17 150 / 0.14);
+  color: var(--c-ink);
+}
+.console-caret {
+  width: 18px;
+  flex: none;
+  color: var(--c-faint);
+  font-size: 11px;
+  text-align: center;
+}
+.console-link[aria-current='page'] .console-caret {
+  color: var(--c-green);
+  font-size: 13px;
+}
+html[data-strained] .console {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .console {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Console sidebar: parent groups that fold, indented children, row counts. */
+.console-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 6px;
+  color: var(--c-faint);
+  font: inherit;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+.console-group:hover,
+.console-group-on {
+  color: var(--c-ink);
+}
+.console-group:hover {
+  background: oklch(1 0 0 / 0.05);
+}
+.console-fold {
+  width: 12px;
+  flex: none;
+  font-size: 10px;
+}
+.console-tree {
+  margin-inline-start: 12px;
+  padding-inline-start: 4px;
+  border-inline-start: 1px dashed var(--c-line);
+}
+.console-child {
+  height: 30px;
+}
+.console-count {
+  flex: none;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: oklch(1 0 0 / 0.09);
+  color: var(--c-dim);
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.console-link[aria-current='page'] .console-count {
+  background: oklch(0.82 0.17 150 / 0.22);
+  color: var(--c-ink);
+}
+.console-count-quiet {
+  background: transparent;
+  color: var(--c-faint);
+}
+.console-count-alert {
+  background: oklch(0.8 0.15 70 / 0.25);
+  color: oklch(0.92 0.12 80);
+}
+/* On the light pills (phone and tablet) the same counts read on the card colour. */
+nav:not(.console-body) .press > .console-count:not(.console-count-alert) {
+  background: var(--color-muted);
+  color: var(--color-muted-foreground);
+}
+nav:not(.console-body) .press > .console-count-alert {
+  background: var(--color-warning-soft);
+  color: var(--color-limit-ink);
+}
+nav:not(.console-body) a[aria-current='page'] > .console-count {
+  background: oklch(1 0 0 / 0.22);
+  color: inherit;
+}
+
+/* Area charts: the line draws itself in once; reduced motion shows it finished. */
+.area-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: area-draw 0.9s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) 0.05s forwards;
+}
+@keyframes area-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .area-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Seamless edges: one frame per thing. A panel that holds a table gives its own frame to the table (the table's border is the panel's),
+   a panel inside a panel is flat, the table's header band runs flush to its frame, and the fields inside table cells rest borderless
+   until pointed at or focused. */
+.surface:has(.table-frame),
+.surface:has(.table-frame):hover {
+  padding: 0;
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.surface:has(.table-frame) > section {
+  padding: 0;
+}
+.surface .surface,
+.surface .surface-soft,
+.glass-pane .surface,
+.glass-pane .surface-soft {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.data-table .field {
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  border-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.data-table .field:hover {
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+.data-table .field:focus-visible,
+.data-table .field[data-state='open'] {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+}

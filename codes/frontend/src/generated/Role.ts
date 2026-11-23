@@ -3,4 +3,4 @@
 /**
  * What a signed-in account may do. Super admin also edits tiers and roles; editor edits content only.
  */
-export type Role = "super_admin" | "admin" | "editor" | "user";
+export type Role = "super_admin" | "admin" | "editor" | "medical_reviewer" | "user";

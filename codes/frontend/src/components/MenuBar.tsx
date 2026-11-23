@@ -2,6 +2,7 @@
 // from the bar). Brand, the main links, the Conditions menu (Radix, its own chunk, loaded after first paint), Spotlight, the clock,
 // language and theme.
 import { lazy, Suspense, useEffect, useState } from 'react';
+import { ListChecks, Pill } from '@/components/icons/page';
 import { Book, CalendarDays, ChevronDown, Home, KeyRound, LayoutGrid, Menu, Close, Scale, Search, UserRound, Utensils, type AppIcon } from '@/components/icons';
 import { LiquidPill, useLiquid } from '@/components/kit/liquid';
 import { PreferenceButtons } from '@/components/Preferences';
@@ -9,6 +10,7 @@ import { iconButtonClass } from '@/components/ui/button-styles';
 import { useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { onLink, usePath } from '@/lib/router';
+import { sectionOf } from '@/lib/section';
 import type { Bootstrap } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +21,8 @@ export interface NavLink {
   href: string;
   label: string;
   Glyph: AppIcon;
+  /** shown in the menu sheet and the dock's More, not in the crowded top bar */
+  menuOnly?: boolean;
 }
 
 export function useLinks(): NavLink[] {
@@ -26,22 +30,24 @@ export function useLinks(): NavLink[] {
   return [
     { href: '/', label: t.nav.today, Glyph: Home },
     { href: '/plan', label: t.nav.plan, Glyph: CalendarDays },
+    { href: '/planner', label: t.nav.meals, Glyph: ListChecks },
     { href: '/foods', label: t.nav.foods, Glyph: Search },
     { href: '/recipes', label: t.nav.recipes, Glyph: Utensils },
     { href: '/read', label: t.nav.read, Glyph: Book },
+    { href: '/medicines', label: t.nav.medicines, Glyph: Pill, menuOnly: true },
     { href: '/tools/bmi', label: t.nav.bmi, Glyph: Scale },
   ];
 }
 
 export const navItem =
-  'nav-link press inline-flex h-10 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-4 text-subhead font-medium text-foreground/72 [&_svg]:opacity-85';
+  'nav-link press inline-flex h-10 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full px-3 text-subhead 2xl:px-4 font-medium text-foreground/72 [&_svg]:opacity-85';
 
 /** Static twin of the Radix menu trigger, shown until the menu's chunk arrives (keeps Radix off the first paint). */
 export function ConditionsTrigger() {
   const { t } = useI18n();
   return (
     <button type="button" className={navItem}>
-      <LayoutGrid size={17} /> {t.nav.conditions} <ChevronDown size={14} />
+      <LayoutGrid size={17} className="max-2xl:hidden" /> {t.nav.conditions} <ChevronDown size={14} />
     </button>
   );
 }
@@ -56,7 +62,8 @@ export function MenuBar({ boot }: { boot: Bootstrap | undefined }) {
   const links = useLinks();
   const [open, setOpen] = useState(false);
   const auth = useAuth();
-  const liquid = useLiquid<HTMLElement>(path);
+  const section = sectionOf(path);
+  const liquid = useLiquid<HTMLElement>(section);
   useEffect(() => {
     setOpen(false);
   }, [path]);
@@ -75,9 +82,9 @@ export function MenuBar({ boot }: { boot: Bootstrap | undefined }) {
         </a>
         <nav ref={liquid.host} aria-label={t.nav.main} className="nav-track liquid-host ml-3 hidden min-w-0 items-center gap-1 xl:flex">
           <LiquidPill pill={liquid.pill} />
-          {links.map((link) => (
-            <a key={link.href} href={link.href} onClick={onLink} className={navItem} aria-current={path === link.href ? 'page' : undefined}>
-              <link.Glyph size={17} /> {link.label}
+          {links.filter((link) => !link.menuOnly).map((link) => (
+            <a key={link.href} href={link.href} onClick={onLink} className={navItem} aria-current={section === link.href ? 'page' : undefined}>
+              <link.Glyph size={17} className="max-2xl:hidden" /> {link.label}
             </a>
           ))}
           <Suspense fallback={<ConditionsTrigger />}>
@@ -91,7 +98,7 @@ export function MenuBar({ boot }: { boot: Bootstrap | undefined }) {
           <kbd className="hidden rounded-md border bg-card px-1.5 text-caption font-semibold 2xl:inline">⌘K</kbd>
         </button>
         <PreferenceButtons className="max-xl:hidden" />
-        {auth.me && ['super_admin', 'admin', 'editor'].includes(auth.me.role) && (
+        {auth.me && ['super_admin', 'admin', 'editor', 'medical_reviewer'].includes(auth.me.role) && (
           <a href="/admin" onClick={onLink} aria-label={t.nav.admin} title={t.nav.admin} aria-current={path.startsWith('/admin') ? 'page' : undefined} className={cn(iconButtonClass('md', 'ghost'), 'max-xl:hidden aria-[current=page]:text-primary')}>
             <KeyRound size={19} />
           </a>

@@ -27,7 +27,7 @@ function HitRow({ hit, index, active, onHover, onChoose }: { hit: Hit; index: nu
       data-index={index}
       onMouseMove={onHover}
       onClick={onChoose}
-      className={cn('flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors', active ? 'bg-foreground text-background' : 'hover:bg-accent')}
+      className={cn('flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors', active ? 'bg-ink text-ink-foreground' : 'hover:bg-accent')}
     >
       <span className={cn('grid size-9 shrink-0 place-items-center rounded-md', hit.tone ? 'tile' : active ? 'bg-white/20' : 'bg-accent')} style={hit.tone ? tone(hit.tone) : undefined}>
         {hit.icon}

@@ -506,3 +506,74 @@ html[lang='bn'] :is(h1, h2, h3, .text-display, .text-large-title, .text-title-1,
 html[lang='bn'] :is(p, li, dd, label) {
   line-height: 1.72;
 }
+
+/* ---- glow card (components/kit/glow.tsx) ---------------------------------------------------------------------------------------
+   A tall frosted capsule: a deep tone, a bright glow rising from below and a soft haze at the top, one hairline rim of light. */
+.glow-card {
+  --g1: #0d3b2e;
+  --g2: #19c58a;
+  --g3: #7af0c4;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.5rem;
+  min-height: 25rem;
+  padding: 1.75rem 1.75rem 1.5rem;
+  overflow: hidden;
+  border-radius: 3rem;
+  color: #fff;
+  background:
+    radial-gradient(70% 45% at 50% 0%, rgb(255 255 255 / 0.18), transparent 70%),
+    radial-gradient(85% 60% at 35% 72%, var(--g3), transparent 62%),
+    radial-gradient(90% 70% at 70% 55%, var(--g2), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--g1) 70%, #2a2a33), var(--g1));
+  border: 1px solid rgb(255 255 255 / 0.22);
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--g2) 60%, transparent);
+}
+.glow-card::after {
+  /* the frost: a faint grain so the glow reads as glass, not as a flat gradient */
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.07;
+  background-image: radial-gradient(rgb(255 255 255 / 0.9) 0.6px, transparent 0.7px);
+  background-size: 3px 3px;
+  pointer-events: none;
+}
+.glow-card[data-glow='amber'] {
+  --g1: #2b1406;
+  --g2: #e2571b;
+  --g3: #ffb347;
+}
+.glow-card[data-glow='blue'] {
+  --g1: #0d1d3d;
+  --g2: #2f6fe4;
+  --g3: #67d3ff;
+}
+.glow-card[data-glow='red'] {
+  --g1: #33090f;
+  --g2: #d7263d;
+  --g3: #ff8a7a;
+}
+.glow-card[data-glow='violet'] {
+  --g1: #1d1240;
+  --g2: #6a48f5;
+  --g3: #c3a8ff;
+}
+.glow-word {
+  font-size: clamp(2.25rem, 3.4vw, 3rem);
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+.glow-mark-label {
+  display: inline-block;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgb(255 255 255 / 0.92);
+}

@@ -12,7 +12,4 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTML
 ));
 Textarea.displayName = 'Textarea';
 
-export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(({ className, ...props }, ref) => (
-  <select ref={ref} className={cn('field h-11 w-full min-w-0 cursor-pointer rounded-lg px-3 text-subhead', className)} {...props} />
-));
-Select.displayName = 'Select';
+export { Select } from '@/components/ui/select';
