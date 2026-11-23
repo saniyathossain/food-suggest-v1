@@ -75,11 +75,11 @@ export function CookingPicker({ variants, chosen, best, onChoose }: PickerProps)
   const { t } = useI18n();
   const groups = GROUPS.map((group) => ({ group, items: variants.filter((variant) => groupOf(variant) === group) })).filter((entry) => entry.items.length > 0);
   return (
-    <div role="radiogroup" aria-label={t.food.waysToCook} className="grid gap-4">
+    <div role="radiogroup" aria-label={t.food.waysToCook} className="flex flex-wrap gap-x-6 gap-y-5">
       {groups.map(({ group, items }) => (
-        <div key={group} className="grid gap-2">
+        <div key={group} className="grid min-w-0 content-start gap-2" style={{ flex: `${Math.min(items.length, 4)} 1 ${Math.min(items.length, 3) * 10.5}rem` }}>
           {groups.length > 1 && <p className="text-caption font-semibold uppercase tracking-[0.06em] text-muted-foreground">{t.food.variantGroup[group]}</p>}
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(140px,100%),1fr))] gap-2.5">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(8.25rem,100%),12rem))] gap-2.5">
             {items.map((variant) => (
               <Choice key={variant.slug} variant={variant} active={variant.slug === chosen} best={variant.slug === best} slot={items.some((item) => item.photo)} onChoose={() => onChoose(variant.slug)} />
             ))}

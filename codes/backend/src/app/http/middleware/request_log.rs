@@ -18,6 +18,9 @@ pub async fn request_log(request: Request, next: Next) -> Response {
     let path = request.uri().path().to_owned();
     let started = Instant::now();
     let mut response = next.run(request).await;
+    if response.status().is_success() {
+        crate::app::support::traffic::record(&crate::app::support::clock::today(), method.as_str(), &path);
+    }
     tracing::info!(
         what = "http.request",
         request_id = %request_id,

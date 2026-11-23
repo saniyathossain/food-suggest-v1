@@ -33,6 +33,10 @@ verdicts: Array<VariantVerdictDto>,
  */
 glycemic: GlycemicDto | null, 
 /**
+ * 0-100: how light the way of cooking is (100 = no added fat, 10 = deep-fried); None when the method is unknown
+ */
+cook_score: number | null, 
+/**
  * a picture of the food cooked this way, when the gallery has one
  */
 photo: FoodPhotoDto | null, };

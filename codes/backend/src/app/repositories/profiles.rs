@@ -1,7 +1,7 @@
 //! Profiles on an account (self and family) with their conditions, medicines and lab history. Loading an account's
 //! profiles is four queries in total (profiles, then conditions / medicines / labs for all of them with IN), never one per
 //! profile. Every write checks the profile belongs to the account.
-use crate::app::enums::{FoodTiming, Gender, Kinship, LabKind, Pregnancy};
+use crate::app::enums::{Activity, Allergen, Budget, FoodTiming, Gender, Kinship, LabKind, Pregnancy};
 use crate::app::exceptions::AppError;
 use crate::app::models::{lab_result, profile, profile_condition, profile_medicine};
 use sea_orm::ActiveValue::{NotSet, Set};
@@ -35,6 +35,12 @@ pub struct ProfileFields {
     pub surgeries: Vec<String>,
     /// (condition id, year diagnosed)
     pub conditions: Vec<(i32, Option<i16>)>,
+    pub height_cm: Option<i16>,
+    pub waist_cm: Option<i16>,
+    pub activity: Option<Activity>,
+    pub sleep_hours: Option<f32>,
+    pub budget: Option<Budget>,
+    pub allergens: Vec<Allergen>,
 }
 
 #[derive(Debug, Clone)]
@@ -113,6 +119,14 @@ impl ProfileRepository {
         model.mode = Set(fields.mode.clone());
         model.allergies = Set(Self::texts(&fields.allergies));
         model.surgeries = Set(Self::texts(&fields.surgeries));
+        model.height_cm = Set(fields.height_cm);
+        model.waist_cm = Set(fields.waist_cm);
+        model.activity = Set(fields.activity);
+        model.sleep_hours = Set(fields.sleep_hours);
+        model.budget = Set(fields.budget);
+        let mut kinds = fields.allergens.clone();
+        kinds.dedup();
+        model.allergens = Set(json!(kinds));
         let saved = model.save(&transaction).await?;
         let id = match saved.id {
             sea_orm::ActiveValue::Set(id) | sea_orm::ActiveValue::Unchanged(id) => id,

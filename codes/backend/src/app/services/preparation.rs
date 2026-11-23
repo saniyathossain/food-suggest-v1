@@ -91,6 +91,7 @@ pub fn variant_dto(index: &CatalogIndex<'_>, food: &food::Model, variant: &food_
         versus_default: delta(variant, default),
         verdicts: verdicts(index, variant),
         glycemic,
+        cook_score: variant.method.map(|method| method.fat().score()),
         photo: photos_of(index, food).into_iter().find(|photo| photo.variant.as_deref() == Some(variant.slug.as_str())),
     }
 }

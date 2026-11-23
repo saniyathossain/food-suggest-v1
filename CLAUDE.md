@@ -14,6 +14,10 @@ plans in `aidlc-docs/`. Start with `.claude/instructions/aidlc-workflow.md` (AI-
 - Migrations: new SQL file + entry in `src/database/migrator.rs`; never edit an applied one.
 - Content is data: add foods/rules in `database/seeders/*.json` (dev) or via admin; never hard-code in UI.
 - Every UI word in `src/lang/en.ts` + `bn.ts` (bn is typed as en's shape).
+- Closed list under 5 options = chips (Select does it); 5+ = dropdown with search; DB-backed = `RemoteSelect`. No native confirm/alert/prompt (`confirmDialog`; `npm run check` enforces).
+- One frame per thing (no double borders). Every list: search, counted filters, every sort criterion (`lib/sorts.ts`), page size, cursor/pages from the API.
+- Backend-first: logic, links, tiers, sort live in DB + API, shaped for the mobile app; update `api-docs/openapi.yaml` with the change. New tier feature = `FeatureKey` + migration + lang + server-side check.
+- Security: JSON bodies are sanitized (`sanitize_json`); SQL always bound; no raw HTML injection.
 - Medical content: general guidance + disclaimer; never dosing.
 - Postgres/Redis are external (docker-commons `common-net`); never add them to compose.
 - Ports on 127.0.0.1; container non-root, read-only, cap_drop ALL.

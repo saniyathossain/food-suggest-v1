@@ -2,8 +2,8 @@
 //! shaped by the tier (conditions counted, suggestions cut from the "eat more" list only, never from avoid / go easy),
 //! with meal alternatives and medicine checks when the tier has them.
 use crate::app::dtos::account::{LabDto, LimitedDto, MealOptionsDto, PersonalPlanDto, ProfileConditionDto, PersonDto, ProfileMedicineDto};
-use crate::app::dtos::plan::{MealItemDto, PlanRequest};
-use crate::app::enums::{FeatureKey, Locale, Verdict};
+use crate::app::dtos::plan::{CriteriaDto, LabReadingDto, MealItemDto, PlanRequest};
+use crate::app::enums::{Allergen, FeatureKey, Locale, Verdict};
 use crate::app::exceptions::AppError;
 use crate::app::models::medicine;
 use crate::app::repositories::{CatalogSnapshot, FullProfile};
@@ -33,6 +33,27 @@ pub fn current_generics(person: &FullProfile, brands: &[medicine::Model]) -> Vec
         .filter(|row| row.stopped_on.is_none())
         .filter_map(|row| row.medicine_id.and_then(|id| brands.iter().find(|brand| brand.id == id).map(|brand| brand.generic_id)).or(row.generic_id))
         .collect()
+}
+
+/// The closed-list allergens saved on a profile (anything else in the column is ignored).
+pub fn allergens_of(value: &serde_json::Value) -> Vec<Allergen> {
+    value.as_array().map(|items| items.iter().filter_map(|item| serde_json::from_value::<Allergen>(item.clone()).ok()).collect()).unwrap_or_default()
+}
+
+/// What the engine can weigh about this person: body measures, habits, allergens, budget and every lab value (oldest first).
+pub fn criteria_of(person: &FullProfile) -> CriteriaDto {
+    let item = &person.profile;
+    CriteriaDto {
+        height_cm: item.height_cm.and_then(|value| u16::try_from(value).ok()),
+        weight_kg: None,
+        waist_cm: item.waist_cm.and_then(|value| u16::try_from(value).ok()),
+        activity: item.activity,
+        sleep_hours: item.sleep_hours,
+        allergens: allergens_of(&item.allergens),
+        budget: item.budget,
+        labs: person.labs.iter().map(|row| LabReadingDto { kind: row.kind, value: row.value }).collect(),
+        pregnancy: Some(item.pregnancy),
+    }
 }
 
 pub fn profile_dto(index: &CatalogIndex<'_>, person: &FullProfile, brands: &[medicine::Model], history: bool) -> PersonDto {
@@ -73,6 +94,12 @@ pub fn profile_dto(index: &CatalogIndex<'_>, person: &FullProfile, brands: &[med
         mode: item.mode.clone(),
         allergies: strings(&item.allergies),
         surgeries: strings(&item.surgeries),
+        height_cm: item.height_cm,
+        waist_cm: item.waist_cm,
+        activity: item.activity,
+        sleep_hours: item.sleep_hours,
+        budget: item.budget,
+        allergens: allergens_of(&item.allergens),
         conditions: person
             .conditions
             .iter()
@@ -127,6 +154,7 @@ pub fn plan(snapshot: &CatalogSnapshot, locale: Locale, person: &FullProfile, br
         gender: person.profile.gender,
         conditions: slugs,
         mode: Some(mode),
+        criteria: Some(criteria_of(person)),
     };
     let mut plan = PlanService::build(snapshot, &request, locale)?;
     if let Some(cap) = rights.count(FeatureKey::Suggestions) {

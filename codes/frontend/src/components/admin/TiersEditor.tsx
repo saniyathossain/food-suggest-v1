@@ -9,10 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { send } from '@/lib/api';
+import { isSwitch } from '@/lib/features';
 import { useI18n } from '@/lib/i18n';
-import type { FeatureKey, Tier } from '@/lib/types';
-
-const SWITCHES: FeatureKey[] = ['diet_modes', 'medicines', 'history', 'reports'];
+import type { FeatureKey, Tier, TierPreview } from '@/lib/types';
 
 export function TiersEditor({ admin, tiers, onSaved }: { admin: Admin; tiers: Tier[]; onSaved: () => void }) {
   const { t } = useI18n();
@@ -20,6 +19,14 @@ export function TiersEditor({ admin, tiers, onSaved }: { admin: Admin; tiers: Ti
   useEffect(() => {
     setDraft(tiers);
   }, [tiers]);
+  const [preview, setPreview] = useState<TierPreview | null>(null);
+  const showPreview = async (tier: Tier) => {
+    try {
+      setPreview(await send<TierPreview>(`/api/v1/admin/tiers/${tier.slug}/preview`, 'POST', { features: tier.features }, admin.token));
+    } catch (error) {
+      toast(refusalText(error));
+    }
+  };
   const features = draft[0]?.features.map((item) => item.feature) ?? [];
   const set = (slug: string, feature: FeatureKey, value: number) =>
     setDraft((now) => now.map((tier) => (tier.slug === slug ? { ...tier, features: tier.features.map((item) => (item.feature === feature ? { ...item, value } : item)) } : tier)));
@@ -60,7 +67,7 @@ export function TiersEditor({ admin, tiers, onSaved }: { admin: Admin; tiers: Ti
                   const value = tier.features.find((item) => item.feature === feature)?.value ?? 0;
                   return (
                     <td key={tier.slug} className="py-2.5 pr-3">
-                      {SWITCHES.includes(feature) ? (
+                      {isSwitch(feature) ? (
                         <Switch checked={value === 1} onCheckedChange={(on) => set(tier.slug, feature, on ? 1 : 0)} aria-label={`${tier.name}: ${t.tiers.features[feature]}`} />
                       ) : (
                         <Input aria-label={`${tier.name}: ${t.tiers.features[feature]}`} inputMode="numeric" placeholder="0" value={value} onChange={(event) => set(tier.slug, feature, Number(event.target.value.replace(/[^\d-]/g, '') || 0))} className="!h-9 !w-24" />
@@ -74,13 +81,32 @@ export function TiersEditor({ admin, tiers, onSaved }: { admin: Admin; tiers: Ti
               <td />
               {draft.map((tier) => (
                 <td key={tier.slug} className="pt-3 pr-3">
-                  <Button size="sm" onClick={() => void save(tier)}>{t.admin.saveTier}</Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" onClick={() => void showPreview(tier)}>{t.admin.ops.preview}</Button>
+                    <Button size="sm" onClick={() => void save(tier)}>{t.admin.saveTier}</Button>
+                  </div>
                 </td>
               ))}
             </tr>
           </tbody>
         </table>
       </div>
+      {preview && (
+        <div role="status" className="grid gap-2 rounded-xl border bg-card p-4 text-subhead">
+          <strong>{preview.tier}: {t.admin.ops.previewAccounts} {preview.accounts}</strong>
+          {preview.changes.length === 0 ? (
+            <p className="text-muted-foreground">{t.admin.ops.previewNone}</p>
+          ) : (
+            <ul className="grid gap-1 text-footnote">
+              {preview.changes.map((change) => (
+                <li key={change.feature}>{t.tiers.features[change.feature]}: {t.admin.ops.before} {change.before} → {t.admin.ops.after} {change.after}</li>
+              ))}
+            </ul>
+          )}
+          {preview.gains.length > 0 && <p className="text-footnote text-ok-ink">{t.admin.ops.gains}: {preview.gains.map((feature) => t.tiers.features[feature]).join(', ')}</p>}
+          {preview.losses.length > 0 && <p className="text-footnote text-avoid-ink">{t.admin.ops.losses}: {preview.losses.map((feature) => t.tiers.features[feature]).join(', ')}</p>}
+        </div>
+      )}
       <p className="text-footnote text-muted-foreground">{t.admin.onlySuper}</p>
     </section>
   );

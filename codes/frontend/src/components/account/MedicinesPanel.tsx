@@ -3,44 +3,80 @@
 // medicines first; a stopped one stays in history with its date. The app never suggests a dose.
 import { useEffect, useState } from 'react';
 import { UpgradeCard } from '@/components/account/Upgrade';
-import { Pill } from '@/components/icons/page';
+import { Pill, Plus } from '@/components/icons/page';
+import { DatePicker } from '@/components/kit/datepicker';
+import { FilterChip } from '@/components/kit/filterchip';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Segmented } from '@/components/ui/segmented';
 import { ApiError, send } from '@/lib/api';
 import { feature } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
-import type { FoodTiming, Me, MedicineHit, Person } from '@/lib/types';
+import type { FoodTiming, Me, MedicineCard, MedicineDetail, MedicineHit, MedicinePage, Person } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const TIMES = ['morning', 'noon', 'evening', 'night'] as const;
 const TIMINGS: FoodTiming[] = ['empty_stomach', 'before_food', 'with_food', 'after_food', 'any'];
 const today = () => new Date().toISOString().slice(0, 10);
 
-function Search({ onPick }: { onPick: (hit: MedicineHit) => void }) {
+/** A library card as the search's own kind of hit, so a suggestion is picked the same way as a search result. */
+function asHit(card: MedicineCard): MedicineHit {
+  return { medicine_id: null, brand: null, company: null, strength: null, form: null, generic: { slug: card.slug, name: card.name, group: card.group, food_timing: card.food_timing, how_to_take: card.how_to_take, source: null } };
+}
+
+/** Search by brand or generic (anywhere in the name), with common medicines suggested before typing and, always at the end, a row to
+    add what was typed as the person's own medicine: nothing is ever "not allowed", and what is not in the library is still kept. */
+function Search({ onPick, onOwn }: { onPick: (hit: MedicineHit) => void; onOwn: (name: string) => void }) {
   const { t, lang } = useI18n();
   const [text, setText] = useState('');
   const [hits, setHits] = useState<MedicineHit[]>([]);
+  const [suggested, setSuggested] = useState<MedicineHit[]>([]);
+  const [searched, setSearched] = useState(false);
+  const typed = text.trim();
   useEffect(() => {
-    if (text.trim().length < 2) {
+    void send<MedicinePage>(`/api/v1/library/medicines?lang=${lang}&sort=conflicts&limit=8`, 'GET')
+      .then((page) => setSuggested(page.items.map(asHit)))
+      .catch(() => setSuggested([]));
+  }, [lang]);
+  useEffect(() => {
+    setSearched(false);
+    if (typed.length < 2) {
       setHits([]);
       return;
     }
     const timer = window.setTimeout(() => {
-      void send<MedicineHit[]>(`/api/v1/medicines/search?q=${encodeURIComponent(text.trim())}&lang=${lang}`, 'GET').then(setHits).catch(() => setHits([]));
+      void send<MedicineHit[]>(`/api/v1/medicines/search?q=${encodeURIComponent(typed)}&lang=${lang}`, 'GET')
+        .then(setHits)
+        .catch(() => setHits([]))
+        .finally(() => setSearched(true));
     }, 200);
     return () => window.clearTimeout(timer);
-  }, [text, lang]);
+  }, [typed, lang]);
+  const choose = (hit: MedicineHit) => {
+    onPick(hit);
+    setText('');
+  };
   return (
     <div className="grid gap-2">
       <Label htmlFor="med-search">{t.meds.search}</Label>
-      <Input id="med-search" placeholder={t.ph.medSearch} value={text} onChange={(event) => setText(event.target.value)} autoComplete="off" />
-      {hits.length > 0 && (
-        <ul role="listbox" aria-label={t.meds.search} className="grid max-h-72 overflow-y-auto rounded-xl border bg-card">
+      <Input id="med-search" placeholder={t.ph.medSearch} value={text} onChange={(event) => setText(event.target.value)} autoComplete="off" maxLength={80} />
+      {typed.length < 2 && suggested.length > 0 && (
+        <div className="grid gap-1.5" role="group" aria-label={t.meds.suggested}>
+          <p className="text-footnote font-bold text-muted-foreground">{t.meds.suggested}</p>
+          <div className="flex flex-wrap gap-2">
+            {suggested.map((hit) => (
+              <button key={hit.generic.slug} type="button" className="chip press" onClick={() => choose(hit)}>
+                <Plus size={13} aria-hidden /> {hit.generic.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {typed.length >= 2 && (
+        <ul role="listbox" aria-label={t.meds.search} className="grid max-h-80 overflow-y-auto overscroll-contain rounded-xl border bg-card" data-lenis-prevent>
           {hits.map((hit) => (
             <li key={`${hit.medicine_id ?? 'g'}-${hit.generic.slug}`}>
-              <button type="button" onClick={() => { onPick(hit); setText(''); setHits([]); }} className="grid w-full gap-0.5 px-3.5 py-2.5 text-left transition-colors hover:bg-accent">
+              <button type="button" onClick={() => choose(hit)} className="grid w-full gap-0.5 px-3.5 py-2.5 text-start transition-colors hover:bg-accent">
                 <span className="text-subhead font-semibold">
                   {hit.brand ?? hit.generic.name} {hit.strength && <span className="font-normal text-muted-foreground">· {hit.strength}</span>}
                 </span>
@@ -52,14 +88,20 @@ function Search({ onPick }: { onPick: (hit: MedicineHit) => void }) {
               </button>
             </li>
           ))}
+          {searched && hits.length === 0 && <li className="px-3.5 py-2.5 text-footnote text-muted-foreground">{t.meds.noMatch}</li>}
+          <li className="border-t">
+            <button type="button" onClick={() => { onOwn(typed); setText(''); }} className="flex w-full items-center gap-2.5 px-3.5 py-3 text-start text-subhead font-semibold text-primary transition-colors hover:bg-accent">
+              <Plus size={16} aria-hidden /> <span className="min-w-0 flex-1 truncate">{t.meds.addOwn.replace('{name}', typed)}</span>
+            </button>
+          </li>
         </ul>
       )}
     </div>
   );
 }
 
-export function MedicinesPanel({ me, person, onChanged }: { me: Me; person: Person; onChanged: () => void }) {
-  const { t } = useI18n();
+export function MedicinesPanel({ me, person, preset = '', onChanged }: { me: Me; person: Person; preset?: string; onChanged: () => void }) {
+  const { t, lang } = useI18n();
   const [picked, setPicked] = useState<MedicineHit | null>(null);
   const [custom, setCustom] = useState('');
   const [dose, setDose] = useState('');
@@ -68,6 +110,16 @@ export function MedicinesPanel({ me, person, onChanged }: { me: Me; person: Pers
   const [started, setStarted] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  // arriving from a medicine's page ("Add to my medicines"): that medicine is already chosen
+  useEffect(() => {
+    if (!preset) return;
+    void send<MedicineDetail>(`/api/v1/library/medicines/${encodeURIComponent(preset)}?lang=${lang}`, 'GET')
+      .then((detail) => {
+        setPicked({ medicine_id: null, brand: null, company: null, strength: null, form: null, generic: detail.generic });
+        setTiming(detail.generic.food_timing);
+      })
+      .catch(() => undefined);
+  }, [preset, lang]);
   if (feature(me, 'medicines') === 0) return <UpgradeCard text={t.tiers.limitedMedicines} />;
   const pick = (hit: MedicineHit) => {
     setPicked(hit);
@@ -150,45 +202,42 @@ export function MedicinesPanel({ me, person, onChanged }: { me: Me; person: Pers
       </ul>
       <section className="surface grid gap-4 rounded-2xl p-5">
         <h3 className="text-headline">{t.meds.add}</h3>
-        {picked ? (
+        {picked || custom ? (
           <p className="flex flex-wrap items-center gap-2 rounded-xl bg-primary-soft p-3 text-subhead">
-            <strong>{picked.brand ?? picked.generic.name}</strong> {picked.strength && `· ${picked.strength}`}
-            <span className="text-muted-foreground">{picked.generic.group}</span>
-            <button type="button" className="ml-auto text-footnote font-semibold text-primary" onClick={() => setPicked(null)}>{t.meds.remove}</button>
+            <strong>{picked ? (picked.brand ?? picked.generic.name) : custom}</strong> {picked?.strength && `· ${picked.strength}`}
+            <span className="text-muted-foreground">{picked ? picked.generic.group : t.meds.own}</span>
+            <button type="button" className="ms-auto text-footnote font-semibold text-primary" onClick={() => { setPicked(null); setCustom(''); }}>{t.meds.remove}</button>
           </p>
         ) : (
-          <>
-            <Search onPick={pick} />
-            <div className="grid gap-1.5">
-              <Label htmlFor="med-custom">{t.meds.notListed}</Label>
-              <Input id="med-custom" placeholder={t.ph.medCustom} value={custom} onChange={(event) => setCustom(event.target.value)} />
-            </div>
-          </>
+          <Search onPick={pick} onOwn={(name) => { setPicked(null); setCustom(name); }} />
         )}
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid items-start gap-4 sm:grid-cols-2">
           <div className="grid gap-1.5">
             <Label htmlFor="med-dose">{t.meds.dose}</Label>
             <Input id="med-dose" placeholder={t.ph.dose} value={dose} onChange={(event) => setDose(event.target.value)} />
-            <p className="text-footnote text-muted-foreground">{t.meds.doseHint}</p>
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="med-start">{t.meds.started}</Label>
-            <Input id="med-start" type="date" value={started} max={today()} onChange={(event) => setStarted(event.target.value)} />
+            <DatePicker id="med-start" label={t.meds.started} value={started} max={today()} onChange={setStarted} clearable />
           </div>
         </div>
-        <div className="grid gap-2">
-          <span className="text-subhead font-semibold">{t.meds.times}</span>
+        <p className="-mt-2 text-footnote text-muted-foreground">{t.meds.doseHint}</p>
+        <fieldset className="grid gap-2">
+          <legend className="mb-0.5 text-footnote font-bold text-muted-foreground">{t.meds.times}</legend>
           <div className="flex flex-wrap gap-2">
             {TIMES.map((time) => (
-              <button key={time} type="button" aria-pressed={times.includes(time)} onClick={() => setTimes((now) => (now.includes(time) ? now.filter((item) => item !== time) : [...now, time]))} className="chip press">
-                {t.meds.timeOptions[time]}
-              </button>
+              <FilterChip key={time} on={times.includes(time)} onClick={() => setTimes((now) => (now.includes(time) ? now.filter((item) => item !== time) : [...now, time]))} label={t.meds.timeOptions[time]} />
             ))}
           </div>
-        </div>
-        <div className="min-w-0 max-w-full">
-          <Segmented label={t.meds.food} value={timing} onChange={(value) => setTiming(value as FoodTiming)} options={TIMINGS.map((value) => ({ value, label: t.meds.foodOptions[value] }))} />
-        </div>
+        </fieldset>
+        <fieldset className="grid gap-2">
+          <legend className="mb-0.5 text-footnote font-bold text-muted-foreground">{t.meds.food}</legend>
+          <div role="radiogroup" aria-label={t.meds.food} className="flex flex-wrap gap-2">
+            {TIMINGS.map((value) => (
+              <FilterChip key={value} on={timing === value} onClick={() => setTiming(value)} label={t.meds.foodOptions[value]} />
+            ))}
+          </div>
+        </fieldset>
         {error && <p role="alert" className="text-footnote text-avoid-ink">{error}</p>}
         <Button onClick={() => void add()} state={busy ? 'busy' : 'idle'} disabled={!picked && !custom.trim()} className="w-fit">
           {t.meds.add}

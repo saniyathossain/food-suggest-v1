@@ -16,11 +16,18 @@ pub struct AdminActor {
 }
 
 impl AdminActor {
+    /// Marking rules and conditions reviewed: a medical reviewer, an admin or the super admin. An editor, who writes the rules,
+    /// never reviews them: the review is a second pair of eyes.
+    pub fn require_reviewer(&self) -> Result<(), AppError> {
+        if matches!(self.role, Role::SuperAdmin | Role::Admin | Role::MedicalReviewer) { Ok(()) } else { Err(AppError::Forbidden) }
+    }
+
     pub fn require(&self, wanted: Role) -> Result<(), AppError> {
         let ok = match wanted {
             Role::SuperAdmin => self.role == Role::SuperAdmin,
             Role::Admin => matches!(self.role, Role::SuperAdmin | Role::Admin),
-            Role::Editor | Role::User => self.role.can_admin(),
+            Role::Editor => matches!(self.role, Role::SuperAdmin | Role::Admin | Role::Editor),
+            Role::MedicalReviewer | Role::User => self.role.can_admin(),
         };
         if ok { Ok(()) } else { Err(AppError::Forbidden) }
     }

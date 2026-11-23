@@ -17,6 +17,7 @@ fn careful(feature: FeatureKey) -> i32 {
         FeatureKey::Conditions => 2,
         FeatureKey::Suggestions => 10,
         FeatureKey::MealAlternatives => 1,
+        FeatureKey::Spotlight => 1,
         _ => 0,
     }
 }

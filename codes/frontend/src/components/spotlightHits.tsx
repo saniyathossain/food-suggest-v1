@@ -2,13 +2,14 @@
 // and the last five things opened. Kept apart from the panel so each stays small.
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CalendarDays, CategoryIcon, Home, Icon, KeyRound, LayoutGrid, Moon, Scale, Search, Sun } from '@/components/icons';
-import { Languages } from '@/components/icons/page';
+import { BookOpen, ChefHat, Languages, Lock } from '@/components/icons/page';
 import { endpoints, getJson } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { usePrefs } from '@/lib/prefs';
 import { navigate } from '@/lib/router';
 import { switchLang, switchTheme } from '@/lib/switching';
-import type { Bootstrap, FoodSearch } from '@/lib/types';
+import { useMoreHits } from '@/components/spotlightIndex';
+import type { Bootstrap, FoodSearch, PostCard, RecipeCard } from '@/lib/types';
 
 export interface Hit {
   id: string;
@@ -63,20 +64,41 @@ function useFoodHits(query: string, open: boolean): FoodSearch[] {
   return foods;
 }
 
+/** Articles and recipes: their lists are small and cached by the API layer, fetched once when the search opens, filtered here. */
+function useContentLists(open: boolean): { posts: PostCard[]; recipes: RecipeCard[] } {
+  const { lang } = useI18n();
+  const [lists, setLists] = useState<{ posts: PostCard[]; recipes: RecipeCard[] }>({ posts: [], recipes: [] });
+  useEffect(() => {
+    if (!open) return;
+    let live = true;
+    void Promise.all([getJson<PostCard[]>(endpoints.posts(lang)).catch(() => []), getJson<RecipeCard[]>(endpoints.recipes(lang)).catch(() => [])]).then(([posts, recipes]) => {
+      if (live) setLists({ posts, recipes });
+    });
+    return () => {
+      live = false;
+    };
+  }, [open, lang]);
+  return lists;
+}
+
 export function useHits(boot: Bootstrap | undefined, query: string, open: boolean): Hit[] {
   const { t, lang } = useI18n();
   const { theme } = usePrefs();
   const foods = useFoodHits(query, open);
+  const content = useContentLists(open);
+  const { hits: more, level } = useMoreHits(open, normal(query.trim()), normal);
   return useMemo<Hit[]>(() => {
     const go = (path: string) => () => navigate(path);
     const pages: Hit[] = [
       { id: 'p-home', group: t.spotlight.pages, label: t.nav.today, icon: <Home size={19} />, run: go('/') },
       { id: 'p-plan', group: t.spotlight.pages, label: t.nav.plan, icon: <CalendarDays size={19} />, run: go('/plan') },
       { id: 'p-foods', group: t.spotlight.pages, label: t.nav.foods, icon: <Search size={19} />, run: go('/foods') },
+      { id: 'p-recipes', group: t.spotlight.pages, label: t.nav.recipes, icon: <ChefHat size={19} />, run: go('/recipes') },
+      { id: 'p-read', group: t.spotlight.pages, label: t.nav.read, icon: <BookOpen size={19} />, run: go('/read') },
       { id: 'p-bmi', group: t.spotlight.pages, label: t.bmi.title, icon: <Scale size={19} />, run: go('/tools/bmi') },
       { id: 'p-admin', group: t.spotlight.pages, label: t.nav.admin, icon: <KeyRound size={19} />, run: go('/admin') },
     ];
-    const conditions: Hit[] = (boot?.conditions ?? []).map((condition) => ({
+    const conditions: Hit[] = (level < 2 ? [] : boot?.conditions ?? []).map((condition) => ({
       id: `c-${condition.slug}`,
       group: t.nav.conditions,
       label: condition.name,
@@ -100,12 +122,31 @@ export function useHits(boot: Bootstrap | undefined, query: string, open: boolea
       run: go(`/food/${food.slug}`),
     }));
     const term = normal(query.trim());
+    const matches = (...parts: string[]) => normal(parts.join(' ')).includes(term);
+    const articleHits: Hit[] = !term || level < 2 ? [] : content.posts.filter((post) => matches(post.title, post.excerpt, post.tags.join(' '))).slice(0, 4).map((post) => ({
+      id: `a-${post.slug}`,
+      group: t.spotlight.articles,
+      label: post.title,
+      hint: post.excerpt,
+      icon: <BookOpen size={18} />,
+      run: go(`/read/${post.slug}`),
+    }));
+    const recipeHits: Hit[] = !term || level < 2 ? [] : content.recipes.filter((recipe) => matches(recipe.title, recipe.summary)).slice(0, 4).map((recipe) => ({
+      id: `rc-${recipe.slug}`,
+      group: t.spotlight.recipes,
+      label: recipe.title,
+      hint: recipe.summary,
+      icon: <ChefHat size={18} />,
+      run: go(`/recipe/${recipe.slug}`),
+    }));
     const local = [...pages, ...conditions, ...actions].filter((hit) => !term || normal(hit.label).includes(term) || normal(hit.hint ?? '').includes(term));
-    if (term) return [...local, ...foodHits];
+    // a tier that does not reach everything says so, once, at the end: what it searches and where to go for more
+    const locked: Hit[] = level >= 3 ? [] : [{ id: 'locked', group: t.tiers.upgrade, label: t.spotlight.locked, hint: t.spotlight.lockedHint.replace('{what}', level < 2 ? t.spotlight.lockedFoods : t.spotlight.lockedMore), icon: <Lock size={18} />, run: go('/account') }];
+    if (term) return [...local, ...foodHits, ...more, ...recipeHits, ...articleHits, ...locked];
     const recent = readRecent()
       .map((label) => [...pages, ...conditions].find((hit) => hit.label === label))
       .filter((hit): hit is Hit => hit !== undefined)
       .map((hit) => ({ ...hit, id: `r-${hit.id}`, group: t.spotlight.recent }));
     return [...recent, ...local];
-  }, [boot, foods, query, t, lang, theme]);
+  }, [boot, foods, content, more, level, query, t, lang, theme]);
 }

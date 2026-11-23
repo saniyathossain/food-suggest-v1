@@ -8,6 +8,7 @@ import { ErrorBox } from '@/components/kit/loaderror';
 import { Button } from '@/components/ui/button';
 import { endpoints, useResource } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { isSwitch } from '@/lib/features';
 import { useI18n } from '@/lib/i18n';
 import { navigate } from '@/lib/router';
 import type { Tier } from '@/lib/types';
@@ -21,7 +22,7 @@ export default function Pricing() {
   const { data, error } = useResource<Tier[]>(endpoints.tiers(lang));
   const [buying, setBuying] = useState('');
   const value = (feature: Tier['features'][number]) => {
-    if (['diet_modes', 'medicines', 'history', 'reports'].includes(feature.feature)) return feature.value ? t.tiers.yes : t.tiers.no;
+    if (isSwitch(feature.feature)) return feature.value ? t.tiers.yes : t.tiers.no;
     return feature.value < 0 ? t.tiers.unlimited : num(feature.value);
   };
   return (

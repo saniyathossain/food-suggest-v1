@@ -21,6 +21,9 @@ pub struct Model {
     #[serde(skip_serializing)]
     pub label_text: Option<String>,
     pub active: bool,
+    /// a photo from the media library; None keeps the drawn tile
+    #[serde(default)]
+    pub media_id: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -1,14 +1,17 @@
 use crate::app::dtos::catalog::TimingDto;
 use crate::app::dtos::plan::{
-    MealDto, MealItemDto, PlanDto, PlanFoodDto, PlanFoodsDto, PlanRequest, PlanTimingDto, ProfileDto, ReasonDto,
+    MealDto, MealItemDto, PlanDto, PlanFoodDto, PlanFoodsDto, PlanRequest, PlanTimingDto, ProfileDto, ReasonDto, WhyDto,
 };
-use crate::app::enums::{AgeGroup, Locale, TimingKind, Verdict};
+use crate::app::enums::{Allergen, AgeGroup, Budget, Locale, TimingKind, Verdict, WhyBasis};
 use crate::app::exceptions::AppError;
 use crate::app::models::{food_rule, meal_slot};
 use crate::app::repositories::CatalogSnapshot;
 use crate::app::services::catalog::media_url;
-use crate::app::services::{diet_mode, preparation, CatalogIndex, CatalogService};
-use std::collections::BTreeMap;
+use crate::app::services::{criteria, diet_mode, preparation, CatalogIndex, CatalogService};
+use std::collections::{BTreeMap, BTreeSet};
+
+/// Countries whose people the WHO Asian BMI action points and the IDF South Asian waist limits apply to.
+const SOUTH_ASIA: [&str; 5] = ["BD", "IN", "PK", "LK", "NP"];
 
 pub struct PlanService;
 
@@ -25,6 +28,11 @@ impl PlanService {
         }
         let age_group = AgeGroup::from_age(request.age);
         let verdicts = Self::merged_verdicts(snapshot, &condition_ids);
+        let wanted = request.criteria.as_ref();
+        let allergens: Vec<Allergen> = wanted.map(|item| item.allergens.clone()).unwrap_or_default();
+        let blocked: BTreeMap<i32, Allergen> = snapshot.food_allergens.iter().filter(|row| allergens.contains(&row.allergen)).map(|row| (row.food_id, row.allergen)).collect();
+        let budget = wanted.and_then(|item| item.budget);
+        let insights = wanted.map(|item| criteria::insights(&index, &criteria::read(item, request.gender, age_group, SOUTH_ASIA.contains(&country.as_str())))).unwrap_or_default();
 
         Ok(PlanDto {
             profile: ProfileDto {
@@ -38,9 +46,9 @@ impl PlanService {
                 .meal_slots
                 .iter()
                 .filter(|slot| slot.country_code == country)
-                .map(|slot| Self::meal(&index, slot, &verdicts))
+                .map(|slot| Self::meal(&index, slot, &verdicts, &blocked))
                 .collect(),
-            foods: Self::foods(&index, &verdicts),
+            foods: Self::foods(&index, &verdicts, &blocked, budget),
             timing: Self::timing(CatalogService::timing_for(&index, &condition_ids, Some(&country))),
             habits: CatalogService::habits_for(&index, &condition_ids, true),
             sources: CatalogService::sources_for(&index, &condition_ids),
@@ -58,6 +66,7 @@ impl PlanService {
                 .and_then(|slug| diet_mode::find(&index, slug))
                 .or_else(|| diet_mode::find(&index, "everyday"))
                 .map(|mode| diet_mode::detail(&index, mode, Some(&condition_ids))),
+            insights,
         })
     }
 
@@ -107,11 +116,13 @@ impl PlanService {
         index: &CatalogIndex<'_>,
         slot: &meal_slot::Model,
         verdicts: &BTreeMap<i32, Vec<&food_rule::Model>>,
+        blocked: &BTreeMap<i32, Allergen>,
     ) -> MealDto {
         let slugs: Vec<&str> = slot.items.as_array().map(|items| items.iter().filter_map(|item| item.as_str()).collect()).unwrap_or_default();
         let mut items: Vec<MealItemDto> = slugs
             .into_iter()
             .filter_map(|slug| index.food_by_slug(slug))
+            .filter(|food| !blocked.contains_key(&food.id))
             .map(|food| MealItemDto {
                 slug: food.slug.clone(),
                 name: index.text(&food.name),
@@ -130,11 +141,41 @@ impl PlanService {
         }
     }
 
-    fn foods(index: &CatalogIndex<'_>, verdicts: &BTreeMap<i32, Vec<&food_rule::Model>>) -> PlanFoodsDto {
+    fn why(index: &CatalogIndex<'_>, rules: &[&food_rule::Model]) -> Option<WhyDto> {
+        let winner = rules.first()?;
+        let condition = index.condition(winner.condition_id)?;
+        let also = rules.iter().map(|rule| rule.condition_id).collect::<BTreeSet<_>>().len().saturating_sub(1);
+        Some(WhyDto {
+            basis: WhyBasis::Condition,
+            rule_id: Some(winner.id),
+            condition: Some(index.tag(condition)),
+            allergen: None,
+            reason: index.text(&winner.reason),
+            source: index.rule_source(winner),
+            reviewed_on: winner.reviewed_on.clone(),
+            also: u32::try_from(also).unwrap_or(0),
+        })
+    }
+
+    fn foods(index: &CatalogIndex<'_>, verdicts: &BTreeMap<i32, Vec<&food_rule::Model>>, blocked: &BTreeMap<i32, Allergen>, budget: Option<Budget>) -> PlanFoodsDto {
         let mut board = PlanFoodsDto::default();
-        for (food_id, rules) in verdicts {
-            let (Some(food), Some(strictest)) = (index.food(*food_id), rules.first()) else { continue };
-            let conflict = strictest.verdict.is_restrictive() && rules.iter().any(|rule| rule.verdict == Verdict::Recommended);
+        let ids: BTreeSet<i32> = verdicts.keys().chain(blocked.keys()).copied().collect();
+        let none: Vec<&food_rule::Model> = Vec::new();
+        for food_id in ids {
+            let rules = verdicts.get(&food_id).unwrap_or(&none);
+            let Some(food) = index.food(food_id) else { continue };
+            let allergen = blocked.get(&food_id).copied();
+            let (verdict, why) = match allergen {
+                Some(kind) => (
+                    Verdict::Avoid,
+                    WhyDto { basis: WhyBasis::Allergy, rule_id: None, condition: None, allergen: Some(kind), reason: String::new(), source: None, reviewed_on: None, also: u32::try_from(rules.len()).unwrap_or(0) },
+                ),
+                None => {
+                    let Some(why) = Self::why(index, rules) else { continue };
+                    (rules[0].verdict, why)
+                }
+            };
+            let conflict = verdict.is_restrictive() && allergen.is_none() && rules.iter().any(|rule| rule.verdict == Verdict::Recommended);
             let entry = PlanFoodDto {
                 slug: food.slug.clone(),
                 name: index.text(&food.name),
@@ -142,7 +183,7 @@ impl PlanService {
                 cutout: index.food_cutout(food),
                 category: index.category_slug(food.category_id),
                 best_way: preparation::best_way(index, food.id).map(|variant| index.text(&variant.name)),
-                verdict: strictest.verdict,
+                verdict,
                 conflict,
                 reasons: rules
                     .iter()
@@ -155,12 +196,21 @@ impl PlanService {
                         })
                     })
                     .collect(),
+                why,
+                cost: food.cost_band,
             };
-            match strictest.verdict {
+            match verdict {
                 Verdict::Avoid => board.avoid.push(entry),
                 Verdict::Limit => board.limit.push(entry),
                 Verdict::Recommended => board.recommended.push(entry),
                 Verdict::Allowed => {}
+            }
+        }
+        if let Some(level) = budget {
+            // a budget shapes which suggestions come first (cheaper first); on a low budget the costliest are left out. It never changes a verdict.
+            board.recommended.sort_by_key(|item| item.cost.unwrap_or(2));
+            if level == Budget::Low {
+                board.recommended.retain(|item| item.cost != Some(3));
             }
         }
         board

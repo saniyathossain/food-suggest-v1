@@ -15,7 +15,7 @@ export default function ConditionsMenu({ boot }: { boot: Bootstrap | undefined }
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className={navItem} aria-current={path.startsWith('/condition/') ? 'page' : undefined}>
-        <LayoutGrid size={18} /> {t.nav.conditions} <ChevronDown size={15} className="transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
+        <LayoutGrid size={18} className="max-2xl:hidden" /> {t.nav.conditions} <ChevronDown size={15} className="transition-transform duration-200 [[data-state=open]_&]:rotate-180" />
       </DropdownMenuTrigger>
       <DropdownMenuContent sideOffset={14} align="start" className="min-w-72">
         {boot?.conditions.map((condition) => (

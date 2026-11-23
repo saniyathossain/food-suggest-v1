@@ -2,7 +2,7 @@
 // of thumbnails when there are two or more. Choosing a way of cooking on the page (an omelette, a poached egg) brings its
 // picture into view when the gallery has one. No pictures at all: the food group's icon.
 import { useEffect, useState } from 'react';
-import { CategoryIcon } from '@/components/icons';
+import { Artwork } from '@/components/kit/artwork';
 import { Cutout } from '@/components/kit/cutout';
 import { Photo } from '@/components/kit/photo';
 import type { FoodPhoto } from '@/lib/types';
@@ -22,9 +22,9 @@ export function Gallery({ photos, name, category, variant }: Props) {
   const current = ordered.find((photo) => photo.url === shown) ?? ordered[0];
   if (!current) {
     return (
-      <span aria-hidden className="grid aspect-square place-items-center rounded-2xl bg-muted text-muted-foreground">
-        <CategoryIcon slug={category} size={72} />
-      </span>
+      <div className="relative aspect-square overflow-hidden rounded-2xl shadow-md" style={{ containerType: 'inline-size' }}>
+        <Artwork category={category} name={name} />
+      </div>
     );
   }
   return (

@@ -29,7 +29,19 @@ const ACCOUNTS_MEDICINES: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR")
 const RECIPE_VIDEOS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/recipe_videos.sql"));
 const MEDICINES_MORE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/medicines_more.sql"));
 const HEALTH: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/catalog_health.sql"));
+const HEALTH_MORE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/health_more.sql"));
+const ENGINE_CRITERIA: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/engine_criteria.sql"));
+const BASELINE_REVIEW: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/baseline_review.sql"));
 const BD_MORE: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/catalog_bd_more.sql"));
+const GROWTH_CATALOG: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/catalog_growth.sql"));
+const ACUTE_CONDITIONS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/conditions_acute.sql"));
+const GROWTH_PHOTOS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/photos_growth.sql"));
+const BABY_POSTS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/posts_baby.sql"));
+const GROWTH_PHOTOS_2: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/photos_growth2.sql"));
+const GROWTH_PHOTOS_3: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/photos_growth3.sql"));
+const GROWTH_CATALOG_2: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/catalog_growth2.sql"));
+const BP_LOW: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/bp_low.sql"));
+const CHICKEN_KINDS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/catalog_growth3.sql"));
 const FOOD_PHOTOS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/food_photos.sql"));
 const CUTOUTS: &str = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/cutouts.sql"));
 
@@ -197,6 +209,18 @@ pub async fn run(db: &DatabaseConnection, force: bool) -> Result<bool, DbErr> {
     transaction.execute_unprepared(BD_MORE).await?;
     transaction.execute_unprepared(FOOD_PHOTOS).await?;
     transaction.execute_unprepared(MEDICINES_MORE).await?;
+    transaction.execute_unprepared(HEALTH_MORE).await?;
+    transaction.execute_unprepared(ENGINE_CRITERIA).await?;
+    transaction.execute_unprepared(GROWTH_CATALOG).await?;
+    transaction.execute_unprepared(GROWTH_CATALOG_2).await?;
+    transaction.execute_unprepared(BP_LOW).await?;
+    transaction.execute_unprepared(CHICKEN_KINDS).await?;
+    transaction.execute_unprepared(ACUTE_CONDITIONS).await?;
+    transaction.execute_unprepared(GROWTH_PHOTOS).await?;
+    transaction.execute_unprepared(BABY_POSTS).await?;
+    transaction.execute_unprepared(GROWTH_PHOTOS_2).await?;
+    transaction.execute_unprepared(GROWTH_PHOTOS_3).await?;
+    transaction.execute_unprepared(BASELINE_REVIEW).await?;
     transaction.commit().await?;
     Ok(true)
 }
@@ -233,6 +257,8 @@ async fn insert_all(db: &DatabaseTransaction, seed: &SeedFile) -> Result<(), DbE
             subcategory_id: NotSet,
             origin: Set(if seed.imported_foods.contains(slug) { FoodOrigin::Imported } else { FoodOrigin::Local }),
             season: Set(None),
+            cost_band: NotSet,
+            age_from_months: NotSet,
         }
         .insert(db)
         .await?;
@@ -252,6 +278,8 @@ async fn insert_all(db: &DatabaseTransaction, seed: &SeedFile) -> Result<(), DbE
             media_id: Set(media_id(db, item.image.as_deref()).await?),
             active: Set(true),
             sort: Set(sort(position)),
+            reviewed_by: NotSet,
+            reviewed_on: NotSet,
         }
         .insert(db)
         .await?;
@@ -323,6 +351,9 @@ async fn insert_rules(db: &DatabaseTransaction, condition_id: i32, rules: &[Seed
             food_id: Set(food_id),
             verdict: Set(*verdict),
             reason: Set(LocalizedText::of(en, bn)),
+            source_id: NotSet,
+            reviewed_by: NotSet,
+            reviewed_on: NotSet,
         });
     }
     if models.is_empty() {
@@ -390,6 +421,8 @@ async fn insert_extra(db: &DatabaseTransaction, extra: &ExtraFile) -> Result<(),
             subcategory_id: NotSet,
             origin: Set(item.origin),
             season: Set(None),
+            cost_band: NotSet,
+            age_from_months: NotSet,
         }
         .insert(db)
         .await?;

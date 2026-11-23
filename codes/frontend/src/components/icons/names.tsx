@@ -1,7 +1,7 @@
 // The icon for each name the database stores (admin-managed condition and habit icons, food groups, meal slots, verdicts). Loaded
 // after first paint (components/icons/index.tsx loadIconNames); unknown names fall back to a neutral glyph.
 import {
-  Activity01Icon, Apple01Icon, BanIcon, BeanIcon, BedDoubleIcon, BedIcon, BrainIcon, BroccoliIcon, CandyIcon, CarrotIcon, CheckmarkCircle02Icon, CigaretteOffIcon, CircleIcon, Coffee01Icon, CookieIcon, CookingPotIcon, DropletIcon, Dumbbell01Icon, FishFoodIcon, FootprintsIcon, GaugeIcon, HeartIcon, HeartPulseIcon, MilkBottleIcon, Moon02Icon, MoonStarIcon, NotebookPenIcon, PackageIcon, PillIcon, RiceBowl01Icon, SaladIcon, Shield01Icon, ShieldPlusIcon, SmartphoneIcon, SoftDrink01Icon, SparklesIcon, Sun03Icon, SunriseIcon, SunsetIcon, ThumbsUpIcon, WindIcon,
+  Activity01Icon, Apple01Icon, Baby01Icon, BanIcon, BeanIcon, BedDoubleIcon, BedIcon, BrainIcon, BroccoliIcon, CandyIcon, CarrotIcon, CheckmarkCircle02Icon, CigaretteOffIcon, CircleIcon, Coffee01Icon, CookieIcon, CookingPotIcon, DropletIcon, Dumbbell01Icon, FishFoodIcon, FootprintsIcon, GaugeIcon, HeartIcon, HeartPulseIcon, MilkBottleIcon, Moon02Icon, MoonStarIcon, NotebookPenIcon, PackageIcon, PillIcon, RiceBowl01Icon, SaladIcon, Shield01Icon, ShieldPlusIcon, SmartphoneIcon, SoftDrink01Icon, SparklesIcon, Sun03Icon, SunriseIcon, SunsetIcon, ThumbsUpIcon, WindIcon,
 } from '@hugeicons/core-free-icons';
 import { icon, type AppIcon } from '@/components/icons/make';
 import { Scale } from '@/components/icons';
@@ -55,6 +55,8 @@ const CATEGORIES: Record<string, AppIcon> = {
   drinks: /* @__PURE__ */ icon(SoftDrink01Icon, 'drinks'),
   kitchen: /* @__PURE__ */ icon(CookingPotIcon, 'kitchen'),
   processed: /* @__PURE__ */ icon(PackageIcon, 'processed'),
+  baby: /* @__PURE__ */ icon(Baby01Icon, 'baby'),
+  functional: /* @__PURE__ */ icon(SparklesIcon, 'functional'),
 };
 const CategoryFallback = /* @__PURE__ */ icon(CarrotIcon, 'category');
 const MealFallback = /* @__PURE__ */ icon(Sun03Icon, 'meal');
@@ -66,6 +68,11 @@ const MEALS: Record<string, AppIcon> = {
   evening: /* @__PURE__ */ icon(SunsetIcon, 'evening'),
   dinner: /* @__PURE__ */ icon(Moon02Icon, 'dinner'),
   bedtime: /* @__PURE__ */ icon(BedDoubleIcon, 'bedtime'),
+  sehri: /* @__PURE__ */ icon(MoonStarIcon, 'sehri'),
+  iftar: /* @__PURE__ */ icon(SunsetIcon, 'iftar'),
+  'first-meal': /* @__PURE__ */ icon(SunriseIcon, 'first-meal'),
+  'last-meal': /* @__PURE__ */ icon(Moon02Icon, 'last-meal'),
+  snack: /* @__PURE__ */ icon(Coffee01Icon, 'snack'),
 };
 
 const VERDICTS: Record<Verdict, AppIcon> = {

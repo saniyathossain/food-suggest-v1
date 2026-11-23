@@ -134,6 +134,7 @@ export const endpoints = {
   plan: (lang: string) => `/api/v1/plan?lang=${lang}`,
   food: (slug: string, lang: string) => `/api/v1/foods/${encodeURIComponent(slug)}?lang=${lang}`,
   recipes: (lang: string) => `/api/v1/recipes?lang=${lang}`,
+  searchIndex: (lang: string) => `/api/v1/search-index?lang=${lang}`,
   tiers: (lang: string) => `/api/v1/tiers?lang=${lang}`,
   gateways: (lang: string) => `/api/v1/billing/gateways?lang=${lang}`,
   recipe: (slug: string, lang: string) => `/api/v1/recipes/${encodeURIComponent(slug)}?lang=${lang}`,

@@ -14,12 +14,14 @@ import { ModePicker } from '@/components/mode/ModePicker';
 import { Alternatives } from '@/components/plan/Alternatives';
 import { DayHeader } from '@/components/plan/DayHeader';
 import { Medication } from '@/components/plan/Medication';
+import { Insight } from '@/components/Insight';
 import { PlanFoods, PlanMeals, ProfileBar } from '@/components/PlanParts';
-import { Disclaimer, Sources } from '@/components/Sources';
+import { Fineprint } from '@/components/Sources';
 import { HabitGrid, TimingList } from '@/components/Timing';
 import { Button } from '@/components/ui/button';
 import { ApiError, send } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { markPlanSeen } from '@/lib/firstrun';
 import { useI18n } from '@/lib/i18n';
 import { navigate, onLink } from '@/lib/router';
 import type { Bootstrap, Person, PersonalPlan, Plan as PlanData } from '@/lib/types';
@@ -56,7 +58,7 @@ function Limited({ plan }: { plan: PersonalPlan }) {
 }
 
 function Body({ boot, data, plan, name, onMode }: { boot: Bootstrap; data: PlanData; plan: PersonalPlan; name: string; onMode: (slug: string) => void }) {
-  const { t } = useI18n();
+  const { t, num } = useI18n();
   const hasConditions = data.profile.conditions.length > 0;
   const mode = data.mode;
   // a fasting mode has its own meals (sehri, iftar…): the everyday meal cards would contradict it
@@ -65,10 +67,24 @@ function Body({ boot, data, plan, name, onMode }: { boot: Bootstrap; data: PlanD
   // clock-time rules belong to everyday eating; a fasting mode keeps only the "any time" ones and brings its own times
   const timed = (items: PlanData['timing']['do']) => (ownMeals ? items.filter((item) => item.time === null) : items);
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-20">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:gap-12">
       <div className="grid gap-4">
         <DayHeader name={name} data={data} />
         <ProfileBar boot={boot} data={data} />
+        {hasConditions && (
+          <Insight>
+            {[
+              t.insight.plan
+                .replace('{0}', num(data.foods.avoid.length))
+                .replace('{1}', num(data.foods.limit.length))
+                .replace('{2}', num(data.foods.recommended.length))
+                .replace('{3}', data.foods.recommended.slice(0, 3).map((food) => food.name).join(', ')),
+              data.foods.recommended.concat(data.foods.limit, data.foods.avoid).some((food) => food.conflict) ? t.insight.conflict : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          </Insight>
+        )}
       </div>
       <Limited plan={plan} />
       {mode && (
@@ -125,8 +141,7 @@ function Body({ boot, data, plan, name, onMode }: { boot: Bootstrap; data: PlanD
           </ul>
         </section>
       )}
-      <Sources items={data.sources} />
-      <Disclaimer />
+      <Fineprint items={data.sources} />
     </div>
   );
 }
@@ -153,6 +168,9 @@ export default function Plan({ boot }: { boot: Bootstrap }) {
   useEffect(() => {
     if (auth.status === 'in') void load();
   }, [auth.status, load]);
+  useEffect(() => {
+    if (plan) markPlanSeen();
+  }, [plan]);
   const empty = people !== null && people.length === 0;
   useEffect(() => {
     if (empty) navigate('/welcome');

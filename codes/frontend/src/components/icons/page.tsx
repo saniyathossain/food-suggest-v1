@@ -1,6 +1,6 @@
 // Glyphs only lazy pages draw (see index.tsx for the split): importing them from here keeps them out of the first bundle.
 import {
-  AlertCircleIcon, CheckIcon, ArrowLeft01Icon, ArrowRight01Icon, BirthdayCakeIcon, BookOpen01Icon, BulbIcon, CalendarClockIcon, CheckListIcon, ChevronRightIcon, CookingPotIcon, DropletIcon, Clock01Icon, CloudUploadIcon, CopyIcon, CornerDownLeftIcon, Database01Icon, ExternalLinkIcon, FireIcon, PillIcon, ChartLineData01Icon, UserGroupIcon, CrownIcon, FlashIcon, GlassWaterIcon, Globe02Icon, HardDriveIcon, HashIcon, HeartHandshakeIcon, ImageUploadIcon, LanguageSkillIcon, Leaf01Icon, MinusSignIcon, PencilIcon, PlusSignIcon, PrinterIcon, RepeatIcon, RulerIcon, SaveIcon, ServerStack01Icon, StarIcon, StethoscopeIcon, StickyNote01Icon, ThumbsUpIcon, Timer01Icon, WifiOff01Icon, Wallet02Icon, CreditCardIcon, ShieldKeyIcon, PlayIcon, PauseIcon, ArrowUp01Icon, ArrowDown01Icon, Cancel01Icon, PictureInPictureOnIcon, YoutubeIcon, ChefHatIcon, UserMultipleIcon,
+  AlertCircleIcon, CheckIcon, ArrowLeft01Icon, ArrowRight01Icon, BirthdayCakeIcon, BookOpen01Icon, BulbIcon, CalendarClockIcon, CheckListIcon, ChevronRightIcon, CookingPotIcon, DropletIcon, Clock01Icon, CloudUploadIcon, CopyIcon, CornerDownLeftIcon, Database01Icon, ExternalLinkIcon, FireIcon, PillIcon, ChartLineData01Icon, UserGroupIcon, CrownIcon, FlashIcon, GlassWaterIcon, Globe02Icon, HardDriveIcon, HashIcon, HeartHandshakeIcon, ImageUploadIcon, LanguageSkillIcon, Leaf01Icon, MinusSignIcon, PencilIcon, PlusSignIcon, PrinterIcon, RepeatIcon, RulerIcon, SaveIcon, ServerStack01Icon, StarIcon, StethoscopeIcon, StickyNote01Icon, ThumbsUpIcon, Timer01Icon, WifiOff01Icon, Wallet02Icon, CreditCardIcon, ShieldKeyIcon, PlayIcon, PauseIcon, ArrowUp01Icon, ArrowDown01Icon, Cancel01Icon, PictureInPictureOnIcon, YoutubeIcon, ChefHatIcon, UserMultipleIcon, ArrowUpDownIcon,
 } from '@hugeicons/core-free-icons';
 import { animated } from '@/components/icons/animated';
 import { iconly } from '@/components/icons/iconly';
@@ -29,6 +29,7 @@ export const ChevronDownSmall = /* @__PURE__ */ icon(ArrowDown01Icon, 'ChevronDo
 export const X = /* @__PURE__ */ icon(Cancel01Icon, 'X');
 export const PopOut = /* @__PURE__ */ icon(PictureInPictureOnIcon, 'PopOut');
 export const Youtube = /* @__PURE__ */ icon(YoutubeIcon, 'Youtube');
+export const ArrowUpDown = /* @__PURE__ */ icon(ArrowUpDownIcon, 'ArrowUpDown');
 export const ChefHat = /* @__PURE__ */ icon(ChefHatIcon, 'ChefHat');
 export const People = /* @__PURE__ */ icon(UserMultipleIcon, 'People');
 export const Wallet = /* @__PURE__ */ icon(Wallet02Icon, 'Wallet');

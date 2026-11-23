@@ -57,9 +57,11 @@ export function Donut({ data, total, center, format, ariaLabel, className }: Pro
             />
           ))}
         </svg>
-        <div className="pointer-events-none absolute inset-0 grid place-content-center text-center">
-          <span className="numeral text-title-2 font-bold">{focus ? format(focus.value) : total}</span>
-          <span className="mt-0.5 max-w-24 text-caption text-muted-foreground">{focus ? focus.label : center}</span>
+        {/* the middle: centred both ways inside the ring's hole (about 7 rem wide); a long label (Bangla "কিলোক্যালরি") wraps and stays
+            centred instead of running into the ring */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+          <span className="numeral text-title-2 font-bold leading-none">{focus ? format(focus.value) : total}</span>
+          <span className="mt-1.5 max-w-full text-balance break-words text-caption leading-tight text-muted-foreground">{focus ? focus.label : center}</span>
         </div>
       </div>
       <ul className="grid w-full min-w-0 flex-1 gap-1">

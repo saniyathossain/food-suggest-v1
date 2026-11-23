@@ -2,7 +2,10 @@
 // with the reason, the meals that suggest it, better swaps from the same group, and the sources behind the verdicts.
 import { useState } from 'react';
 import { Icon, MealIcon, Utensils, VerdictIcon } from '@/components/icons';
-import { Clock, Repeat, ArrowLeft, Stethoscope } from '@/components/icons/page';
+import { Clock, Repeat, Stethoscope } from '@/components/icons/page';
+import { Crumbs } from '@/components/journey/Crumbs';
+import { PlanNext } from '@/components/journey/NextStep';
+import { LinkedWith } from '@/components/links/LinkedWith';
 import { FoodHero } from '@/components/food/FoodHero';
 import { Nutrition } from '@/components/food/Nutrition';
 import { FoodThumb } from '@/components/FoodRow';
@@ -11,7 +14,7 @@ import { ErrorBox } from '@/components/kit/loaderror';
 import { SectionTitle } from '@/components/kit/section';
 import { MotionRoot } from '@/components/motion';
 import { RecipeCard } from '@/components/recipe/RecipeCard';
-import { Disclaimer, Sources } from '@/components/Sources';
+import { Fineprint } from '@/components/Sources';
 import { VerdictBadge, verdictColor } from '@/components/Verdict';
 import { endpoints, useResource } from '@/lib/api';
 import { clock, useI18n, useT } from '@/lib/i18n';
@@ -111,9 +114,7 @@ export default function Food({ slug }: { slug: string }) {
   return (
     <MotionRoot>
       <main className="page">
-        <a className="no-print press mb-4 inline-flex h-10 items-center gap-2 rounded-full px-3 text-subhead font-semibold text-muted-foreground hover:bg-accent hover:text-foreground" href="/foods" onClick={onLink}>
-          <ArrowLeft size={18} /> {t.nav.foods}
-        </a>
+        <Crumbs trail={[{ href: '/foods', label: t.nav.foods }]} here={data?.name} />
         {error && <ErrorBox {...(error.status === 404 ? { message: t.food.missing } : {})} />}
         {!data && !error && <FoodBones />}
         {data && (
@@ -133,8 +134,9 @@ export default function Food({ slug }: { slug: string }) {
                 </div>
               </section>
             )}
-            <Sources items={data.sources} />
-            <Disclaimer />
+            <LinkedWith from={`food:${data.slug}`} />
+            <PlanNext kind="food" />
+            <Fineprint items={data.sources} />
           </div>
         )}
       </main>

@@ -20,7 +20,7 @@ export function Tip({
           side={side}
           sideOffset={6}
           className={cn(
-            'anim-pop z-50 max-w-xs rounded-lg bg-foreground px-2.5 py-1.5 text-footnote text-background shadow-md',
+            'anim-pop z-50 max-w-xs rounded-lg bg-ink px-2.5 py-1.5 text-footnote text-ink-foreground shadow-md',
           )}
         >
           {content}

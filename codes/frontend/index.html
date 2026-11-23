@@ -11,6 +11,13 @@
     <script src="/theme.js"></script>
   </head>
   <body>
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
+      <!-- Glass refraction for the few small floating layers (tab bar, menu sheet) in Chromium: a soft noise bends what is behind them. -->
+      <filter id="lens-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.011 0.018" numOctaves="1" seed="7" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
     <div id="root">
       <div class="boot" role="status" aria-live="polite">
         <img src="/favicon.svg" alt="" width="56" height="56" />

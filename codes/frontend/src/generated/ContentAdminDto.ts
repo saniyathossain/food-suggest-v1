@@ -7,4 +7,12 @@ export type ContentAdminDto = { slug: string, title_en: string, title_bn: string
 /**
  * recipe kind or the article's first tag
  */
-group: string, published: boolean, has_image: boolean, };
+group: string, published: boolean, has_image: boolean, 
+/**
+ * the scheduled day, when there is one
+ */
+publish_on: string | null, 
+/**
+ * the date shown on the item (articles)
+ */
+date: string | null, };

@@ -21,7 +21,6 @@ use sea_orm::ActiveValue::{NotSet, Set};
 use serde_json::json;
 use std::collections::HashMap;
 
-const PER_PAGE: u64 = 25;
 const OPEN: [PaymentStatus; 2] = [PaymentStatus::Pending, PaymentStatus::Review];
 
 fn slug_ok(slug: &str) -> bool {
@@ -278,7 +277,7 @@ pub async fn admin_payments(State(state): State<AppState>, Extension(actor): Ext
     let status = query.status.as_deref().and_then(|value| serde_json::from_value::<PaymentStatus>(json!(value)).ok());
     let gateway_id = query.gateway.as_deref().and_then(|slug| gateways.iter().find(|item| item.slug == slug)).map(|item| item.id);
     let page = query.page.unwrap_or(0);
-    let (rows, payers, total) = state.billing.page(&PaymentFilter { status, gateway_id, query: query.q, page, per_page: PER_PAGE }).await?;
+    let (rows, payers, total) = state.billing.page(&PaymentFilter { status, gateway_id, query: query.q, page, per_page: crate::app::support::page::per_page(query.per_page) }).await?;
     let index = CatalogIndex::new(&snapshot, Locale::En);
     let items = rows
         .into_iter()
@@ -296,7 +295,7 @@ pub async fn admin_payments(State(state): State<AppState>, Extension(actor): Ext
             paid_on: row.paid_on,
         })
         .collect();
-    Ok(Json(PageDto { items, total, page, per_page: PER_PAGE }))
+    Ok(Json(PageDto { items, total, page, per_page: crate::app::support::page::per_page(query.per_page) }))
 }
 
 /// Approve a manual transfer (paid: the account moves to the tier), reject it (failed), or record a refund.

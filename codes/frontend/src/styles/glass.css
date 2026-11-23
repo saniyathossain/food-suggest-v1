@@ -1,0 +1,481 @@
+/* Liquid glass, the finishing layer (Pathya). utilities.css gives every floating layer (top bar, dock, menu sheet, popovers, dialogs,
+   Spotlight, toasts) the frosted pane; lens.css bends what is behind the two smallest ones. This file adds the small details that make
+   it read as glass rather than as a translucent box:
+
+     1. an inner highlight on the top edge and a faint inner shade on the bottom edge (light catching a thick pane),
+     2. a specular rim: a hairline brighter at the top-left and bottom-right corners, dim between, drawn with a masked gradient,
+     3. a glass call to action (key buttons laid on photos): a lighter frost, the same rim, a sheen that follows the pointer a little,
+     4. the press: panes and glass buttons sink a pixel and lose their highlight, then spring back,
+     5. direction-aware page transitions (lib/router.ts sets <html data-nav>): deeper pages arrive from the right, going back from the
+        left, sibling tabs rise; the outgoing page leaves a little faster than the new one arrives, with a breath of blur,
+     6. button states (busy, done, error) as colour and motion, not only an icon swap.
+
+   Cost: paint only (gradients, shadows, one mask) plus the blur the panes already had. Nothing here animates on the main thread
+   except two short keyframes on press. Cards stay solid: none of this touches `.surface`. An unblurred fallback is the denser pane;
+   weak devices (data-strained) and prefers-reduced-transparency drop the sheen; <html data-hidden> pauses every animation. */
+
+:root {
+  --spec-top: light-dark(rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.2));
+  --spec-bottom: light-dark(rgb(19 32 26 / 0.05), rgb(0 0 0 / 0.35));
+  --spec-rim-a: light-dark(rgb(255 255 255 / 1), rgb(255 255 255 / 0.5));
+  --spec-rim-b: light-dark(rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.22));
+  --spec-glow: light-dark(rgb(255 255 255 / 0.6), rgb(255 255 255 / 0.08));
+  --vt-out: 0px;
+  --vt-in: 0px;
+  --vt-rise: 14px;
+}
+
+/* ---- 1: the pane's inner light --------------------------------------------------------------------
+   One hairline border (the `glass` utility's own) and no second line inside it: the light is a soft glow that fades in from the top
+   edge, not a 1 px stroke, so a pane never reads as two borders. */
+.glass {
+  box-shadow:
+    inset 0 16px 18px -16px var(--spec-top),
+    inset 0 -14px 16px -16px var(--spec-bottom),
+    var(--sh-lg);
+}
+/* the two panes lens.css gave extra inner strokes: same single hairline and soft glow */
+:is(.tabbar .glass, #menu-sheet.glass) {
+  box-shadow:
+    inset 0 16px 18px -16px var(--spec-top),
+    inset 0 -14px 16px -16px var(--spec-bottom),
+    var(--sh-lg);
+}
+/* a small floating pill (the breadcrumb, a chip on a photo): one light blur, the same rim */
+.glass-pill {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-shine) 55%, transparent), transparent 70%), var(--glass);
+  -webkit-backdrop-filter: blur(14px) saturate(1.7);
+  backdrop-filter: blur(14px) saturate(1.7);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 10px 12px -10px var(--spec-top),
+    0 1px 2px var(--shade),
+    0 8px 20px -10px var(--shade-deep);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-pill,
+  .glass-cta {
+    background: var(--glass-dense);
+  }
+}
+html[data-strained] :is(.glass-pill, .glass-cta) {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--glass-dense);
+}
+@media (prefers-reduced-transparency: reduce) {
+  :is(.glass-pill, .glass-cta) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--popover);
+  }
+}
+
+/* ---- 3: the glass call to action ---------------------------------------------------------------- */
+.glass-cta {
+  --px: 50%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--foreground);
+  background:
+    radial-gradient(90px 60px at var(--px) -10%, var(--spec-glow), transparent 70%),
+    linear-gradient(180deg, light-dark(rgb(255 255 255 / 0.78), rgb(70 66 92 / 0.5)), light-dark(rgb(255 255 255 / 0.5), rgb(40 38 58 / 0.55)));
+  -webkit-backdrop-filter: blur(14px) saturate(1.7);
+  backdrop-filter: blur(14px) saturate(1.7);
+  border: 1px solid var(--glass-edge);
+  box-shadow:
+    inset 0 10px 12px -10px var(--spec-top),
+    inset 0 -8px 14px -10px var(--spec-bottom),
+    0 1px 2px var(--shade),
+    0 10px 22px -12px var(--shade-deep);
+}
+.glass-cta:hover {
+  background:
+    radial-gradient(110px 70px at var(--px) -10%, var(--spec-top), transparent 70%),
+    linear-gradient(180deg, light-dark(rgb(255 255 255 / 0.9), rgb(84 80 108 / 0.58)), light-dark(rgb(255 255 255 / 0.62), rgb(50 48 70 / 0.6)));
+}
+.glass-cta:active:not(:disabled) {
+  box-shadow:
+    inset 0 2px 5px var(--spec-bottom),
+    0 1px 2px var(--shade);
+}
+
+/* ---- 4: panes that you press are alive ------------------------------------------------------------ */
+@media (hover: hover) {
+  .tabbar .glass a:active,
+  .glass a.nav-link:active {
+    transition-duration: 90ms;
+  }
+}
+
+/* ---- 5: page transitions ---------------------------------------------------------------------------- */
+html[data-nav='deeper'] {
+  --vt-out: -22px;
+  --vt-in: 34px;
+  --vt-rise: 0px;
+}
+html[data-nav='shallower'] {
+  --vt-out: 22px;
+  --vt-in: -34px;
+  --vt-rise: 0px;
+}
+@keyframes vt-leave {
+  to {
+    opacity: 0;
+    transform: translate3d(var(--vt-out), 0, 0) scale(0.995);
+    filter: blur(3px);
+  }
+}
+@keyframes vt-arrive {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--vt-in), var(--vt-rise), 0);
+    filter: blur(4px);
+  }
+}
+::view-transition-old(page) {
+  animation: vt-leave 190ms cubic-bezier(0.4, 0, 0.8, 0.4) both;
+}
+::view-transition-new(page) {
+  animation: vt-arrive 440ms cubic-bezier(0.16, 1, 0.3, 1) 40ms both;
+}
+::view-transition-group(root) {
+  animation-duration: 0.01ms;
+}
+
+/* ---- 6: what a button says about its action ------------------------------------------------------- */
+@keyframes cta-busy {
+  50% {
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, currentColor 14%, transparent),
+      var(--busy-lift, 0 0 0 0 transparent);
+  }
+}
+@keyframes cta-done {
+  0% {
+    transform: scale(0.96);
+  }
+  45% {
+    transform: scale(1.045);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes cta-error {
+  15%,
+  55% {
+    transform: translate3d(-5px, 0, 0);
+  }
+  35%,
+  75% {
+    transform: translate3d(5px, 0, 0);
+  }
+  100% {
+    transform: none;
+  }
+}
+button[data-state='busy'] {
+  cursor: progress;
+  animation: cta-busy 1.2s ease-in-out infinite;
+}
+button[data-state='done'] {
+  background: var(--recommended);
+  color: light-dark(#ffffff, #052e16);
+  box-shadow: 0 1px 1px rgb(0 80 30 / 0.3), 0 8px 18px -8px color-mix(in srgb, var(--recommended) 70%, transparent);
+  animation: cta-done 460ms var(--ease-bounce) both;
+}
+button[data-state='error'] {
+  background: var(--avoid);
+  color: light-dark(#ffffff, #3b0a0a);
+  animation: cta-error 420ms ease-in-out both;
+}
+/* the check and the label trade places without the button changing width */
+button[data-state] .done-mark {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+/* ---- paused when nobody is looking, calm when asked ---------------------------------------------- */
+html[data-hidden] *,
+html[data-hidden] *::before,
+html[data-hidden] *::after {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  button[data-state] {
+    animation: none !important;
+  }
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    animation: none !important;
+  }
+}
+
+/* ---- one border per surface ---------------------------------------------------------------------------
+   Selected chips and the sliding bead carried a border AND a 1 px lit line inside it: the line goes, the border stays. */
+.liquid-pill,
+.chip-on {
+  box-shadow: 0 5px 12px -6px var(--chip-on-pool);
+}
+
+/* ---- chips: one design for every filter, choice and tag ------------------------------------------------
+   A quiet glass-white pill with a single hairline; hover leans toward its tint; chosen is the tint itself (a wash of the chip's colour, the
+   same colour on its border, a soft coloured glow), with a check that swaps in for the icon. Each food group passes its own colour as
+   --chip-fg; without one the brand violet is used. Light and dark both come from the tokens, so nothing here is a literal colour. */
+.chip {
+  --fg: var(--chip-fg, var(--primary));
+  min-height: 2.25rem;
+  gap: 0.4rem;
+  padding: 0.25rem 0.875rem 0.25rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-shine) 32%, var(--card)), var(--card));
+  box-shadow: 0 1px 1px var(--shade);
+  font-size: 14px;
+  letter-spacing: -0.003em;
+  color: color-mix(in srgb, var(--foreground) 86%, transparent);
+}
+@media (pointer: coarse) {
+  .chip {
+    min-height: 2.5rem;
+  }
+}
+.chip:is(button, a):hover:not(:is([aria-pressed='true'], [data-on='true'])) {
+  border-color: color-mix(in srgb, var(--fg) 38%, transparent);
+  background: color-mix(in srgb, var(--fg) 6%, var(--card));
+  color: var(--foreground);
+}
+.chip:is([aria-pressed='true'], [data-on='true']) {
+  color: color-mix(in srgb, var(--fg) 82%, var(--foreground));
+  border-color: color-mix(in srgb, var(--fg) 52%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 17%, var(--card)), color-mix(in srgb, var(--fg) 11%, var(--card)));
+  box-shadow: 0 6px 14px -9px color-mix(in srgb, var(--fg) 60%, transparent);
+}
+.chip:focus-visible {
+  outline-offset: 2px;
+  outline-color: var(--fg);
+}
+/* the count after a label, and its chosen state */
+.chip-count {
+  min-width: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+.chip:is([aria-pressed='true'], [data-on='true']) .chip-count {
+  background: color-mix(in srgb, var(--fg) 20%, transparent);
+  color: inherit;
+}
+.chip-tick {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--fg);
+  animation: check-pop 260ms var(--ease-spring) both;
+}
+/* a row of chips on a phone scrolls sideways: the right edge fades so the next chip is a hint, not a cut */
+@media (max-width: 639px) {
+  .rail {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    padding-inline-end: 28px;
+  }
+}
+
+/* a stage card that is chosen */
+.chip.chip-on-card,
+.chip[aria-pressed='true'].chip-on-card {
+  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
+  background: color-mix(in srgb, var(--primary) 9%, var(--card));
+}
+
+/* ---- a dark filled control always carries white text (the chosen segment, a chosen step, a play button, a number badge) ---- */
+.seg > button[aria-pressed='true'],
+.seg-sm > button[aria-pressed='true'],
+.seg-lg > button[aria-pressed='true'] {
+  color: var(--ink-foreground);
+  background: var(--ink);
+}
+
+/* =====================================================================================================================
+   Frosted glass, one step further: a ground with something to frost, a light that follows the pointer, frosted fields.
+   ===================================================================================================================== */
+
+/* ---- 1. the ground: soft colour orbs painted once on a fixed layer (never moved, so free while scrolling). Light mode gets warm peach and rose
+   above, a violet haze across the middle, sky and mint low; dark mode keeps the same places at low strength. The glass above has real colour
+   to blur, which is what makes it read as glass and not as a white box. ---- */
+:root {
+  --orb-peach: light-dark(rgb(255 176 120 / 0.5), rgb(255 120 64 / 0.16));
+  --orb-rose: light-dark(rgb(255 128 168 / 0.36), rgb(236 72 130 / 0.14));
+  --orb-iris: light-dark(rgb(150 128 255 / 0.26), rgb(120 90 250 / 0.14));
+  --orb-sky: light-dark(rgb(104 178 255 / 0.4), rgb(40 100 220 / 0.16));
+  --orb-mint: light-dark(rgb(110 224 190 / 0.3), rgb(40 190 150 / 0.1));
+}
+body::before {
+  background:
+    radial-gradient(46% 38% at 6% 4%, var(--orb-peach), transparent 70%),
+    radial-gradient(40% 34% at 96% 8%, var(--orb-rose), transparent 70%),
+    radial-gradient(56% 44% at 52% 46%, var(--orb-iris), transparent 74%),
+    radial-gradient(58% 48% at 14% 100%, var(--orb-sky), transparent 70%),
+    radial-gradient(44% 38% at 100% 90%, var(--orb-mint), transparent 70%);
+}
+
+/* ---- 2. a light under the pointer: cards catch it as it moves (lib/chrome.ts sets --px/--py on the card under the pointer). Only where there
+   is a real pointer; the card's own layers stay under it. ---- */
+.surface {
+  background:
+    radial-gradient(280px circle at var(--px, 50%) var(--py, 0%), var(--lens-glow, transparent), transparent 72%),
+    radial-gradient(130% 85% at 0% 0%, var(--pane-glint), transparent 46%),
+    linear-gradient(180deg, var(--pane-sheen), transparent 30%),
+    var(--pane);
+}
+@media (hover: hover) and (pointer: fine) {
+  .surface:hover {
+    --lens-glow: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.075));
+  }
+}
+
+/* ---- 3. frosted fields: a translucent well with a soft inner shadow (a recess, not a box), the ring a soft halo ---- */
+.field {
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  border-color: color-mix(in srgb, var(--foreground) 11%, transparent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--shade-deep) 55%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.field:is(input, textarea, select):focus,
+.field:focus-within {
+  border-color: color-mix(in srgb, var(--primary) 62%, transparent);
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--shade-deep) 45%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+html[data-strained] .field {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--card);
+}
+
+/* ---- 4. the segmented control's track: frosted, its chosen segment a raised ink pill with a soft lit top ---- */
+.seg::before,
+.seg-sm::before,
+.seg-lg::before {
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--shade-deep) 45%, transparent);
+}
+.seg > button[aria-pressed='true'],
+.seg-sm > button[aria-pressed='true'],
+.seg-lg > button[aria-pressed='true'] {
+  box-shadow:
+    inset 0 8px 10px -8px rgb(255 255 255 / 0.28),
+    0 6px 14px -8px var(--shade-deep);
+}
+
+/* ---- 5. the iOS switch: a glass thumb ---- */
+[role='switch'] > span {
+  box-shadow:
+    inset 0 -2px 3px -1px rgb(0 0 0 / 0.12),
+    0 3px 8px rgb(0 0 0 / 0.22);
+}
+
+/* ---- 6. big titles breathe a little: the display faces get a whisper of text shadow so they sit on the frosted ground, not in it ---- */
+.text-large-title,
+h1.text-display {
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--glass-shine) 70%, transparent);
+}
+
+/* =====================================================================================================================
+   Liquid glass you can SEE: translucent panes over a coloured ground, with real blur where the screen can afford it.
+   ===================================================================================================================== */
+
+/* the panes let the ground through: the bar and sheets about 60 % clear, cards about half */
+:root {
+  --glass: light-dark(rgb(255 255 255 / 0.4), rgb(34 30 50 / 0.42));
+  --pane: light-dark(rgb(255 255 255 / 0.44), rgb(30 27 46 / 0.46));
+  --pane-sheen: light-dark(rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.07));
+  /* a stronger ground so there is colour behind the frost */
+  --orb-peach: light-dark(rgb(255 168 112 / 0.62), rgb(255 120 64 / 0.2));
+  --orb-rose: light-dark(rgb(255 120 164 / 0.46), rgb(236 72 130 / 0.18));
+  --orb-iris: light-dark(rgb(140 118 255 / 0.36), rgb(120 90 250 / 0.18));
+  --orb-sky: light-dark(rgb(96 172 255 / 0.5), rgb(40 100 220 / 0.2));
+  --orb-mint: light-dark(rgb(100 220 184 / 0.4), rgb(40 190 150 / 0.13));
+}
+.glass {
+  -webkit-backdrop-filter: blur(26px) saturate(2.1) brightness(1.04);
+  backdrop-filter: blur(26px) saturate(2.1) brightness(1.04);
+}
+
+/* a section card (not a card that is a link in a big grid) frosts what is behind it on screens with room; phones keep the translucency
+   without the blur, and weak devices (data-strained) and reduced transparency fall back to a solid pane */
+@media (min-width: 768px) {
+  html:not([data-strained]) :is(section, article, aside, header, div).surface {
+    -webkit-backdrop-filter: blur(20px) saturate(1.7);
+    backdrop-filter: blur(20px) saturate(1.7);
+  }
+}
+html[data-strained] .surface {
+  background: var(--card);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .surface {
+    background: var(--card);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* the plain bordered boxes inside pages (a tip, a rule, a timeline) were solid white: they become the same glass, translucent only (no blur,
+   so a page with fifty of them stays fast) */
+[class~='bg-card'][class~='border']:not(input, textarea, select, button, label, [role='switch']) {
+  background-color: color-mix(in srgb, var(--card) 58%, transparent);
+  border-color: color-mix(in srgb, var(--foreground) 9%, transparent);
+  box-shadow: 0 1px 2px var(--shade), inset 0 10px 14px -12px var(--spec-top);
+}
+html[data-strained] [class~='bg-card'][class~='border'] {
+  background-color: var(--card);
+}
+
+/* ---- small motion with a real pointer (styles written from what beUI, Bencho and Border Beam show: tilt, magnet, beam; the code is ours) ----
+   A link card tilts toward the pointer by a couple of degrees; a filled call to action leans toward it by a few pixels. Only with a mouse, and
+   never for a reader who asked for less motion. The Beam component (kit/beam.tsx) circles a border for the one thing that wants attention. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  a.surface:hover {
+    transform: perspective(900px) rotateX(calc(var(--ty, 0) * -2.2deg)) rotateY(calc(var(--tx, 0) * 2.6deg)) translate3d(0, -3px, 0);
+  }
+  .shine:is(a, button):hover:not(:disabled) {
+    translate: calc(var(--mx, 0) * 5px) calc(var(--my, 0) * 3px);
+  }
+}
+
+/* The outline button: a frosted fill and a real edge (about 22 % of the text colour), so it is visible on a pale card, a pink or violet
+   gradient, a photo and the dark page alike. Hover firms both up; the pressed state sinks a pixel (from .press). */
+.btn-outline {
+  border-color: color-mix(in srgb, var(--foreground) 24%, transparent);
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: 0 1px 2px var(--shade), inset 0 1px 0 var(--spec-top);
+}
+.btn-outline:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+}
+html[data-strained] .btn-outline {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--card);
+}

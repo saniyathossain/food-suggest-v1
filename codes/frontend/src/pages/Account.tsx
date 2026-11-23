@@ -3,10 +3,12 @@
 // medicines, then the plan.
 import { useCallback, useEffect, useState } from 'react';
 import { Billing } from '@/components/account/Billing';
+import { BloodPressureCard } from '@/components/account/BloodPressureCard';
 import { LabsPanel } from '@/components/account/LabsPanel';
 import { MedicinesPanel } from '@/components/account/MedicinesPanel';
 import { PersonForm } from '@/components/account/PersonForm';
 import { UpgradeCard } from '@/components/account/Upgrade';
+import { WelcomeSteps } from '@/components/journey/WelcomeSteps';
 import { PageBones } from '@/components/kit/routeskeleton';
 import { toast } from '@/components/kit/toast';
 import { ChartLine, Pill, Plus, Users } from '@/components/icons/page';
@@ -14,6 +16,7 @@ import { UserRound } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Segmented } from '@/components/ui/segmented';
 import { send } from '@/lib/api';
+import { confirmDialog } from '@/lib/confirm';
 import { feature, signOut, useAuth } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import { usePrefs } from '@/lib/prefs';
@@ -29,7 +32,8 @@ export default function Account({ boot, welcome = false }: { boot: Bootstrap; we
   const prefs = usePrefs();
   const [people, setPeople] = useState<Person[] | null>(null);
   const [chosen, setChosen] = useState<number | 'new' | null>(null);
-  const [tab, setTab] = useState<Tab>('about');
+  const wanted = new URLSearchParams(window.location.search).get('medicine') ?? '';
+  const [tab, setTab] = useState<Tab>(wanted ? 'medicines' : 'about');
   const load = useCallback(async () => {
     const rows = await send<Person[]>(`/api/v1/me/profiles?lang=${lang}`, 'GET');
     setPeople(rows);
@@ -47,7 +51,7 @@ export default function Account({ boot, welcome = false }: { boot: Bootstrap; we
   const seed: Person | null =
     person ??
     (people.length === 0 && draft
-      ? { id: 0, name: me.name, relation: 'me', birth_year: new Date().getFullYear() - draft.age, age: draft.age, gender: draft.gender, country: draft.country, pregnancy: 'none', mode: draft.mode ?? 'everyday', allergies: [], surgeries: [], conditions: boot.conditions.filter((item) => draft.conditions.includes(item.slug)).map((item) => ({ condition: { slug: item.slug, name: item.name, icon: item.icon, color: item.color }, diagnosed_year: null })), medicines: [], labs: [] }
+      ? { id: 0, name: me.name, relation: 'me', birth_year: new Date().getFullYear() - draft.age, age: draft.age, gender: draft.gender, country: draft.country, pregnancy: 'none', mode: draft.mode ?? 'everyday', height_cm: null, waist_cm: null, activity: null, sleep_hours: null, budget: null, allergens: [], allergies: [], surgeries: [], conditions: boot.conditions.filter((item) => draft.conditions.includes(item.slug)).map((item) => ({ condition: { slug: item.slug, name: item.name, icon: item.icon, color: item.color }, diagnosed_year: null })), medicines: [], labs: [] }
       : null);
   const saved = async (id: number) => {
     toast(t.account.saved);
@@ -56,7 +60,7 @@ export default function Account({ boot, welcome = false }: { boot: Bootstrap; we
     if (welcome) setTab('medicines');
   };
   const remove = async () => {
-    if (!person || !window.confirm(t.account.confirmDelete)) return;
+    if (!person || !(await confirmDialog({ title: t.account.delete, body: t.account.confirmDelete, tone: 'danger' }))) return;
     await send(`/api/v1/me/profiles/${person.id}`, 'DELETE');
     setChosen(null);
     await load();
@@ -82,6 +86,7 @@ export default function Account({ boot, welcome = false }: { boot: Bootstrap; we
           )}
         </div>
       </header>
+      {welcome && <WelcomeSteps step={people.length === 0 ? 0 : tab === 'medicines' ? 1 : tab === 'history' ? 2 : 0} />}
       <section className="grid gap-3">
         <h2 className="flex items-center gap-2 text-headline">
           <Users size={18} /> {t.account.family}
@@ -114,12 +119,13 @@ export default function Account({ boot, welcome = false }: { boot: Bootstrap; we
           {person && tab === 'medicines' && (
             <>
               <h2 className="flex items-center gap-2 text-title-3 font-bold"><Pill size={20} /> {t.meds.title}</h2>
-              <MedicinesPanel me={me} person={person} onChanged={() => void load()} />
+              <MedicinesPanel me={me} person={person} preset={wanted} onChanged={() => void load()} />
             </>
           )}
           {person && tab === 'history' && (
             <>
               <h2 className="flex items-center gap-2 text-title-3 font-bold"><ChartLine size={20} /> {t.labs.title}</h2>
+              <BloodPressureCard me={me} person={person} onChanged={() => void load()} />
               <LabsPanel me={me} person={person} onChanged={() => void load()} />
             </>
           )}

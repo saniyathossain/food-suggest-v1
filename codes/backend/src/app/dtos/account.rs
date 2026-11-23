@@ -1,7 +1,7 @@
 //! Accounts, tiers, profiles, history and medicines over HTTP.
 use crate::app::dtos::catalog::{ConditionTagDto, SourceDto};
 use crate::app::dtos::plan::{MealItemDto, PlanDto};
-use crate::app::enums::{FeatureKey, FoodTiming, Gender, Kinship, LabKind, MedicineForm, Pregnancy, Role, Severity};
+use crate::app::enums::{Activity, Allergen, Budget, FeatureKey, FoodTiming, Gender, Kinship, LabKind, MedicineForm, Pregnancy, Role, Severity};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -97,6 +97,24 @@ pub struct ProfileInputDto {
     pub surgeries: Vec<String>,
     #[serde(default)]
     pub conditions: Vec<ConditionInputDto>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub height_cm: Option<i16>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub waist_cm: Option<i16>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub activity: Option<Activity>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub sleep_hours: Option<f32>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub budget: Option<Budget>,
+    /// allergens and intolerances the engine matches foods on (a closed list)
+    #[serde(default)]
+    pub allergens: Vec<Allergen>,
 }
 
 #[derive(Debug, Serialize, TS)]
@@ -162,6 +180,12 @@ pub struct PersonDto {
     pub allergies: Vec<String>,
     pub surgeries: Vec<String>,
     pub conditions: Vec<ProfileConditionDto>,
+    pub height_cm: Option<i16>,
+    pub waist_cm: Option<i16>,
+    pub activity: Option<Activity>,
+    pub sleep_hours: Option<f32>,
+    pub budget: Option<Budget>,
+    pub allergens: Vec<Allergen>,
     pub medicines: Vec<ProfileMedicineDto>,
     /// empty unless the tier includes history
     pub labs: Vec<LabDto>,
@@ -337,6 +361,7 @@ pub struct UserQuery {
     pub role: Option<String>,
     pub tier: Option<String>,
     pub page: Option<u64>,
+    pub per_page: Option<u64>,
 }
 
 #[derive(Debug, Deserialize, TS)]
@@ -383,6 +408,7 @@ pub struct MedicineQuery {
     pub q: Option<String>,
     pub generic: Option<String>,
     pub page: Option<u64>,
+    pub per_page: Option<u64>,
 }
 
 #[derive(Debug, Serialize, TS)]
@@ -394,6 +420,9 @@ pub struct GenericAdminDto {
     pub food_timing: FoodTiming,
     pub conflicts: usize,
     pub label_synced: Option<String>,
+    /// the photo's media id (None: the drawn tile)
+    pub media_id: Option<i32>,
+    pub image: Option<String>,
 }
 
 #[derive(Debug, Serialize, TS)]
