@@ -1,7 +1,7 @@
 //! Sync sources and their runs. Every statement is bound (values never in the SQL text). Timestamps leave as unix seconds
 //! (the entities have no chrono). Indexed: sources by slug (unique) and by due time; runs by (source, started_at) and user;
 //! one running run per source (partial unique index), which is also what stops two instances running the same source.
-use crate::app::enums::{SyncKind, SyncMethod, SyncStatus};
+use crate::app::enums::{SyncKind, SyncMethod, SyncMode, SyncStatus};
 use crate::app::exceptions::AppError;
 use sea_orm::{ConnectionTrait, DatabaseConnection, DbBackend, QueryResult, Statement, TransactionTrait, Value as SqlValue};
 use serde_json::Value;
@@ -21,6 +21,11 @@ pub struct SourceConfig {
     /// `{ "Header": { "value": "...", "secret": bool } }`; a secret value is sealed
     pub headers: Value,
     pub query_template: String,
+    /// the request body (any method but GET): JSON text or form text
+    pub body: String,
+    pub mode: SyncMode,
+    /// the platform preset it was set up from
+    pub platform: Option<String>,
     pub timeout_ms: u32,
     pub max_retries: u32,
     pub backoff_base_ms: u64,
@@ -38,6 +43,24 @@ pub struct SourceRow {
     pub last_run_at: Option<i64>,
     pub last_status: Option<SyncStatus>,
     pub last_error: Option<String>,
+    /// hash of the request that last passed "Test" (services/sync/verify.rs)
+    pub tested_hash: Option<String>,
+}
+
+/// A platform preset (a row of sync_platforms).
+#[derive(Debug, Clone)]
+pub struct PlatformRow {
+    pub slug: String,
+    pub name: String,
+    pub kind: SyncKind,
+    pub base_url: String,
+    pub method: SyncMethod,
+    pub headers: Value,
+    pub query_template: String,
+    pub body: String,
+    pub mode: SyncMode,
+    pub docs_url: String,
+    pub note: Value,
 }
 
 /// How a run ended.
@@ -78,7 +101,7 @@ pub struct RunFilter {
     pub per_page: u64,
 }
 
-const SOURCE_COLUMNS: &str = "id, slug, name, kind, base_url, method, headers, query_template, timeout_ms, max_retries, backoff_base_ms, backoff_factor, backoff_max_ms, jitter, schedule_hours, active, extract(epoch FROM last_run_at)::bigint AS last_run_at, last_status, last_error";
+const SOURCE_COLUMNS: &str = "id, slug, name, kind, base_url, method, headers, query_template, body, mode, platform, tested_hash, timeout_ms, max_retries, backoff_base_ms, backoff_factor, backoff_max_ms, jitter, schedule_hours, active, extract(epoch FROM last_run_at)::bigint AS last_run_at, last_status, last_error";
 const RUN_COLUMNS: &str = "r.id, s.slug AS source, s.name AS source_name, r.started_by, extract(epoch FROM r.started_at)::bigint AS started_at, extract(epoch FROM r.finished_at)::bigint AS finished_at, r.attempts, r.status, r.rows_seen, r.rows_created, r.rows_updated, r.rows_skipped, r.error";
 /// A run still "running" after this long is taken as dead (the server restarted mid-run) and closed as failed.
 const STALE_AFTER: &str = "interval '60 minutes'";
@@ -100,6 +123,9 @@ fn to_source(row: &QueryResult) -> Option<SourceRow> {
             method: SyncMethod::parse(&text("method"))?,
             headers: row.try_get("", "headers").unwrap_or(Value::Null),
             query_template: text("query_template"),
+            body: text("body"),
+            mode: SyncMode::parse(&text("mode")).unwrap_or(SyncMode::Update),
+            platform: row.try_get::<Option<String>>("", "platform").ok().flatten(),
             timeout_ms: u32::try_from(unsigned("timeout_ms")).unwrap_or(15_000),
             max_retries: u32::try_from(row.try_get::<i16>("", "max_retries").unwrap_or_default()).unwrap_or_default(),
             backoff_base_ms: unsigned("backoff_base_ms"),
@@ -112,6 +138,24 @@ fn to_source(row: &QueryResult) -> Option<SourceRow> {
         last_run_at: row.try_get::<Option<i64>>("", "last_run_at").ok().flatten(),
         last_status: row.try_get::<Option<String>>("", "last_status").ok().flatten().and_then(|word| SyncStatus::parse(&word)),
         last_error: row.try_get::<Option<String>>("", "last_error").ok().flatten(),
+        tested_hash: row.try_get::<Option<String>>("", "tested_hash").ok().flatten(),
+    })
+}
+
+fn to_platform(row: &QueryResult) -> Option<PlatformRow> {
+    let text = |column: &str| row.try_get::<String>("", column).unwrap_or_default();
+    Some(PlatformRow {
+        slug: text("slug"),
+        name: text("name"),
+        kind: SyncKind::parse(&text("kind"))?,
+        base_url: text("base_url"),
+        method: SyncMethod::parse(&text("method"))?,
+        headers: row.try_get("", "headers").unwrap_or(Value::Null),
+        query_template: text("query_template"),
+        body: text("body"),
+        mode: SyncMode::parse(&text("mode")).unwrap_or(SyncMode::Update),
+        docs_url: text("docs_url"),
+        note: row.try_get("", "note").unwrap_or(Value::Null),
     })
 }
 
@@ -152,6 +196,9 @@ fn config_values(config: &SourceConfig) -> Vec<SqlValue> {
         config.jitter.into(),
         config.schedule_hours.and_then(|hours| i32::try_from(hours).ok()).into(),
         config.active.into(),
+        config.body.clone().into(),
+        config.mode.as_str().to_owned().into(),
+        config.platform.clone().into(),
     ]
 }
 
@@ -177,8 +224,8 @@ impl SyncRepository {
 
     /// Insert a new source. Err(None-like) is reported as a validation error by the caller when the slug exists.
     pub async fn insert(&self, config: &SourceConfig) -> Result<bool, AppError> {
-        let sql = "INSERT INTO sync_sources (slug, name, kind, base_url, method, headers, query_template, timeout_ms, max_retries, backoff_base_ms, backoff_factor, backoff_max_ms, jitter, schedule_hours, active) \
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)";
+        let sql = "INSERT INTO sync_sources (slug, name, kind, base_url, method, headers, query_template, timeout_ms, max_retries, backoff_base_ms, backoff_factor, backoff_max_ms, jitter, schedule_hours, active, body, mode, platform) \
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)";
         match self.db.execute(statement(sql, config_values(config))).await {
             Ok(_) => Ok(true),
             Err(error) if duplicate(&error) => Ok(false),
@@ -187,8 +234,23 @@ impl SyncRepository {
     }
 
     pub async fn update(&self, config: &SourceConfig) -> Result<bool, AppError> {
-        let sql = "UPDATE sync_sources SET name = $2, kind = $3, base_url = $4, method = $5, headers = $6, query_template = $7, timeout_ms = $8, max_retries = $9, backoff_base_ms = $10, backoff_factor = $11, backoff_max_ms = $12, jitter = $13, schedule_hours = $14, active = $15, updated_at = now() WHERE slug = $1";
+        let sql = "UPDATE sync_sources SET name = $2, kind = $3, base_url = $4, method = $5, headers = $6, query_template = $7, timeout_ms = $8, max_retries = $9, backoff_base_ms = $10, backoff_factor = $11, backoff_max_ms = $12, jitter = $13, schedule_hours = $14, active = $15, body = $16, mode = $17, platform = $18, updated_at = now() WHERE slug = $1";
         Ok(self.db.execute(statement(sql, config_values(config))).await?.rows_affected() == 1)
+    }
+
+    /// Remember the request that just passed "Test" for this source.
+    pub async fn set_tested(&self, slug: &str, hash: &str) -> Result<(), AppError> {
+        self.db.execute(statement("UPDATE sync_sources SET tested_hash = $2 WHERE slug = $1", vec![slug.to_owned().into(), hash.to_owned().into()])).await?;
+        Ok(())
+    }
+
+    pub async fn platforms(&self) -> Result<Vec<PlatformRow>, AppError> {
+        let rows = self.db.query_all(statement("SELECT slug, name, kind, base_url, method, headers, query_template, body, mode, docs_url, note FROM sync_platforms ORDER BY sort, slug", vec![])).await?;
+        Ok(rows.iter().filter_map(to_platform).collect())
+    }
+
+    pub async fn platform_exists(&self, slug: &str) -> Result<bool, AppError> {
+        Ok(self.db.query_one(statement("SELECT 1 AS found FROM sync_platforms WHERE slug = $1", vec![slug.to_owned().into()])).await?.is_some())
     }
 
     pub async fn delete(&self, slug: &str) -> Result<bool, AppError> {

@@ -7,11 +7,13 @@ pub mod guard;
 pub mod headers;
 pub mod mapper;
 pub mod rules;
+pub mod verify;
 
-use crate::app::dtos::sync::{SyncRunDto, SyncSourceDto, SyncTestDto};
-use crate::app::enums::{SyncMethod, SyncStatus};
+use crate::app::dtos::sync::{SyncHeaderDto, SyncPlatformDto, SyncRunDto, SyncSourceDto, SyncTestDto};
+use crate::app::enums::{SyncMethod, SyncMode, SyncStatus};
 use crate::app::exceptions::AppError;
-use crate::app::repositories::{CatalogRepository, MedicineRepository, RunResult, RunRow, SourceConfig, SourceRow, SyncRepository};
+use crate::app::repositories::{CatalogRepository, MedicineRepository, PlatformRow, RunResult, RunRow, SourceConfig, SourceRow, SyncRepository};
+use crate::app::support::i18n::LocalizedText;
 use crate::app::support::clock::today;
 use crate::app::support::vault::SecretKey;
 use fetch::{Policy, Request};
@@ -77,6 +79,9 @@ impl SyncService {
             method: config.method,
             headers: headers::public(&config.headers),
             query_template: config.query_template.clone(),
+            body: config.body.clone(),
+            mode: config.mode,
+            platform: config.platform.clone(),
             timeout_ms: config.timeout_ms,
             max_retries: config.max_retries,
             backoff_base_ms: narrow(config.backoff_base_ms),
@@ -89,34 +94,64 @@ impl SyncService {
             last_status: row.last_status,
             last_error: row.last_error.clone(),
             can_save: config.kind.has_mapper(),
+            needs_test: verify::needs_test(config, row.tested_hash.as_deref()),
         }
     }
 
-    /// The request a source sends and how hard it tries. `{today}` in the template becomes the day.
+    pub fn platform_dto(&self, row: &PlatformRow) -> SyncPlatformDto {
+        let note = |lang: &str| row.note.get(lang).and_then(serde_json::Value::as_str).unwrap_or_default().to_owned();
+        let headers = row
+            .headers
+            .as_array()
+            .map(|list| list.iter().map(|item| SyncHeaderDto { name: item["name"].as_str().unwrap_or_default().to_owned(), value: item["value"].as_str().unwrap_or_default().to_owned(), secret: item["secret"] == serde_json::json!(true) }).collect())
+            .unwrap_or_default();
+        SyncPlatformDto {
+            slug: row.slug.clone(),
+            name: row.name.clone(),
+            kind: row.kind,
+            base_url: row.base_url.clone(),
+            method: row.method,
+            headers,
+            query_template: row.query_template.clone(),
+            body: row.body.clone(),
+            mode: row.mode,
+            docs_url: row.docs_url.clone(),
+            note: LocalizedText { en: note("en"), bn: note("bn") },
+            can_save: row.kind.has_mapper(),
+        }
+    }
+
+    /// The request a source sends and how hard it tries. `{today}` in the query and the body becomes the day. The query is the address's
+    /// query string for every method; the body goes with any method but GET, as JSON when it starts with { or [ and as a form otherwise,
+    /// unless the headers already name a Content-Type.
     fn request_of(&self, config: &SourceConfig) -> Result<(Request, Policy), String> {
         let mut url = rules::base_url(&config.base_url, self.allow_private)?;
-        let query = config.query_template.trim().trim_start_matches('?').replace("{today}", &today());
-        let mut body = None;
-        let method = match config.method {
-            SyncMethod::Get => {
-                if !query.is_empty() {
-                    let joined = match url.query() {
-                        Some(old) if !old.is_empty() => format!("{old}&{query}"),
-                        _ => query,
-                    };
-                    url.set_query(Some(&joined));
-                }
-                Method::GET
-            }
-            SyncMethod::Post => {
-                if !query.is_empty() {
-                    let kind = if query.starts_with('{') || query.starts_with('[') { "application/json" } else { "application/x-www-form-urlencoded" };
-                    body = Some((kind.to_owned(), query));
-                }
-                Method::POST
-            }
+        let day = today();
+        let query = config.query_template.trim().trim_start_matches('?').replace("{today}", &day);
+        if !query.is_empty() {
+            let joined = match url.query() {
+                Some(old) if !old.is_empty() => format!("{old}&{query}"),
+                _ => query,
+            };
+            url.set_query(Some(&joined));
+        }
+        let headers = headers::open(self.key, &config.headers)?;
+        let text = config.body.trim().replace("{today}", &day);
+        let body = if config.method.has_body() && !text.is_empty() {
+            let named = headers.iter().any(|(name, _)| name.eq_ignore_ascii_case("content-type"));
+            let kind = if named { None } else { Some(if text.starts_with('{') || text.starts_with('[') { "application/json" } else { "application/x-www-form-urlencoded" }.to_owned()) };
+            Some((kind, text))
+        } else {
+            None
         };
-        let request = Request { url, method, headers: headers::open(self.key, &config.headers)?, body, timeout: Duration::from_millis(u64::from(config.timeout_ms)) };
+        let method = match config.method {
+            SyncMethod::Get => Method::GET,
+            SyncMethod::Post => Method::POST,
+            SyncMethod::Put => Method::PUT,
+            SyncMethod::Patch => Method::PATCH,
+            SyncMethod::Delete => Method::DELETE,
+        };
+        let request = Request { url, method, headers, body, timeout: Duration::from_millis(u64::from(config.timeout_ms)) };
         let policy = Policy { max_retries: config.max_retries, base_ms: config.backoff_base_ms, factor: config.backoff_factor, max_ms: config.backoff_max_ms, jitter: config.jitter };
         Ok((request, policy))
     }
@@ -146,6 +181,9 @@ impl SyncService {
     /// Run a source now. Err only when it cannot start (already running) or the run row cannot be written; a failed fetch is a
     /// finished run with status `failed`.
     pub async fn run(&self, source: &SourceRow, started_by: &str, user_id: Option<i32>) -> Result<RunRow, AppError> {
+        if verify::needs_test(&source.config, source.tested_hash.as_deref()) {
+            return Err(AppError::field("run", "test this source first: a PUT, PATCH or DELETE source runs only after its exact request passed Test"));
+        }
         let run_id = self.repo.begin_run(source.id, started_by, user_id).await?.ok_or_else(|| AppError::field("run", "this source is already running"))?;
         let (status, result) = self.execute(&source.config).await;
         tracing::info!(what = "sync.finished", source = %source.config.slug, status = status.as_str(), attempts = result.attempts, seen = result.seen, created = result.created, updated = result.updated, skipped = result.skipped);
@@ -173,7 +211,7 @@ impl SyncService {
         let Some(mapped) = mapper::map(config.kind, &body) else {
             return failed("no mapper for this kind".to_owned(), answer.made);
         };
-        match self.save(&mapped).await {
+        match self.save(&mapped, config.mode).await {
             Ok(counts) => (SyncStatus::Ok, RunResult { attempts: answer.made, ..counts }),
             Err(error) => {
                 tracing::error!(what = "sync.save_failed", source = %config.slug, why = %error);
@@ -182,19 +220,22 @@ impl SyncService {
         }
     }
 
-    /// Save mapped medicines the way the CSV import and the label sync do: new generics and brands, then the labels.
-    async fn save(&self, mapped: &mapper::Mapped) -> Result<RunResult, AppError> {
+    /// Save mapped medicines the way the CSV import and the label sync do: new generics and brands, then (update mode) the labels.
+    async fn save(&self, mapped: &mapper::Mapped, mode: SyncMode) -> Result<RunResult, AppError> {
         let (new_generics, new_brands, known) = self.medicines.import(&mapped.brands).await?;
         self.catalog.flush().await;
         let snapshot = self.catalog.snapshot().await?;
         let mut done = std::collections::HashSet::new();
         let mut updated = 0_usize;
         let mut unmatched = 0_usize;
+        let mut kept = 0_usize;
         for label in &mapped.labels {
             if !done.insert(label.generic_slug.clone()) {
                 continue;
             }
             match snapshot.generics.iter().find(|item| item.slug == label.generic_slug) {
+                // append mode adds what is missing: a generic that already has a label keeps it
+                Some(generic) if mode == SyncMode::Append && generic.label_set_id.is_some() => kept += 1,
                 Some(generic) => {
                     self.medicines.set_label(generic.id, label.set_id.clone(), label.synced_on.clone(), label.excerpt.clone()).await?;
                     updated += 1;
@@ -206,7 +247,7 @@ impl SyncService {
             self.catalog.flush().await;
         }
         let count = |value: usize| u32::try_from(value).unwrap_or(u32::MAX);
-        Ok(RunResult { attempts: 0, seen: count(mapped.seen), created: count(new_generics + new_brands), updated: count(updated), skipped: count(mapped.unusable + known + unmatched), error: None })
+        Ok(RunResult { attempts: 0, seen: count(mapped.seen), created: count(new_generics + new_brands), updated: count(updated), skipped: count(mapped.unusable + known + unmatched + kept), error: None })
     }
 
     /// One scheduler tick: start every active scheduled source that is due. Each runs in its own task; the one-running-run-per-source

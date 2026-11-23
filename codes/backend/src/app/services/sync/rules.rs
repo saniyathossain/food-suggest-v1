@@ -1,7 +1,7 @@
 //! What a saved source may hold: the admin's input applied over the stored source (or over the defaults for a new one) and checked
 //! against the same ranges as the table's CHECKs, so a bad value is a field error on the form, not a database error. Pure.
 use crate::app::dtos::sync::SyncSourceInputDto;
-use crate::app::enums::SyncMethod;
+use crate::app::enums::{SyncMethod, SyncMode};
 use crate::app::exceptions::AppError;
 use crate::app::repositories::SourceConfig;
 use crate::app::services::sync::{guard, headers};
@@ -59,6 +59,17 @@ pub fn apply(existing: Option<&SourceConfig>, input: &SyncSourceInputDto, key: O
     if query_template.len() > 4000 || query_template.chars().any(|letter| letter == '\n' || letter == '\r' || letter == '\0') {
         return Err(AppError::field("query_template", "keep it on one line, under 4000 characters"));
     }
+    let body = if method.has_body() { input.body.clone().or_else(|| existing.map(|found| found.body.clone())).unwrap_or_default().trim().to_owned() } else { String::new() };
+    if body.chars().count() > 20_000 || body.contains('\0') {
+        return Err(AppError::field("body", "keep the body under 20000 characters"));
+    }
+    let platform = match &input.platform {
+        Some(choice) => choice.clone().filter(|slug| !slug.is_empty()),
+        None => existing.and_then(|found| found.platform.clone()),
+    };
+    if platform.as_deref().is_some_and(|slug| !slug_ok(slug)) {
+        return Err(AppError::field("platform", "unknown platform"));
+    }
     let stored = existing.map_or(serde_json::Value::Null, |found| found.headers.clone());
     let headers = match &input.headers {
         Some(list) => headers::merge(key, &stored, list).map_err(|why| AppError::field("headers", &why))?,
@@ -94,6 +105,9 @@ pub fn apply(existing: Option<&SourceConfig>, input: &SyncSourceInputDto, key: O
         method,
         headers,
         query_template,
+        body,
+        mode: input.mode.or_else(|| existing.map(|found| found.mode)).unwrap_or(SyncMode::Update),
+        platform,
         timeout_ms,
         max_retries,
         backoff_base_ms,
@@ -109,7 +123,7 @@ pub fn apply(existing: Option<&SourceConfig>, input: &SyncSourceInputDto, key: O
 mod tests {
     use super::{apply, base_url, slug_ok};
     use crate::app::dtos::sync::SyncSourceInputDto;
-    use crate::app::enums::{SyncKind, SyncMethod};
+    use crate::app::enums::{SyncKind, SyncMethod, SyncMode};
 
     fn input(url: &str) -> SyncSourceInputDto {
         SyncSourceInputDto { slug: Some("fda-labels".to_owned()), name: Some("openFDA labels".to_owned()), kind: Some(SyncKind::Medicines), base_url: Some(url.to_owned()), ..SyncSourceInputDto::default() }
@@ -121,6 +135,35 @@ mod tests {
         assert_eq!((made.method, made.timeout_ms, made.max_retries, made.backoff_base_ms, made.backoff_max_ms, made.jitter, made.active), (SyncMethod::Get, 15_000, 3, 500, 30_000, true, false));
         assert!((made.backoff_factor - 2.0).abs() < f64::EPSILON);
         assert_eq!(made.schedule_hours, None);
+        assert_eq!((made.mode, made.body.as_str(), made.platform.as_deref()), (SyncMode::Update, "", None));
+    }
+
+    #[test]
+    fn a_body_belongs_to_methods_that_take_one() {
+        let with = |method: SyncMethod| {
+            let mut sent = input("https://api.example.org/items");
+            (sent.method, sent.body) = (Some(method), Some("  {\"a\": 1}  ".to_owned()));
+            apply(None, &sent, None, false).expect("valid")
+        };
+        for method in [SyncMethod::Post, SyncMethod::Put, SyncMethod::Patch, SyncMethod::Delete] {
+            assert_eq!(with(method).body, "{\"a\": 1}", "{method:?}");
+        }
+        assert_eq!(with(SyncMethod::Get).body, "", "GET sends no body");
+        let mut long = input("https://api.example.org/items");
+        (long.method, long.body) = (Some(SyncMethod::Put), Some("x".repeat(20_001)));
+        assert!(apply(None, &long, None, false).is_err());
+    }
+
+    #[test]
+    fn mode_and_platform_can_be_set_and_cleared() {
+        let mut sent = input("https://api.fda.gov/drug/label.json");
+        (sent.mode, sent.platform) = (Some(SyncMode::Append), Some(Some("openfda-labels".to_owned())));
+        let made = apply(None, &sent, None, false).expect("valid");
+        assert_eq!((made.mode, made.platform.as_deref()), (SyncMode::Append, Some("openfda-labels")));
+        let cleared = apply(Some(&made), &SyncSourceInputDto { platform: Some(None), ..SyncSourceInputDto::default() }, None, false).expect("valid");
+        assert_eq!((cleared.mode, cleared.platform), (SyncMode::Append, None));
+        let bad = apply(None, &SyncSourceInputDto { platform: Some(Some("Not A Slug".to_owned())), ..input("https://api.example.org/") }, None, false);
+        assert!(bad.is_err());
     }
 
     #[test]

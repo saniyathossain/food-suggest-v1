@@ -5,4 +5,4 @@ mod sync;
 
 pub use domain::{Activity, AgeGroup, Allergen, Band, Budget, Criterion, DetailKind, WhyBasis, PaymentDriver, PaymentStatus, FeatureKey, FoodTiming, LabKind, MedicineForm, Kinship, MealTime, MeterKey, MeterKind, Pregnancy, Role, Severity, CookingFat, CookingMethod, DietModeKind, Difficulty, RecipeKind, FoodOrigin, GlycemicBand, ModeStance, ModeTipKind, Gender, LinkKind, LinkOrigin, LinkVerdict, Locale, MediaStatus, TimingKind, Verdict};
 pub use drivers::{AppEnv, CacheDriver, LogChannel, LogFormat, StorageDriver};
-pub use sync::{SyncKind, SyncMethod, SyncStatus};
+pub use sync::{SyncKind, SyncMethod, SyncMode, SyncStatus};

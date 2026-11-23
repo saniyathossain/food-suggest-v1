@@ -460,3 +460,22 @@ html[data-strained] [class~='bg-card'][class~='border'] {
     translate: calc(var(--mx, 0) * 5px) calc(var(--my, 0) * 3px);
   }
 }
+
+/* The outline button: a frosted fill and a real edge (about 22 % of the text colour), so it is visible on a pale card, a pink or violet
+   gradient, a photo and the dark page alike. Hover firms both up; the pressed state sinks a pixel (from .press). */
+.btn-outline {
+  border-color: color-mix(in srgb, var(--foreground) 24%, transparent);
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: 0 1px 2px var(--shade), inset 0 1px 0 var(--spec-top);
+}
+.btn-outline:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+}
+html[data-strained] .btn-outline {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--card);
+}

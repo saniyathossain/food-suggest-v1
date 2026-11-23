@@ -56,7 +56,7 @@ function Invite() {
 
 export function Landing({ boot }: { boot: Bootstrap }) {
   return (
-    <div className="grid gap-24">
+    <div className="grid gap-14 lg:gap-16">
       <Hero boot={boot} />
       <How />
       <Suspense fallback={<span className="shimmer block h-[380px] rounded-[28px]" />}>

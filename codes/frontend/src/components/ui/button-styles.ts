@@ -9,7 +9,8 @@ export const BUTTON_VARIANT = {
   default: 'shine bg-cta text-cta-ink shadow-[var(--lift-sun-sm)] hover:bg-cta-hover hover:shadow-[var(--lift-sun)]',
   brand: 'shine bg-primary text-primary-foreground shadow-[var(--lift-sm)] hover:bg-primary/92 hover:shadow-[var(--lift)]',
   destructive: 'bg-avoid text-white shadow-sm hover:bg-avoid/90',
-  outline: 'border border-border bg-card text-foreground shadow-xs hover:border-foreground/25 hover:bg-muted',
+  // frosted, with its own visible fill and edge so it reads on any ground (a pink hero, a photo, dark); the look is .btn-outline in glass.css
+  outline: 'btn-outline border text-foreground',
   secondary: 'bg-muted text-foreground hover:bg-accent',
   ghost: 'text-muted-foreground hover:bg-accent hover:text-foreground',
   // key calls to action laid on a photo or the ground: frosted glass with a lit rim (styles/glass.css)

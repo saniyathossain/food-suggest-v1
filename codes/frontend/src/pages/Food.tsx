@@ -14,7 +14,7 @@ import { ErrorBox } from '@/components/kit/loaderror';
 import { SectionTitle } from '@/components/kit/section';
 import { MotionRoot } from '@/components/motion';
 import { RecipeCard } from '@/components/recipe/RecipeCard';
-import { Disclaimer, Sources } from '@/components/Sources';
+import { Fineprint } from '@/components/Sources';
 import { VerdictBadge, verdictColor } from '@/components/Verdict';
 import { endpoints, useResource } from '@/lib/api';
 import { clock, useI18n, useT } from '@/lib/i18n';
@@ -136,8 +136,7 @@ export default function Food({ slug }: { slug: string }) {
             )}
             <LinkedWith from={`food:${data.slug}`} />
             <PlanNext kind="food" />
-            <Sources items={data.sources} />
-            <Disclaimer />
+            <Fineprint items={data.sources} />
           </div>
         )}
       </main>

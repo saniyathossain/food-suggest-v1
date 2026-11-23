@@ -637,6 +637,36 @@
   visibility: hidden;
   transition-delay: 0.6s;
 }
+/* The island's body is smoked glass: the shape is drawn in a deep tint at about 70 % (one group opacity, so overlapping shapes never
+   seam) over a blurred copy of what is behind it, the same material as the menu bar. Text and glyphs stay white on it in light and dark. */
+.island-body {
+  fill: light-dark(#17141f, #0b0a12);
+  fill-opacity: 1;
+  opacity: 0.72;
+}
+.island-body > path {
+  fill: inherit;
+}
+.island-frost {
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  backdrop-filter: blur(22px) saturate(1.6);
+}
+html[data-strained] .island-frost {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html[data-strained] .island-body {
+  opacity: 0.94;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .island-frost {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .island-body {
+    opacity: 0.94;
+  }
+}
 @media print {
   .island-slot {
     display: none;

@@ -92,6 +92,8 @@ export type { PaymentAdminDto as PaymentAdmin } from '../generated/PaymentAdminD
 // external sync (codes/backend/src/app/dtos/sync.rs)
 export type { SyncKind } from '../generated/SyncKind';
 export type { SyncMethod } from '../generated/SyncMethod';
+export type { SyncMode } from '../generated/SyncMode';
+export type { SyncPlatformDto as SyncPlatform } from '../generated/SyncPlatformDto';
 export type { SyncStatus } from '../generated/SyncStatus';
 export type { SyncHeaderDto as SyncHeader } from '../generated/SyncHeaderDto';
 export type { SyncHeaderInputDto as SyncHeaderInput } from '../generated/SyncHeaderInputDto';

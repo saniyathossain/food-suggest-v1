@@ -13,7 +13,7 @@ export default function Home({ boot }: { boot: Bootstrap }) {
   const status = auth.status === 'loading' ? (wasSignedIn() ? 'loading' : 'out') : auth.status;
   return (
     <main>
-      <div className="page grid gap-20 pt-6">
+      <div className="page grid gap-12 pt-6 lg:gap-14">
         {status === 'loading' && (
           <div aria-busy="true" className="grid gap-4 md:grid-cols-[1fr_1.3fr_1fr]">
             <span className="shimmer block h-[420px] rounded-[28px]" />

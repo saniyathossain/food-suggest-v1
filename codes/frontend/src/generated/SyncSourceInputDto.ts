@@ -2,9 +2,18 @@
 import type { SyncHeaderInputDto } from "./SyncHeaderInputDto";
 import type { SyncKind } from "./SyncKind";
 import type { SyncMethod } from "./SyncMethod";
+import type { SyncMode } from "./SyncMode";
 
 /**
  * Create (POST: slug, name, kind and base_url required) or change (PATCH: only what is sent) a source. `headers`, when sent,
  * replaces the whole list. `schedule_hours`: a number runs every N hours, `null` runs by hand only.
  */
-export type SyncSourceInputDto = { slug?: string, name?: string, kind?: SyncKind, base_url?: string, method?: SyncMethod, headers?: Array<SyncHeaderInputDto>, query_template?: string, timeout_ms?: number, max_retries?: number, backoff_base_ms?: number, backoff_factor?: number, backoff_max_ms?: number, jitter?: boolean, schedule_hours?: number | null, active?: boolean, };
+export type SyncSourceInputDto = { slug?: string, name?: string, kind?: SyncKind, base_url?: string, method?: SyncMethod, headers?: Array<SyncHeaderInputDto>, query_template?: string, body?: string, mode?: SyncMode, 
+/**
+ * a platform preset's slug; `null` clears it
+ */
+platform?: string | null, 
+/**
+ * "Test" of a PUT / PATCH / DELETE sends the real request: the caller confirms that first
+ */
+confirm_write?: boolean, timeout_ms?: number, max_retries?: number, backoff_base_ms?: number, backoff_factor?: number, backoff_max_ms?: number, jitter?: boolean, schedule_hours?: number | null, active?: boolean, };

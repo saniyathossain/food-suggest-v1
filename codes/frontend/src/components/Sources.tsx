@@ -49,10 +49,21 @@ export function Sources({ items }: { items: Source[] }) {
   );
 }
 
+/** The small print at the foot of a guidance page: the sources and the disclaimer share one row on a wide screen (two thirds and one third)
+    and stack on a phone, so a 2000 px page does not leave half of the row empty. */
+export function Fineprint({ items }: { items: Source[] }) {
+  return (
+    <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+      <Sources items={items} />
+      <Disclaimer />
+    </div>
+  );
+}
+
 export function Disclaimer() {
   const { t } = useI18n();
   return (
-    <p className="flex gap-3 rounded-xl border border-dashed p-4 text-footnote text-muted-foreground">
+    <p className="flex gap-3 rounded-xl border border-dashed border-foreground/25 p-4 text-footnote leading-relaxed text-muted-foreground lg:self-stretch">
       <Info size={18} className="shrink-0" />
       {t.disclaimer}
     </p>

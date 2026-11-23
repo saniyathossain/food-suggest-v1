@@ -106,8 +106,8 @@ export function Select({ value, onChange, children, id, className, disabled, sea
         {searching && (
           <label className="flex h-10 items-center gap-2 rounded-xl border bg-background/60 px-3">
             <Search size={15} className="text-muted-foreground" />
-            <span className="sr-only">{t.table.search}</span>
-            <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} placeholder={t.table.search} className="min-w-0 flex-1 bg-transparent text-subhead outline-none placeholder:text-faint-foreground" />
+            <span className="sr-only">{t.table.find}</span>
+            <input autoFocus value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} placeholder={t.table.find} className="min-w-0 flex-1 bg-transparent text-subhead outline-none placeholder:text-faint-foreground" />
           </label>
         )}
         <ul ref={list} role="listbox" aria-label={rest['aria-label']} data-lenis-prevent className="grid max-h-72 gap-0.5 overflow-y-auto overscroll-contain">

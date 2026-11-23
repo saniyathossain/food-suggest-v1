@@ -58,6 +58,8 @@ const MIGRATIONS: &[(&str, &str)] = &[
     ("0055_links_data", include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/links_data.sql"))),
     ("0056_condition_details", include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/migrations/0056_condition_details.sql"))),
     ("0057_condition_details_data", include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/condition_details.sql"))),
+    ("0056_sync_modes", include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/migrations/0056_sync_modes.sql"))),
+    ("0057_sync_platforms_data", include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/database/seeders/sync_platforms.sql"))),
 ];
 
 /// Applies pending migrations, each in its own transaction. Returns how many ran.

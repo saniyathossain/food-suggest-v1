@@ -2,9 +2,22 @@
 import type { SyncHeaderDto } from "./SyncHeaderDto";
 import type { SyncKind } from "./SyncKind";
 import type { SyncMethod } from "./SyncMethod";
+import type { SyncMode } from "./SyncMode";
 import type { SyncStatus } from "./SyncStatus";
 
-export type SyncSourceDto = { slug: string, name: string, kind: SyncKind, base_url: string, method: SyncMethod, headers: Array<SyncHeaderDto>, query_template: string, timeout_ms: number, max_retries: number, backoff_base_ms: number, backoff_factor: number, backoff_max_ms: number, jitter: boolean, 
+export type SyncSourceDto = { slug: string, name: string, kind: SyncKind, base_url: string, method: SyncMethod, headers: Array<SyncHeaderDto>, 
+/**
+ * added to the address as its query string, for every method
+ */
+query_template: string, 
+/**
+ * the request body (any method but GET)
+ */
+body: string, mode: SyncMode, 
+/**
+ * the platform preset it was set up from
+ */
+platform: string | null, timeout_ms: number, max_retries: number, backoff_base_ms: number, backoff_factor: number, backoff_max_ms: number, jitter: boolean, 
 /**
  * None = run by hand only
  */
@@ -16,4 +29,8 @@ last_run_at: number | null, last_status: SyncStatus | null, last_error: string |
 /**
  * false = the kind has no mapper yet: a run is refused, "Test" only counts and shows the answer
  */
-can_save: boolean, };
+can_save: boolean, 
+/**
+ * a PUT / PATCH / DELETE source whose current request has not passed "Test": a run is refused until it does
+ */
+needs_test: boolean, };

@@ -793,6 +793,8 @@ export const IslandSurface = (props: IslandSurfaceProps) => {
   }, []);
   const shadowPill = useRef<HTMLDivElement>(null);
   const shadowBubble = useRef<HTMLDivElement>(null);
+  /** The frosted layer under the body: a div that blurs what is behind it, clipped each frame to the same outline as the body. */
+  const glass = useRef<HTMLDivElement>(null);
   const svgPill = useRef<SVGPathElement>(null);
   const svgBubble = useRef<SVGPathElement>(null);
   const svgBridge = useRef<SVGPathElement>(null);
@@ -834,6 +836,11 @@ export const IslandSurface = (props: IslandSurfaceProps) => {
     svgPill.current?.setAttribute("d", paths.pill);
     svgBubble.current?.setAttribute("d", paths.bubble);
     svgBridge.current?.setAttribute("d", paths.bridge);
+    // the frost is the union of the three shapes (one path with sub-paths fills as their union)
+    if (glass.current) {
+      const outline = [paths.pill, paths.bridge, paths.bubble].filter((part) => part && part.length > 0).join(" ");
+      glass.current.style.clipPath = outline ? `path("${outline}")` : "none";
+    }
     // Content is clipped to the island with concentric corners, as on the simulator, so arriving
     // content is revealed by the shape. The island's outline cuts everything; the concentric clip
     // (`clipPath`) applies per layer: before the blur on expanded content, after it on the rest.
@@ -2128,6 +2135,7 @@ export const IslandSurface = (props: IslandSurfaceProps) => {
         {/* The shadow in Apple's WebKit (`placeShadow`); hidden elsewhere. */}
         <div ref={shadowPill} aria-hidden="true" style={shadowBox} />
         <div ref={shadowBubble} aria-hidden="true" style={shadowBox} />
+        <div ref={glass} aria-hidden="true" className="island-frost" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
         <svg
           ref={svg}
           aria-hidden="true"
@@ -2201,9 +2209,12 @@ export const IslandSurface = (props: IslandSurfaceProps) => {
             <path ref={kBridge} d={initialPaths.bridge} />
             <path ref={kBubble} d={initialPaths.bubble} />
           </g>
-          <path ref={svgPill} d={initialPaths.pill} fill="#000" />
-          <path ref={svgBridge} d={initialPaths.bridge} fill="#000" />
-          <path ref={svgBubble} d={initialPaths.bubble} fill="#000" />
+          {/* The body is smoked glass, not black: one group opacity so the three overlapping shapes never show a seam (see .island-body in utilities.css). */}
+          <g className="island-body">
+            <path ref={svgPill} d={initialPaths.pill} fill="#000" />
+            <path ref={svgBridge} d={initialPaths.bridge} fill="#000" />
+            <path ref={svgBubble} d={initialPaths.bubble} fill="#000" />
+          </g>
         </svg>
         {interaction ? (
           <button

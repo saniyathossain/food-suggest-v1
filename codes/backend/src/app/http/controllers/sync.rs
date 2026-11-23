@@ -6,7 +6,7 @@ use crate::app::enums::{Role, SyncStatus};
 use crate::app::exceptions::AppError;
 use crate::app::http::middleware::AdminActor;
 use crate::app::repositories::RunFilter;
-use crate::app::services::sync::{rules, run_dto};
+use crate::app::services::sync::{rules, run_dto, verify};
 use crate::bootstrap::AppState;
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
@@ -15,17 +15,18 @@ use serde_json::json;
 
 pub async fn list(State(state): State<AppState>, Extension(actor): Extension<AdminActor>) -> Result<Json<SyncSetupDto>, AppError> {
     actor.require(Role::SuperAdmin)?;
-    let rows = state.sync_repo.sources().await?;
-    Ok(Json(SyncSetupDto { sources: rows.iter().map(|row| state.sync.source_dto(row)).collect(), vault_ready: state.sync.vault_ready() }))
+    let (rows, platforms) = tokio::try_join!(state.sync_repo.sources(), state.sync_repo.platforms())?;
+    Ok(Json(SyncSetupDto { sources: rows.iter().map(|row| state.sync.source_dto(row)).collect(), platforms: platforms.iter().map(|row| state.sync.platform_dto(row)).collect(), vault_ready: state.sync.vault_ready() }))
 }
 
 pub async fn create(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Json(input): Json<SyncSourceInputDto>) -> Result<Json<SyncSourceDto>, AppError> {
     actor.require(Role::SuperAdmin)?;
     let config = rules::apply(None, &input, state.sync.key(), state.sync.allow_private())?;
+    known_platform(&state, &config).await?;
     if !state.sync_repo.insert(&config).await? {
         return Err(AppError::field("slug", "a source with this slug exists"));
     }
-    state.accounts.audit(actor.user_id, "sync.created", &config.slug, json!({ "kind": config.kind, "base_url": config.base_url, "headers": header_names(&config) })).await;
+    state.accounts.audit(actor.user_id, "sync.created", &config.slug, json!({ "kind": config.kind, "method": config.method, "mode": config.mode, "platform": config.platform, "base_url": config.base_url, "headers": header_names(&config) })).await;
     saved(&state, &config.slug).await
 }
 
@@ -33,10 +34,11 @@ pub async fn update(State(state): State<AppState>, Extension(actor): Extension<A
     actor.require(Role::SuperAdmin)?;
     let found = state.sync_repo.source(&slug).await?.ok_or(AppError::NotFound("source"))?;
     let config = rules::apply(Some(&found.config), &input, state.sync.key(), state.sync.allow_private())?;
+    known_platform(&state, &config).await?;
     if !state.sync_repo.update(&config).await? {
         return Err(AppError::NotFound("source"));
     }
-    state.accounts.audit(actor.user_id, "sync.saved", &slug, json!({ "active": config.active, "schedule_hours": config.schedule_hours, "base_url": config.base_url, "headers": header_names(&config) })).await;
+    state.accounts.audit(actor.user_id, "sync.saved", &slug, json!({ "active": config.active, "method": config.method, "mode": config.mode, "platform": config.platform, "schedule_hours": config.schedule_hours, "base_url": config.base_url, "headers": header_names(&config) })).await;
     saved(&state, &slug).await
 }
 
@@ -50,19 +52,27 @@ pub async fn destroy(State(state): State<AppState>, Extension(actor): Extension<
 }
 
 /// "Test" from the form: one request with the settings as typed (a blank secret header falls back to the stored one when `slug`
-/// names a saved source), no retries, nothing saved.
+/// names a saved source), no retries, nothing saved. A PUT, PATCH or DELETE test sends the real request, so it needs `confirm_write`.
+/// A passed test of a saved source's request is remembered: that is what lets a write-style source run.
 pub async fn test(State(state): State<AppState>, Extension(actor): Extension<AdminActor>, Json(input): Json<SyncSourceInputDto>) -> Result<Json<SyncTestDto>, AppError> {
     actor.require(Role::SuperAdmin)?;
     let slug = input.slug.as_deref().map(str::trim).unwrap_or_default().to_owned();
     let found = if slug.is_empty() { None } else { state.sync_repo.source(&slug).await? };
+    let confirmed = input.confirm_write == Some(true);
     // a draft needs a slug to pass the same checks as saving; the test does not keep it
     let mut draft = input;
     if found.is_none() && draft.slug.as_deref().map(str::trim).unwrap_or_default().is_empty() {
         draft.slug = Some("test".to_owned());
     }
     let config = rules::apply(found.as_ref().map(|row| &row.config), &draft, state.sync.key(), state.sync.allow_private())?;
+    if config.method.is_write() && !confirmed {
+        return Err(AppError::field("method", "a PUT, PATCH or DELETE test sends the real request: confirm it first"));
+    }
     let answer = state.sync.test(&config).await;
-    state.accounts.audit(actor.user_id, "sync.tested", &config.slug, json!({ "ok": answer.ok, "rows_seen": answer.rows_seen })).await;
+    if answer.ok && found.is_some() {
+        state.sync_repo.set_tested(&config.slug, &verify::request_hash(&config)).await?;
+    }
+    state.accounts.audit(actor.user_id, "sync.tested", &config.slug, json!({ "ok": answer.ok, "method": config.method, "rows_seen": answer.rows_seen })).await;
     Ok(Json(answer))
 }
 
@@ -85,6 +95,14 @@ pub async fn runs(State(state): State<AppState>, Extension(actor): Extension<Adm
     let per_page = crate::app::support::page::per_page(query.per_page);
     let (rows, total) = state.sync_repo.runs(&RunFilter { source_id, status, text: query.q, page, per_page }).await?;
     Ok(Json(PageDto { items: rows.into_iter().map(run_dto).collect(), total, page, per_page }))
+}
+
+/// A platform slug must name a preset (the table has a foreign key too; this gives the form a field error).
+async fn known_platform(state: &AppState, config: &crate::app::repositories::SourceConfig) -> Result<(), AppError> {
+    match config.platform.as_deref() {
+        Some(slug) if !state.sync_repo.platform_exists(slug).await? => Err(AppError::field("platform", "unknown platform")),
+        _ => Ok(()),
+    }
 }
 
 async fn saved(state: &AppState, slug: &str) -> Result<Json<SyncSourceDto>, AppError> {

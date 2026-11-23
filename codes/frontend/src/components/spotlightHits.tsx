@@ -141,7 +141,7 @@ export function useHits(boot: Bootstrap | undefined, query: string, open: boolea
     }));
     const local = [...pages, ...conditions, ...actions].filter((hit) => !term || normal(hit.label).includes(term) || normal(hit.hint ?? '').includes(term));
     // a tier that does not reach everything says so, once, at the end: what it searches and where to go for more
-    const locked: Hit[] = level >= 3 ? [] : [{ id: 'locked', group: t.spotlight.locked, label: t.spotlight.locked, hint: t.spotlight.lockedHint.replace('{what}', level < 2 ? t.spotlight.lockedFoods : t.spotlight.lockedMore), icon: <Lock size={18} />, run: go('/account') }];
+    const locked: Hit[] = level >= 3 ? [] : [{ id: 'locked', group: t.tiers.upgrade, label: t.spotlight.locked, hint: t.spotlight.lockedHint.replace('{what}', level < 2 ? t.spotlight.lockedFoods : t.spotlight.lockedMore), icon: <Lock size={18} />, run: go('/account') }];
     if (term) return [...local, ...foodHits, ...more, ...recipeHits, ...articleHits, ...locked];
     const recent = readRecent()
       .map((label) => [...pages, ...conditions].find((hit) => hit.label === label))

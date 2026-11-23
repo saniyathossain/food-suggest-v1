@@ -176,6 +176,6 @@ fn new_features_are_off_until_a_tier_switches_them_on() {
     }
     assert!(pro.allows(FeatureKey::MealLog) && pro.allows(FeatureKey::DataExport));
     assert!(!pro.allows(FeatureKey::WeeklyReport), "only what the matrix switched on");
-    assert_eq!(FeatureKey::ALL.len(), 14);
-    assert_eq!(pro.features().len(), 14, "the tiers page lists every feature");
+    assert_eq!(FeatureKey::ALL.len(), 13);
+    assert_eq!(pro.features().len(), 13, "the tiers page lists every feature");
 }

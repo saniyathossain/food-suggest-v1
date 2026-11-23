@@ -12,13 +12,13 @@ use std::time::Duration;
 pub const MAX_BODY_BYTES: usize = 5 * 1024 * 1024;
 const MAX_REDIRECTS: usize = 3;
 
-/// What to send. `body` is (content type, text) and only for POST.
+/// What to send. `body` is (content type, text) for any method but GET; the content type is None when the caller set one in the headers.
 #[derive(Debug, Clone)]
 pub struct Request {
     pub url: Url,
     pub method: Method,
     pub headers: Vec<(String, String)>,
-    pub body: Option<(String, String)>,
+    pub body: Option<(Option<String>, String)>,
     pub timeout: Duration,
 }
 
@@ -68,6 +68,11 @@ pub fn redirect_target(current: &Url, status: u16, location: &str) -> Option<(Ur
     Some((next, matches!(status, 307 | 308)))
 }
 
+/// PUT, PATCH and DELETE change something there: a redirect could send them (and their body) somewhere else, so none is followed.
+fn is_write(method: &Method) -> bool {
+    matches!(*method, Method::PUT | Method::PATCH | Method::DELETE)
+}
+
 fn same_origin(first: &Url, second: &Url) -> bool {
     first.scheme() == second.scheme() && first.host_str() == second.host_str() && first.port_or_known_default() == second.port_or_known_default()
 }
@@ -108,13 +113,19 @@ pub async fn once(request: &Request, allow_private: bool) -> Result<Value, Failu
             for (name, value) in &request.headers {
                 builder = builder.header(name.as_str(), value.as_str());
             }
-            if let (Some((kind, text)), true) = (&request.body, method == Method::POST) {
-                builder = builder.header(reqwest::header::CONTENT_TYPE, kind.as_str()).body(text.clone());
+            if let (Some((kind, text)), true) = (&request.body, method != Method::GET) {
+                if let Some(kind) = kind {
+                    builder = builder.header(reqwest::header::CONTENT_TYPE, kind.as_str());
+                }
+                builder = builder.body(text.clone());
             }
         }
         let response = builder.send().await.map_err(failure_of)?;
         let status = response.status().as_u16();
         let location = response.headers().get(reqwest::header::LOCATION).and_then(|value| value.to_str().ok()).map(str::to_owned);
+        if is_write(&method) && (300..400).contains(&status) && status != 304 {
+            return Err(Failure::Refused(format!("{method} requests are not redirected: the address answered {status}")));
+        }
         if let Some((next, keeps_method)) = location.as_deref().and_then(|text| redirect_target(&url, status, text)) {
             carry = carry && same_origin(&url, &next);
             if !keeps_method {
@@ -127,6 +138,9 @@ pub async fn once(request: &Request, allow_private: bool) -> Result<Value, Failu
             return Err(Failure::Status(status));
         }
         let body = read_body(response).await?;
+        if method != Method::GET && body.iter().all(u8::is_ascii_whitespace) {
+            return Ok(Value::Null); // 204 or an empty answer from a POST / PUT / PATCH / DELETE
+        }
         return serde_json::from_slice(&body).map_err(|_| Failure::Refused("the answer is not JSON".to_owned()));
     }
     Err(Failure::Refused("too many redirects".to_owned()))
@@ -234,6 +248,63 @@ mod tests {
         let done = with_retries(&request(url), &FAST, true, |_, _, _| {}).await;
         assert!(matches!(done.result, Err(Failure::Refused(_))));
         assert_eq!(done.made, 1);
+    }
+
+    /// A server that answers every request with `status` and an optional Location, and records the first request line and body.
+    fn echo(status: u16, location: &'static str, reply: &'static str) -> (Url, std::sync::mpsc::Receiver<String>) {
+        let listener = TcpListener::bind("127.0.0.1:0").expect("bind");
+        let url = Url::parse(&format!("http://{}/item", listener.local_addr().expect("address"))).expect("url");
+        let (sender, receiver) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            for stream in listener.incoming() {
+                let Ok(mut stream) = stream else { return };
+                // headers and body may arrive in separate packets: read until the client goes quiet
+                let _ = stream.set_read_timeout(Some(Duration::from_millis(300)));
+                let mut raw = Vec::new();
+                let mut buffer = [0_u8; 4096];
+                while let Ok(read) = stream.read(&mut buffer) {
+                    if read == 0 {
+                        break;
+                    }
+                    raw.extend_from_slice(&buffer[..read]);
+                }
+                let _ = sender.send(String::from_utf8_lossy(&raw).into_owned());
+                let place = if location.is_empty() { String::new() } else { format!("Location: {location}\r\n") };
+                let _ = stream.write_all(format!("HTTP/1.1 {status} X\r\n{place}Content-Length: {}\r\nConnection: close\r\n\r\n{reply}", reply.len()).as_bytes());
+            }
+        });
+        (url, receiver)
+    }
+
+    #[tokio::test]
+    async fn every_method_is_sent_with_its_body_and_an_empty_answer_is_fine() {
+        for (method, status) in [(Method::PUT, 204), (Method::PATCH, 200), (Method::DELETE, 204), (Method::POST, 200)] {
+            let (url, seen) = echo(status, "", if status == 200 { r#"{"ok":true}"# } else { "" });
+            let sent = Request { url, method: method.clone(), headers: vec![("X-Api-Key".to_owned(), "k".to_owned())], body: Some((Some("application/json".to_owned()), r#"{"a":1}"#.to_owned())), timeout: Duration::from_secs(5) };
+            let answer = super::once(&sent, true).await.expect("answered");
+            assert_eq!(answer.is_null(), status == 204, "{method}");
+            let raw = seen.recv_timeout(Duration::from_secs(5)).expect("a request");
+            assert!(raw.starts_with(&format!("{method} /item")), "{raw}");
+            assert!(raw.to_lowercase().contains("x-api-key: k") && raw.contains("content-type: application/json") && raw.ends_with(r#"{"a":1}"#), "{raw}");
+        }
+    }
+
+    #[tokio::test]
+    async fn a_get_with_an_empty_answer_is_still_refused() {
+        let (url, _) = echo(200, "", "");
+        let done = super::once(&request(url), true).await;
+        assert!(matches!(done, Err(Failure::Refused(_))));
+    }
+
+    #[tokio::test]
+    async fn write_methods_never_follow_a_redirect_not_even_to_a_public_host() {
+        for method in [Method::PUT, Method::PATCH, Method::DELETE] {
+            let (url, seen) = echo(307, "https://example.org/elsewhere", "");
+            let sent = Request { url, method: method.clone(), headers: Vec::new(), body: None, timeout: Duration::from_secs(5) };
+            let done = super::once(&sent, true).await;
+            assert!(matches!(done, Err(Failure::Refused(ref why)) if why.contains("not redirected")), "{method}: {done:?}");
+            assert!(seen.recv_timeout(Duration::from_secs(5)).is_ok(), "the request was made once, to the mock only");
+        }
     }
 
     #[test]

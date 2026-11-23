@@ -14,7 +14,7 @@ import { ConditionBones } from '@/components/kit/routeskeleton';
 import { ErrorBox } from '@/components/kit/loaderror';
 import { Photo } from '@/components/kit/photo';
 import { FadeIn, MotionRoot } from '@/components/motion';
-import { Disclaimer, Sources } from '@/components/Sources';
+import { Fineprint } from '@/components/Sources';
 import { HabitGrid, TimingList } from '@/components/Timing';
 import { Segmented } from '@/components/ui/segmented';
 import { VERDICTS } from '@/components/Verdict';
@@ -93,9 +93,8 @@ function Body({ data }: { data: ConditionDetail }) {
         {tab === 'habits' && <HabitGrid items={data.habits} />}
       </FadeIn>
       <LinkedWith from={`condition:${data.slug}`} />
-      <Sources items={data.sources} />
       <PlanNext kind="condition" />
-      <Disclaimer />
+      <Fineprint items={data.sources} />
     </div>
   );
 }

@@ -16,7 +16,7 @@ import { DayHeader } from '@/components/plan/DayHeader';
 import { Medication } from '@/components/plan/Medication';
 import { Insight } from '@/components/Insight';
 import { PlanFoods, PlanMeals, ProfileBar } from '@/components/PlanParts';
-import { Disclaimer, Sources } from '@/components/Sources';
+import { Fineprint } from '@/components/Sources';
 import { HabitGrid, TimingList } from '@/components/Timing';
 import { Button } from '@/components/ui/button';
 import { ApiError, send } from '@/lib/api';
@@ -67,7 +67,7 @@ function Body({ boot, data, plan, name, onMode }: { boot: Bootstrap; data: PlanD
   // clock-time rules belong to everyday eating; a fasting mode keeps only the "any time" ones and brings its own times
   const timed = (items: PlanData['timing']['do']) => (ownMeals ? items.filter((item) => item.time === null) : items);
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-20">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:gap-12">
       <div className="grid gap-4">
         <DayHeader name={name} data={data} />
         <ProfileBar boot={boot} data={data} />
@@ -141,8 +141,7 @@ function Body({ boot, data, plan, name, onMode }: { boot: Bootstrap; data: PlanD
           </ul>
         </section>
       )}
-      <Sources items={data.sources} />
-      <Disclaimer />
+      <Fineprint items={data.sources} />
     </div>
   );
 }

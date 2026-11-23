@@ -1,6 +1,7 @@
 //! External sync (super admin): sources, their runs and a test fetch. Header secrets only travel inward: outward a secret header
 //! shows as "set" and an empty value.
-use crate::app::enums::{SyncKind, SyncMethod, SyncStatus};
+use crate::app::enums::{SyncKind, SyncMethod, SyncMode, SyncStatus};
+use crate::app::support::i18n::LocalizedText;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
@@ -32,7 +33,13 @@ pub struct SyncSourceDto {
     pub base_url: String,
     pub method: SyncMethod,
     pub headers: Vec<SyncHeaderDto>,
+    /// added to the address as its query string, for every method
     pub query_template: String,
+    /// the request body (any method but GET)
+    pub body: String,
+    pub mode: SyncMode,
+    /// the platform preset it was set up from
+    pub platform: Option<String>,
     pub timeout_ms: u32,
     pub max_retries: u32,
     pub backoff_base_ms: u32,
@@ -49,12 +56,34 @@ pub struct SyncSourceDto {
     pub last_error: Option<String>,
     /// false = the kind has no mapper yet: a run is refused, "Test" only counts and shows the answer
     pub can_save: bool,
+    /// a PUT / PATCH / DELETE source whose current request has not passed "Test": a run is refused until it does
+    pub needs_test: bool,
+}
+
+/// A platform preset: where to fetch from and how the source is usually set up. Secret headers carry no value.
+#[derive(Debug, Serialize, TS)]
+#[ts(export)]
+pub struct SyncPlatformDto {
+    pub slug: String,
+    pub name: String,
+    pub kind: SyncKind,
+    pub base_url: String,
+    pub method: SyncMethod,
+    pub headers: Vec<SyncHeaderDto>,
+    pub query_template: String,
+    pub body: String,
+    pub mode: SyncMode,
+    pub docs_url: String,
+    pub note: LocalizedText,
+    /// false = the kind has no mapper yet
+    pub can_save: bool,
 }
 
 #[derive(Debug, Serialize, TS)]
 #[ts(export)]
 pub struct SyncSetupDto {
     pub sources: Vec<SyncSourceDto>,
+    pub platforms: Vec<SyncPlatformDto>,
     /// false = APP_KEY missing: secret headers cannot be stored
     pub vault_ready: bool,
 }
@@ -78,6 +107,17 @@ pub struct SyncSourceInputDto {
     pub headers: Option<Vec<SyncHeaderInputDto>>,
     #[ts(optional)]
     pub query_template: Option<String>,
+    #[ts(optional)]
+    pub body: Option<String>,
+    #[ts(optional)]
+    pub mode: Option<SyncMode>,
+    /// a platform preset's slug; `null` clears it
+    #[ts(optional)]
+    #[serde(default, deserialize_with = "crate::app::dtos::nullable")]
+    pub platform: Option<Option<String>>,
+    /// "Test" of a PUT / PATCH / DELETE sends the real request: the caller confirms that first
+    #[ts(optional)]
+    pub confirm_write: Option<bool>,
     #[ts(optional)]
     pub timeout_ms: Option<u32>,
     #[ts(optional)]

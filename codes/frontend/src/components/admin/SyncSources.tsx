@@ -64,9 +64,11 @@ export function SyncSources({ admin }: { admin: Admin }) {
       toast(refusalText(error), 'bad');
     }
   };
+  const platformName = (item: SyncSource) => setup?.platforms.find((entry) => entry.slug === item.platform)?.name ?? '';
   const columns: Column<SyncSource>[] = [
     { key: 'name', label: copy.name, sort: (first, second) => first.name.localeCompare(second.name), text: (item) => item.name, cell: (item) => <span className="grid min-w-0"><strong className="truncate">{item.name}</strong><span className="truncate font-mono text-caption text-muted-foreground">{item.slug}</span></span> },
     { key: 'kind', label: copy.kind, hideBelow: 'sm', sort: (first, second) => first.kind.localeCompare(second.kind), text: (item) => item.kind, cell: (item) => <span className="rounded-full bg-muted px-2.5 py-0.5 text-caption font-semibold">{copy.kinds[item.kind]}</span> },
+    { key: 'platform', label: copy.platform, hideBelow: 'lg', sort: (first, second) => (first.platform ?? '').localeCompare(second.platform ?? ''), text: (item) => platformName(item), cell: (item) => <span className="text-footnote text-muted-foreground">{platformName(item) || '—'}</span> },
     { key: 'url', label: copy.url, hideBelow: 'lg', text: (item) => item.base_url, cell: (item) => <span className="block max-w-[28ch] truncate font-mono text-footnote text-muted-foreground" title={item.base_url}>{item.method.toUpperCase()} {item.base_url}</span> },
     { key: 'schedule', label: copy.schedule, hideBelow: 'md', sort: (first, second) => (first.schedule_hours ?? 1e9) - (second.schedule_hours ?? 1e9), text: (item) => (item.schedule_hours ? String(item.schedule_hours) : ''), cell: (item) => <span className="text-footnote">{item.schedule_hours ? copy.scheduleOf.replace('{n}', num(item.schedule_hours)) : copy.manual}</span> },
     { key: 'last', label: copy.lastRun, sort: (first, second) => Number(first.last_run_at ?? 0) - Number(second.last_run_at ?? 0), text: (item) => `${item.last_status ?? ''} ${when(item.last_run_at)}`, cell: (item) => <span className="grid gap-1"><StatusBadge status={item.last_status} /><span className="whitespace-nowrap text-caption text-muted-foreground">{when(item.last_run_at)}</span></span> },
@@ -77,7 +79,7 @@ export function SyncSources({ admin }: { admin: Admin }) {
       align: 'end',
       cell: (item) => (
         <span className="inline-flex items-center gap-1">
-          <Button variant="outline" size="sm" icon={Play} state={running === item.slug ? 'busy' : 'idle'} disabled={running !== null || !item.can_save} onClick={() => void run(item)}>{running === item.slug ? copy.running : copy.run}</Button>
+          <Button variant="outline" size="sm" icon={Play} state={running === item.slug ? 'busy' : 'idle'} disabled={running !== null || !item.can_save || item.needs_test} title={item.needs_test ? copy.needsTest.replace('{method}', item.method.toUpperCase()) : undefined} onClick={() => void run(item)}>{running === item.slug ? copy.running : copy.run}</Button>
           <IconButton icon={Pencil} label={copy.edit} onClick={() => setEditing(item)} />
           <IconButton icon={Trash} label={t.admin.delete} tone="danger" onClick={() => void remove(item)} />
         </span>
@@ -118,7 +120,7 @@ export function SyncSources({ admin }: { admin: Admin }) {
         />
       </section>
       <SyncRuns admin={admin} sources={sources} refresh={refresh} />
-      {editing && <SyncForm key={editing === 'new' ? 'new' : editing.slug} admin={admin} source={editing} vaultReady={setup?.vault_ready ?? false} onClose={() => setEditing(null)} onSaved={touch} />}
+      {editing && <SyncForm key={editing === 'new' ? 'new' : editing.slug} admin={admin} source={editing} platforms={setup?.platforms ?? []} vaultReady={setup?.vault_ready ?? false} onClose={() => setEditing(null)} onSaved={touch} />}
     </div>
   );
 }
