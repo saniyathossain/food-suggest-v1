@@ -7,13 +7,15 @@ import { Photo } from '@/components/kit/photo';
 import { ErrorBox } from '@/components/kit/loaderror';
 import { PageBones } from '@/components/kit/routeskeleton';
 import { VideoPlayer } from '@/components/kit/video';
-import { ArrowLeft, Check, ChefHat, Clock, Leaf, ListChecks, People, Youtube } from '@/components/icons/page';
+import { Check, ChefHat, Clock, Leaf, ListChecks, People, Youtube } from '@/components/icons/page';
 import { Utensils } from '@/components/icons';
 import { Disclaimer } from '@/components/Sources';
 import { VerdictBadge } from '@/components/Verdict';
 import { endpoints, useResource } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import { usePrefs } from '@/lib/prefs';
+import { Crumbs } from '@/components/journey/Crumbs';
+import { PlanNext } from '@/components/journey/NextStep';
 import { onLink } from '@/lib/router';
 import type { Recipe as RecipeData } from '@/lib/types';
 import { cn, tone } from '@/lib/utils';
@@ -78,7 +80,7 @@ function Ingredients({ data }: { data: RecipeData }) {
           return (
             <li key={`${item.item}${index}`}>
               <button type="button" role="checkbox" aria-checked={ticked} onClick={() => flip(index)} className={cn('press grid h-full w-full cursor-pointer content-between gap-3 rounded-[20px] border p-3.5 text-left transition-colors', ticked ? 'border-transparent bg-[var(--tint-mint)] text-[var(--tint-ink)]' : 'bg-card hover:border-foreground/25')}>
-                <span className={cn('grid size-6 place-items-center rounded-full border-2 transition-colors', ticked ? 'border-foreground bg-foreground text-background' : 'border-border')}>
+                <span className={cn('grid size-6 place-items-center rounded-full border-2 transition-colors', ticked ? 'border-foreground bg-ink text-ink-foreground' : 'border-border')}>
                   {ticked && <Check size={13} strokeWidth={2.4} />}
                 </span>
                 <span className="grid gap-0.5">
@@ -112,7 +114,7 @@ function Steps({ data }: { data: RecipeData }) {
           <li key={step} className="surface grid content-start gap-3 rounded-[24px] p-5">
             <span className="flex items-center justify-between gap-3">
               <span className="text-caption font-semibold text-muted-foreground">{t.recipes.stepOf.replace('{n}', num(index + 1)).replace('{m}', num(data.steps.length))}</span>
-              <span className="grid size-9 place-items-center rounded-full bg-foreground text-subhead font-extrabold text-background">{num(index + 1)}</span>
+              <span className="grid size-9 place-items-center rounded-full bg-ink text-subhead font-extrabold text-ink-foreground">{num(index + 1)}</span>
             </span>
             <p className="text-callout leading-relaxed">{step}</p>
           </li>
@@ -129,13 +131,7 @@ export default function Recipe({ slug }: { slug: string }) {
   if (!data) return <PageBones shape="recipe" />;
   return (
     <main className="page grid grid-cols-[minmax(0,1fr)] gap-10">
-      <nav aria-label={t.recipes.back} className="flex min-w-0 items-center gap-2 text-subhead">
-        <a href="/recipes" onClick={onLink} className="inline-flex shrink-0 items-center gap-1.5 font-semibold text-muted-foreground transition-colors hover:text-foreground">
-          <ArrowLeft size={16} /> {t.recipes.back}
-        </a>
-        <span className="text-faint-foreground">/</span>
-        <span className="truncate font-semibold">{data.title}</span>
-      </nav>
+      <Crumbs trail={[{ href: '/recipes', label: t.nav.recipes }]} here={data.title} />
       <header className="surface grid gap-6 rounded-[32px] p-3 sm:p-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8">
         <Photo src={data.image} alt={data.title} eager ratio="4 / 3" sizes="(max-width: 1024px) 100vw, 620px" tone="#e8a33d" className="rounded-[24px]" />
         <div className="grid content-center gap-5 px-2 pb-3 lg:px-0 lg:py-4 lg:pr-6">
@@ -183,6 +179,7 @@ export default function Recipe({ slug }: { slug: string }) {
           </ul>
         </section>
       )}
+      <PlanNext kind="recipe" />
       <Disclaimer />
     </main>
   );

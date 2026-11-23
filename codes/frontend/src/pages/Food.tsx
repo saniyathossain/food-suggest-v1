@@ -2,7 +2,9 @@
 // with the reason, the meals that suggest it, better swaps from the same group, and the sources behind the verdicts.
 import { useState } from 'react';
 import { Icon, MealIcon, Utensils, VerdictIcon } from '@/components/icons';
-import { Clock, Repeat, ArrowLeft, Stethoscope } from '@/components/icons/page';
+import { Clock, Repeat, Stethoscope } from '@/components/icons/page';
+import { Crumbs } from '@/components/journey/Crumbs';
+import { PlanNext } from '@/components/journey/NextStep';
 import { FoodHero } from '@/components/food/FoodHero';
 import { Nutrition } from '@/components/food/Nutrition';
 import { FoodThumb } from '@/components/FoodRow';
@@ -111,9 +113,7 @@ export default function Food({ slug }: { slug: string }) {
   return (
     <MotionRoot>
       <main className="page">
-        <a className="no-print press mb-4 inline-flex h-10 items-center gap-2 rounded-full px-3 text-subhead font-semibold text-muted-foreground hover:bg-accent hover:text-foreground" href="/foods" onClick={onLink}>
-          <ArrowLeft size={18} /> {t.nav.foods}
-        </a>
+        <Crumbs trail={[{ href: '/foods', label: t.nav.foods }]} here={data?.name} />
         {error && <ErrorBox {...(error.status === 404 ? { message: t.food.missing } : {})} />}
         {!data && !error && <FoodBones />}
         {data && (
@@ -133,6 +133,7 @@ export default function Food({ slug }: { slug: string }) {
                 </div>
               </section>
             )}
+            <PlanNext kind="food" />
             <Sources items={data.sources} />
             <Disclaimer />
           </div>

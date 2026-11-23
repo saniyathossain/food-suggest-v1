@@ -4,3 +4,7 @@ export { Donut, type Slice } from '@/components/charts/Donut';
 export { DotMeter } from '@/components/charts/DotMeter';
 export { Gauge } from '@/components/charts/Gauge';
 export { DayTrack, minutesOf } from '@/components/charts/DayTrack';
+export { TickGauge } from '@/components/charts/TickGauge';
+export { Radar, type Axis } from '@/components/charts/Radar';
+export { LimitBars, type LimitRow } from '@/components/charts/LimitBars';
+export { Orb } from '@/components/charts/Orb';

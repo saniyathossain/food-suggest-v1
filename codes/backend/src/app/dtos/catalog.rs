@@ -126,6 +126,26 @@ pub struct HabitDto {
     pub condition: Option<ConditionTagDto>,
 }
 
+/// What the in-app search (⌘K) indexes beyond pages, conditions and foods: habits and medicine generics. Public data only; the
+/// client fetches it once when the search opens and filters it locally.
+#[derive(Debug, Serialize, TS)]
+#[ts(export)]
+pub struct SearchIndexDto {
+    /// how far this viewer's tier lets the search reach (1 pages and foods, 2 adds habits, 3 adds medicines)
+    pub level: i32,
+    pub habits: Vec<HabitDto>,
+    pub medicines: Vec<SearchMedicineDto>,
+}
+
+#[derive(Debug, Serialize, TS)]
+#[ts(export)]
+pub struct SearchMedicineDto {
+    pub slug: String,
+    pub name: String,
+    /// the drug group ("Biguanide (diabetes)")
+    pub group: String,
+}
+
 #[derive(Debug, Serialize, TS)]
 #[ts(export)]
 pub struct ConditionDetailDto {
@@ -173,6 +193,8 @@ pub struct FoodSearchDto {
     pub subcategory: Option<String>,
     /// glycemic index (glucose = 100) when measured
     pub gi: Option<i16>,
+    /// months from birth from which the food suits a baby (0 = from birth, 6 = about six months, 12 = one year); None = no age stated
+    pub age_from_months: Option<i16>,
     /// energy and macronutrients per 100 g of the usual form, when the dataset has them
     pub macros: Option<MacrosDto>,
     pub verdicts: Vec<FoodVerdictDto>,
@@ -205,6 +227,10 @@ pub struct FoodConditionVerdictDto {
     pub condition: ConditionTagDto,
     pub verdict: Verdict,
     pub reason: String,
+    pub rule_id: i32,
+    /// the rule's own source, else the first source of its condition
+    pub source: Option<SourceDto>,
+    pub reviewed_on: Option<String>,
 }
 
 #[derive(Debug, Serialize, TS)]
@@ -230,6 +256,8 @@ pub struct FoodDetailDto {
     pub origin: FoodOrigin,
     pub season: Vec<u8>,
     pub in_season: bool,
+    /// months from birth from which the food suits a baby (0 = from birth, 6 = about six months, 12 = one year); None = no age stated
+    pub age_from_months: Option<i16>,
     /// the gallery: every picture of the food in order (the main photo and the cut-out first when they exist)
     pub photos: Vec<FoodPhotoDto>,
     pub variants: Vec<FoodVariantDto>,
@@ -248,7 +276,7 @@ pub struct FoodDetailDto {
 }
 
 /// Nutrients per 100 g (None = not reported by the source).
-#[derive(Debug, Serialize, Deserialize, Default, TS)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, TS)]
 #[ts(export)]
 pub struct NutrientsDto {
     pub kcal: Option<f32>,
@@ -284,6 +312,8 @@ pub struct FoodVariantDto {
     pub verdicts: Vec<VariantVerdictDto>,
     /// how this way of cooking raises blood sugar, when a glycemic index was measured for it
     pub glycemic: Option<GlycemicDto>,
+    /// 0-100: how light the way of cooking is (100 = no added fat, 10 = deep-fried); None when the method is unknown
+    pub cook_score: Option<u8>,
     /// a picture of the food cooked this way, when the gallery has one
     pub photo: Option<FoodPhotoDto>,
 }

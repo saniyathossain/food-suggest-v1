@@ -29,6 +29,9 @@ pub struct Model {
     pub video_url: Option<String>,
     pub video_channel: Option<String>,
     pub published: bool,
+    /// the day it goes live (published flips on that day); None = no schedule
+    #[serde(default)]
+    pub publish_on: Option<String>,
     pub sort: i32,
 }
 

@@ -554,8 +554,17 @@
   overflow-x: auto;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
+  /* a scroller also clips on the other axis: the room below and above keeps a chip's glow, hover ring and focus outline from being cut */
+  padding-block: 0.75rem;
+  margin-block: -0.75rem;
   &::-webkit-scrollbar {
     display: none;
+  }
+  /* wrapped rows (from 640 px) do not scroll at all, so nothing is clipped */
+  @media (min-width: 40rem) {
+    &.sm\:flex-wrap {
+      overflow: visible;
+    }
   }
 }
 
@@ -592,12 +601,6 @@
     text-transform: uppercase;
     white-space: nowrap;
     border: 0;
-  }
-  & thead th:first-child {
-    border-radius: 0.875rem 0 0 0.875rem;
-  }
-  & thead th:last-child {
-    border-radius: 0 0.875rem 0.875rem 0;
   }
   & thead tr {
     border: 0;

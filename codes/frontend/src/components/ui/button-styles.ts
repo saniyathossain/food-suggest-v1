@@ -12,7 +12,8 @@ export const BUTTON_VARIANT = {
   outline: 'border border-border bg-card text-foreground shadow-xs hover:border-foreground/25 hover:bg-muted',
   secondary: 'bg-muted text-foreground hover:bg-accent',
   ghost: 'text-muted-foreground hover:bg-accent hover:text-foreground',
-  glass: 'border border-white/50 bg-white/85 text-[#13201a] shadow-md backdrop-blur-md hover:bg-white',
+  // key calls to action laid on a photo or the ground: frosted glass with a lit rim (styles/glass.css)
+  glass: 'glass-cta',
   link: 'text-primary underline-offset-4 hover:underline',
 };
 

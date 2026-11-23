@@ -21,6 +21,8 @@ fn snapshot() -> CatalogSnapshot {
         media_id: None,
         active: true,
         sort: id,
+        reviewed_by: None,
+        reviewed_on: None,
     };
     let rule = |id: i32, condition_id: i32, food_id: i32, verdict: Verdict| food_rule::Model {
         id,
@@ -28,14 +30,17 @@ fn snapshot() -> CatalogSnapshot {
         food_id,
         verdict,
         reason: text("because"),
+        source_id: None,
+        reviewed_by: None,
+        reviewed_on: None,
     };
     CatalogSnapshot {
         countries: vec![country::Model { id: 1, code: "BD".to_owned(), name: text("Bangladesh"), active: true, sort: 0 }],
         conditions: vec![condition(1, "diabetes"), condition(2, "insomnia")],
         categories: vec![food_category::Model { id: 1, slug: "drinks".to_owned(), name: text("Drinks"), sort: 0, media_id: None }],
         foods: vec![
-            food::Model { id: 1, slug: "milk".to_owned(), category_id: 1, name: text("Milk"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None },
-            food::Model { id: 2, slug: "cola".to_owned(), category_id: 1, name: text("Cola"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None },
+            food::Model { id: 1, slug: "milk".to_owned(), category_id: 1, name: text("Milk"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None },
+            food::Model { id: 2, slug: "cola".to_owned(), category_id: 1, name: text("Cola"), country_code: None, active: true, media_id: None, cutout_media_id: None, gi: None, gi_source_id: None, subcategory_id: None, origin: FoodOrigin::Local, season: None, cost_band: None },
         ],
         rules: vec![
             rule(1, 1, 1, Verdict::Limit),
@@ -65,6 +70,8 @@ fn snapshot() -> CatalogSnapshot {
         generics: vec![],
         medicine_interactions: vec![],
         medicine_foods: vec![],
+        food_allergens: vec![],
+        criteria_notes: vec![],
     }
 }
 
@@ -75,6 +82,7 @@ fn request(conditions: &[&str]) -> PlanRequest {
         gender: Gender::Female,
         conditions: conditions.iter().map(|slug| (*slug).to_owned()).collect(),
         mode: None,
+        criteria: None,
     }
 }
 
@@ -184,6 +192,7 @@ fn a_recipe_takes_the_strictest_verdict_of_its_foods() {
         media_id: None,
         video_url: None, video_channel: None,
         published: true,
+        publish_on: None,
         sort: 0,
     }];
     data.recipe_foods = vec![recipe_food::Model { recipe_id: 1, food_id: 1 }, recipe_food::Model { recipe_id: 1, food_id: 2 }];

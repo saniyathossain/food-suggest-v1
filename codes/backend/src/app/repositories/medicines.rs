@@ -29,6 +29,11 @@ fn prefix(text: &str) -> String {
     format!("{}%", text.trim().to_lowercase().replace(['%', '_'], ""))
 }
 
+/// Anywhere in the name: "statin" finds atorvastatin. `%` and `_` are taken out so the person's text is never a wildcard.
+fn anywhere(text: &str) -> String {
+    format!("%{}%", text.trim().to_lowercase().replace(['%', '_'], ""))
+}
+
 pub fn slug_of(name: &str) -> String {
     let lowered = name.trim().to_lowercase();
     let mut slug = String::with_capacity(lowered.len());
@@ -52,10 +57,10 @@ impl MedicineRepository {
         if text.trim().len() < 2 {
             return Ok((Vec::new(), Vec::new()));
         }
-        let pattern = prefix(text);
+        let (start, inside) = (prefix(text), anywhere(text));
         let (brands, generics) = tokio::try_join!(
-            medicine::Entity::find().filter(medicine::Column::Active.eq(true)).filter(Expr::expr(Func::lower(Expr::col(medicine::Column::Brand))).like(&pattern)).order_by_asc(medicine::Column::Brand).limit(limit).all(&self.db),
-            medicine_generic::Entity::find().filter(medicine_generic::Column::Active.eq(true)).filter(Expr::expr(Func::lower(Expr::col(medicine_generic::Column::Name))).like(&pattern)).order_by_asc(medicine_generic::Column::Name).limit(limit).all(&self.db),
+            medicine::Entity::find().filter(medicine::Column::Active.eq(true)).filter(Expr::expr(Func::lower(Expr::col(medicine::Column::Brand))).like(&start)).order_by_asc(medicine::Column::Brand).limit(limit).all(&self.db),
+            medicine_generic::Entity::find().filter(medicine_generic::Column::Active.eq(true)).filter(Expr::expr(Func::lower(Expr::col(medicine_generic::Column::Name))).like(&inside)).order_by_asc(medicine_generic::Column::Name).limit(limit).all(&self.db),
         )?;
         Ok((brands, generics))
     }
@@ -65,6 +70,11 @@ impl MedicineRepository {
             return Ok(Vec::new());
         }
         Ok(medicine::Entity::find().filter(medicine::Column::Id.is_in(ids.to_vec())).all(&self.db).await?)
+    }
+
+    /// A generic's active brands, A to Z, up to `limit`.
+    pub async fn brands_of(&self, generic_id: i32, limit: u64) -> Result<Vec<medicine::Model>, AppError> {
+        Ok(medicine::Entity::find().filter(medicine::Column::GenericId.eq(generic_id)).filter(medicine::Column::Active.eq(true)).order_by_asc(medicine::Column::Brand).limit(limit).all(&self.db).await?)
     }
 
     pub async fn brand(&self, id: i32) -> Result<Option<medicine::Model>, AppError> {
@@ -103,6 +113,7 @@ impl MedicineRepository {
                         label_synced: Set(None),
                         label_text: Set(None),
                         active: Set(true),
+                        media_id: NotSet,
                     }
                     .insert(&self.db)
                     .await?;
@@ -146,6 +157,14 @@ impl MedicineRepository {
         let total = query.clone().count(&self.db).await?;
         let per_page = per_page.clamp(1, 100);
         Ok((query.offset(page * per_page).limit(per_page).all(&self.db).await?, total))
+    }
+
+    /// Give a medicine a photo from the media library (0 clears it).
+    pub async fn set_media(&self, slug: &str, media_id: i32) -> Result<i32, AppError> {
+        let found = medicine_generic::Entity::find().filter(medicine_generic::Column::Slug.eq(slug)).one(&self.db).await?.ok_or(AppError::NotFound("generic"))?;
+        let mut model: medicine_generic::ActiveModel = found.into();
+        model.media_id = Set((media_id > 0).then_some(media_id));
+        Ok(model.update(&self.db).await?.id)
     }
 
     pub async fn set_label(&self, generic_id: i32, set_id: String, synced_on: String, text: String) -> Result<(), AppError> {

@@ -5,6 +5,7 @@ import { Sparkles } from '@/components/icons';
 import { ArrowLeft, ChevronRight } from '@/components/icons/page';
 import { ConditionChoices, WhoStep } from '@/components/ProfileSteps';
 import { Button } from '@/components/ui/button';
+import { BuilderPreview } from '@/components/BuilderPreview';
 import { PlanOverview } from '@/components/PlanOverview';
 import { useAuth } from '@/lib/auth';
 import { useI18n, useT } from '@/lib/i18n';
@@ -40,7 +41,7 @@ function StepDots({ step, onPick }: { step: Step; onPick: (step: Step) => void }
             type="button"
             onClick={() => onPick(name)}
             aria-current={name === step ? 'step' : undefined}
-            className={cn('press inline-flex h-9 cursor-pointer items-center gap-2 rounded-full px-3 text-footnote font-semibold transition-colors', name === step ? 'bg-foreground text-background' : index < at ? 'bg-[var(--tint-mint)] text-[var(--tint-ink)]' : 'bg-muted text-muted-foreground hover:text-foreground')}
+            className={cn('press inline-flex h-9 cursor-pointer items-center gap-2 rounded-full px-3 text-footnote font-semibold transition-colors', name === step ? 'bg-ink text-ink-foreground' : index < at ? 'bg-[var(--tint-mint)] text-[var(--tint-ink)]' : 'bg-muted text-muted-foreground hover:text-foreground')}
           >
             <span className="tabular-nums">{num(index + 1)}</span> {t.profile.steps[name]}
           </button>
@@ -51,7 +52,7 @@ function StepDots({ step, onPick }: { step: Step; onPick: (step: Step) => void }
   );
 }
 
-export function ProfileForm({ boot, onDone, className }: { boot: Bootstrap; onDone?: () => void; className?: string | undefined }) {
+export function ProfileForm({ boot, onDone, className, live = false }: { boot: Bootstrap; onDone?: () => void; className?: string | undefined; live?: boolean }) {
   const { t } = useI18n();
   const saved = usePrefs().profile;
   const [draft, setDraft] = useState<Profile>(saved ?? blank);
@@ -75,14 +76,15 @@ export function ProfileForm({ boot, onDone, className }: { boot: Bootstrap; onDo
   return (
     <form
       id="profile-builder"
-      className={cn('grid gap-5', className)}
+      className={cn('grid gap-5', live && 'lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-x-8', className)}
       onSubmit={(event) => {
         event.preventDefault();
         submit();
       }}
     >
+      <div className="grid content-start gap-5">
       <StepDots step={step} onPick={(next) => { if (next === 'go') setPrefs({ profile: draft }); setStep(next); }} />
-      <div key={step} className="data-in min-h-[188px]">
+      <div key={step} className={cn('data-in', !live && 'min-h-[188px]')}>
         {step === 'who' && <WhoStep boot={boot} draft={draft} onChange={setDraft} />}
         {step === 'conditions' && <ConditionChoices boot={boot} draft={draft} onChange={setDraft} />}
         {step === 'go' && guest && <PlanOverview draft={draft} />}
@@ -113,6 +115,8 @@ export function ProfileForm({ boot, onDone, className }: { boot: Bootstrap; onDo
           )}
         </div>
       </div>
+      </div>
+      {live && <BuilderPreview boot={boot} draft={draft} />}
     </form>
   );
 }

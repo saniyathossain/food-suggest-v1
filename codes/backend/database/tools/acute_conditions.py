@@ -1,0 +1,201 @@
+"""Writes database/seeders/conditions_acute.sql: eight everyday illnesses (dengue, jaundice, typhoid, viral fever, food poisoning,
+diarrhoea, constipation, stomach ulcer) as DRAFT conditions (active = false) with sourced food rules, timing and habits, English and
+Bangla. Every rule states only what the cited page says (pages opened 2026-11-23: WHO, NHS, CDC, MedlinePlus). A food a page does not
+mention gets no rule. General guidance, never a dose; none of these pages names a food that treats the illness, and the text says so
+where that matters. A condition goes live only after a medical reviewer reviews it in the admin (services/review.rs).
+
+    python3 acute_conditions.py > ../seeders/conditions_acute.sql
+"""
+
+
+def q(text):
+    return "'" + text.replace("'", "''") + "'"
+
+
+SOURCES = [
+    ("who-dengue", "Dengue and severe dengue (fact sheet)", "ডেঙ্গু ও মারাত্মক ডেঙ্গু (তথ্যপত্র)", "WHO", "https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue", 2025),
+    ("nhs-jaundice", "Jaundice", "জন্ডিস", "NHS", "https://www.nhs.uk/conditions/jaundice/", None),
+    ("nhs-hepatitis-a", "Hepatitis A", "হেপাটাইটিস এ", "NHS", "https://www.nhs.uk/conditions/hepatitis-a/", None),
+    ("who-hepatitis-a", "Hepatitis A (fact sheet)", "হেপাটাইটিস এ (তথ্যপত্র)", "WHO", "https://www.who.int/news-room/fact-sheets/detail/hepatitis-a", None),
+    ("nhs-typhoid", "Typhoid fever", "টাইফয়েড জ্বর", "NHS", "https://www.nhs.uk/conditions/typhoid-fever/", 2025),
+    ("cdc-typhoid-prevention", "Preventing typhoid fever and paratyphoid fever", "টাইফয়েড ও প্যারাটাইফয়েড প্রতিরোধ", "CDC", "https://www.cdc.gov/typhoid-fever/prevention/index.html", None),
+    ("who-typhoid", "Typhoid (fact sheet)", "টাইফয়েড (তথ্যপত্র)", "WHO", "https://www.who.int/news-room/fact-sheets/detail/typhoid", 2023),
+    ("medlineplus-fever", "Fever", "জ্বর", "MedlinePlus (NIH)", "https://medlineplus.gov/fever.html", 2025),
+    ("nhs-food-poisoning", "Food poisoning", "খাদ্যে বিষক্রিয়া", "NHS", "https://www.nhs.uk/conditions/food-poisoning/", 2024),
+    ("nhs-diarrhoea", "Diarrhoea and vomiting", "ডায়রিয়া ও বমি", "NHS", "https://www.nhs.uk/conditions/diarrhoea/", 2023),
+    ("nhs-constipation", "Constipation", "কোষ্ঠকাঠিন্য", "NHS", "https://www.nhs.uk/conditions/constipation/", 2023),
+    ("nhs-stomach-ulcer", "Stomach ulcer", "পাকস্থলীর আলসার", "NHS", "https://www.nhs.uk/conditions/stomach-ulcer/", 2025),
+]
+
+# slug, en, bn, summary en, summary bn, icon, color, sources
+CONDITIONS = [
+    ("dengue", "Dengue fever", "ডেঙ্গু জ্বর",
+     "WHO advises resting and drinking plenty of liquids, and watching for warning signs. No food treats dengue; this is general guidance, and your doctor guides care.",
+     "WHO বিশ্রাম নিতে এবং প্রচুর তরল খেতে পরামর্শ দেয়, আর বিপদচিহ্নের দিকে নজর রাখতে বলে। কোনো খাবারই ডেঙ্গু সারায় না; এটি সাধারণ পরামর্শ, চিকিৎসা ডাক্তার ঠিক করবেন।",
+     "droplet", "#dc2626", ["who-dengue"]),
+    ("jaundice", "Jaundice and hepatitis A", "জন্ডিস ও হেপাটাইটিস এ",
+     "Yellow skin or eyes need a doctor. For hepatitis A the NHS advises no alcohol and safe food and water; WHO notes that care is supportive, replacing lost fluids.",
+     "ত্বক বা চোখ হলুদ হলে ডাক্তার দেখান। হেপাটাইটিস এ-তে NHS অ্যালকোহল না খেতে এবং নিরাপদ খাবার-পানি খেতে বলে; WHO বলে চিকিৎসা সহায়ক, হারানো তরল পূরণ করাই মূল কাজ।",
+     "shield-plus", "#d97706", ["nhs-jaundice", "nhs-hepatitis-a", "who-hepatitis-a"]),
+    ("typhoid", "Typhoid fever", "টাইফয়েড জ্বর",
+     "Typhoid spreads through unclean food and water. The NHS, CDC and WHO advise boiled or bottled water, hot freshly cooked food and careful handwashing. Treatment is by a doctor.",
+     "টাইফয়েড অপরিষ্কার খাবার ও পানি থেকে ছড়ায়। NHS, CDC ও WHO ফোটানো বা বোতলের পানি, গরম টাটকা রান্না করা খাবার আর সাবধানে হাত ধোয়ার পরামর্শ দেয়। চিকিৎসা ডাক্তারের।",
+     "shield", "#0d9488", ["nhs-typhoid", "cdc-typhoid-prevention", "who-typhoid"]),
+    ("viral-fever", "Viral fever", "ভাইরাল জ্বর",
+     "MedlinePlus says to drink enough liquids to prevent dehydration; treatment depends on the cause, so see a doctor if unsure. Its page names no food that helps or harms.",
+     "MedlinePlus পানিশূন্যতা এড়াতে যথেষ্ট তরল খেতে বলে; চিকিৎসা কারণের ওপর নির্ভর করে, তাই নিশ্চিত না হলে ডাক্তার দেখান। পাতাটি কোনো খাবারকে উপকারী বা ক্ষতিকর বলেনি।",
+     "activity", "#e11d48", ["medlineplus-fever"]),
+    ("food-poisoning", "Food poisoning", "খাদ্যে বিষক্রিয়া",
+     "The NHS advises lots of fluids in small sips, eating when you feel able, and skipping fatty or spicy food, fruit juice and fizzy drinks. See a doctor for blood, dehydration or a long illness.",
+     "NHS অল্প অল্প চুমুকে প্রচুর তরল, ক্ষুধা পেলে খাওয়া, আর চর্বিযুক্ত বা ঝাল খাবার, ফলের রস ও কোমল পানীয় এড়াতে বলে। রক্ত, পানিশূন্যতা বা দীর্ঘ অসুখে ডাক্তার দেখান।",
+     "zap", "#f59e0b", ["nhs-food-poisoning"]),
+    ("diarrhoea", "Diarrhoea", "ডায়রিয়া",
+     "Fluids are the most important step, says the NHS; oral rehydration powder in water is a drink a pharmacist may suggest. Skip fruit juice and fizzy drinks, and see a doctor if it lasts over 7 days.",
+     "NHS-এর মতে তরলই সবচেয়ে জরুরি; পানিতে মেশানো খাওয়ার স্যালাইন ফার্মাসিস্ট পরামর্শ দিতে পারেন। ফলের রস ও কোমল পানীয় এড়ান, ৭ দিনের বেশি চললে ডাক্তার দেখান।",
+     "glass-water", "#0284c7", ["nhs-diarrhoea"]),
+    ("constipation", "Constipation", "কোষ্ঠকাঠিন্য",
+     "The NHS advises gradually more fibre (fruit, vegetables, cereals, oats, linseed), plenty of water and no alcohol; changes can take days to weeks. See a doctor for blood or sudden changes.",
+     "NHS ধীরে ধীরে আঁশ বাড়াতে (ফল, সবজি, দানাশস্য, ওটস, তিসি), প্রচুর পানি খেতে ও অ্যালকোহল বাদ দিতে বলে; ফল পেতে কয়েক দিন থেকে কয়েক সপ্তাহ লাগতে পারে। রক্ত বা হঠাৎ পরিবর্তনে ডাক্তার দেখান।",
+     "salad", "#16a34a", ["nhs-constipation"]),
+    ("gastric-ulcer", "Stomach (gastric) ulcer", "পাকস্থলীর আলসার",
+     "The NHS suggests smaller meals, the evening meal 3 to 4 hours before bed, and avoiding foods that trigger symptoms, such as fatty or spicy food, coffee and chocolate. See a doctor for lasting or worsening pain.",
+     "NHS ছোট ছোট বেলায় খেতে, রাতের খাবার ঘুমের ৩-৪ ঘণ্টা আগে খেতে এবং উপসর্গ বাড়ায় এমন খাবার, যেমন চর্বিযুক্ত বা ঝাল খাবার, কফি ও চকলেট এড়াতে বলে। ব্যথা থাকলে বা বাড়লে ডাক্তার দেখান।",
+     "stethoscope", "#7458c4", ["nhs-stomach-ulcer"]),
+]
+
+W_FLUID = ("Drink plenty of liquids: water is the simplest way.", "প্রচুর তরল খান: পানিই সবচেয়ে সহজ উপায়।")
+FATSPICY = ("The NHS says it may help to avoid fatty or spicy foods while you recover.", "NHS বলে সুস্থ হওয়ার সময় চর্বিযুক্ত বা ঝাল খাবার এড়ালে সুবিধা হতে পারে।")
+JUICE = ("The NHS says fruit juice and fizzy drinks can make diarrhoea worse.", "NHS বলে ফলের রস ও কোমল পানীয় ডায়রিয়া আরও খারাপ করতে পারে।")
+SORB = ("The NHS names this among the fruits that contain sorbitol, which can help with constipation.", "NHS একে সরবিটলযুক্ত ফলের মধ্যে ধরে, যা কোষ্ঠকাঠিন্যে সাহায্য করতে পারে।")
+ULCER = ("The NHS lists this among foods and drinks that can trigger stomach ulcer symptoms; avoid what bothers you.", "NHS একে সেই খাবারের তালিকায় রাখে যা পাকস্থলীর আলসারের উপসর্গ বাড়াতে পারে; যা অস্বস্তি দেয় তা এড়ান।")
+STREET = ("The CDC advises avoiding street-vendor food and drink unless it is steaming hot.", "CDC রাস্তার বিক্রেতার খাবার-পানীয় বেশ গরম না হলে এড়াতে বলে।")
+
+# condition, food, verdict, (en, bn), source
+RULES = [
+    ("dengue", "water", "recommended", ("WHO advice for dengue is to drink plenty of liquids and rest.", "ডেঙ্গুতে WHO-র পরামর্শ প্রচুর তরল খাওয়া ও বিশ্রাম নেওয়া।"), "who-dengue"),
+    ("dengue", "daab", "ok", ("A fluid. WHO advises plenty of liquids for dengue and names no particular drink.", "একটি তরল। ডেঙ্গুতে WHO প্রচুর তরল খেতে বলে, কোনো নির্দিষ্ট পানীয়ের নাম বলে না।"), "who-dengue"),
+    ("jaundice", "alcohol", "avoid", ("The NHS says not to drink alcohol with hepatitis A.", "NHS বলে হেপাটাইটিস এ-তে অ্যালকোহল খাবেন না।"), "nhs-hepatitis-a"),
+    ("jaundice", "crab", "limit", ("The NHS advises avoiding shellfish where hepatitis A is common; the virus spreads through unclean food and water.", "যেখানে হেপাটাইটিস এ সাধারণ সেখানে NHS শামুক-ঝিনুক-কাঁকড়াজাতীয় খাবার এড়াতে বলে; ভাইরাসটি অপরিষ্কার খাবার ও পানি থেকে ছড়ায়।"), "nhs-hepatitis-a"),
+    ("jaundice", "chingri", "limit", ("The NHS advises avoiding shellfish where hepatitis A is common; the virus spreads through unclean food and water.", "যেখানে হেপাটাইটিস এ সাধারণ সেখানে NHS শামুক-ঝিনুক-কাঁকড়াজাতীয় খাবার এড়াতে বলে; ভাইরাসটি অপরিষ্কার খাবার ও পানি থেকে ছড়ায়।"), "nhs-hepatitis-a"),
+    ("jaundice", "water", "recommended", ("WHO says care is supportive, including replacing fluids lost to vomiting and diarrhoea; use safe drinking water.", "WHO বলে চিকিৎসা সহায়ক, বমি-ডায়রিয়ায় হারানো তরল পূরণ করা তার অংশ; নিরাপদ পানি পান করুন।"), "who-hepatitis-a"),
+    ("typhoid", "water", "recommended", ("The NHS, CDC and WHO advise bottled water or water that has been boiled.", "NHS, CDC ও WHO বোতলের পানি বা ফোটানো পানি পান করতে বলে।"), "nhs-typhoid"),
+    ("typhoid", "fuchka", "limit", STREET, "cdc-typhoid-prevention"),
+    ("typhoid", "chotpoti", "limit", STREET, "cdc-typhoid-prevention"),
+    ("typhoid", "fresh-juice", "limit", ("The CDC advises avoiding ice unless it is made from safe water; ask how a street juice was made.", "CDC নিরাপদ পানির না হলে বরফ এড়াতে বলে; রাস্তার জুস কীভাবে বানানো জেনে নিন।"), "cdc-typhoid-prevention"),
+    ("typhoid", "lettuce", "avoid", ("The CDC says lettuce and greens can stay contaminated even when washed; avoid raw vegetables you cannot peel.", "CDC বলে ধোয়ার পরেও লেটুস ও সবুজ পাতা দূষিত থাকতে পারে; যে কাঁচা সবজির খোসা ছাড়ানো যায় না তা এড়ান।"), "cdc-typhoid-prevention"),
+    ("viral-fever", "water", "recommended", ("MedlinePlus says it is important to drink enough liquids to prevent dehydration.", "MedlinePlus বলে পানিশূন্যতা এড়াতে যথেষ্ট তরল খাওয়া জরুরি।"), "medlineplus-fever"),
+    ("viral-fever", "daab", "ok", ("A fluid. MedlinePlus advises enough liquids and names no particular drink.", "একটি তরল। MedlinePlus যথেষ্ট তরল খেতে বলে, কোনো নির্দিষ্ট পানীয়ের নাম বলে না।"), "medlineplus-fever"),
+]
+for cond, source in (("food-poisoning", "nhs-food-poisoning"), ("diarrhoea", "nhs-diarrhoea")):
+    RULES += [
+        (cond, "water", "recommended", ("The NHS says to drink lots of fluids such as water, in small sips if you feel sick.", "NHS বলে প্রচুর তরল, যেমন পানি, খান; বমি বমি লাগলে অল্প অল্প চুমুকে।"), source),
+        (cond, "fresh-juice", "avoid", JUICE, source),
+        (cond, "soft-drinks", "avoid", JUICE, source),
+        (cond, "fried-snacks", "limit", FATSPICY, source),
+        (cond, "french-fries", "limit", FATSPICY, source),
+        (cond, "green-chili", "limit", FATSPICY, source),
+        (cond, "fast-food", "limit", FATSPICY, source),
+    ]
+for food in ("apple", "grapes", "raisins", "strawberry", "apricot", "raspberry"):
+    RULES.append(("constipation", food, "recommended", SORB, "nhs-constipation"))
+RULES += [
+    ("constipation", "oats", "recommended", ("The NHS suggests adding wheat bran, oats or linseed to your diet, gradually.", "NHS ধীরে ধীরে খাবারে গমের ভুসি, ওটস বা তিসি যোগ করতে বলে।"), "nhs-constipation"),
+    ("constipation", "flaxseed", "recommended", ("Flaxseed is linseed: the NHS suggests adding it to your diet, gradually.", "তিসিই লিনসিড: NHS ধীরে ধীরে খাবারে এটি যোগ করতে বলে।"), "nhs-constipation"),
+    ("constipation", "atta-ruti", "ok", ("The NHS says fibre is found in fruit, vegetables and cereals; raise it gradually.", "NHS বলে আঁশ ফল, সবজি ও দানাশস্যে থাকে; ধীরে ধীরে বাড়ান।"), "nhs-constipation"),
+    ("constipation", "red-rice", "ok", ("The NHS says fibre is found in fruit, vegetables and cereals; raise it gradually.", "NHS বলে আঁশ ফল, সবজি ও দানাশস্যে থাকে; ধীরে ধীরে বাড়ান।"), "nhs-constipation"),
+    ("constipation", "water", "recommended", ("The NHS says to drink plenty of water and other fluids.", "NHS প্রচুর পানি ও অন্যান্য তরল খেতে বলে।"), "nhs-constipation"),
+    ("constipation", "alcohol", "avoid", ("The NHS says to avoid alcohol when constipated.", "NHS কোষ্ঠকাঠিন্যে অ্যালকোহল এড়াতে বলে।"), "nhs-constipation"),
+]
+for food in ("coffee", "chocolate", "green-chili", "fried-snacks", "french-fries"):
+    RULES.append(("gastric-ulcer", food, "limit", ULCER, "nhs-stomach-ulcer"))
+RULES.append(("gastric-ulcer", "alcohol", "limit", ("The NHS advises not drinking too much alcohol with a stomach ulcer.", "NHS পাকস্থলীর আলসারে বেশি অ্যালকোহল না খেতে বলে।"), "nhs-stomach-ulcer"))
+
+# condition, kind, title en/bn, detail en/bn
+TIMING = [
+    ("dengue", "do", "Drink liquids often", "ঘন ঘন তরল খান", "WHO advises drinking plenty of liquids. Keep a bottle near you and sip through the day.", "WHO প্রচুর তরল খেতে বলে। কাছে পানির বোতল রাখুন, সারা দিন অল্প অল্প খান।"),
+    ("dengue", "do", "Rest", "বিশ্রাম নিন", "WHO advises resting while you have dengue.", "ডেঙ্গুর সময় WHO বিশ্রাম নিতে বলে।"),
+    ("dengue", "dont", "Don't wait on warning signs", "বিপদচিহ্ন দেখে অপেক্ষা করবেন না", "Severe abdominal pain, persistent vomiting, rapid breathing, bleeding gums or nose, blood in vomit or stool, restlessness or very cold, pale skin need care at once, often after the fever has gone.", "তীব্র পেটব্যথা, ক্রমাগত বমি, দ্রুত শ্বাস, মাড়ি বা নাক থেকে রক্ত, বমি বা পায়খানায় রক্ত, অস্থিরতা বা খুব ঠান্ডা ফ্যাকাশে ত্বকে এখনই চিকিৎসা নিন; অনেক সময় জ্বর সেরে যাওয়ার পরই এগুলো দেখা দেয়।"),
+    ("jaundice", "do", "See a doctor when skin or eyes look yellow", "ত্বক বা চোখ হলুদ হলে ডাক্তার দেখান", "The NHS advises seeing a GP or calling 111 urgently for yellow skin or eyes, itchy skin, darker urine or paler stools.", "ত্বক বা চোখ হলুদ, চুলকানি, গাঢ় প্রস্রাব বা ফ্যাকাশে পায়খানায় NHS দ্রুত ডাক্তার দেখাতে বলে।"),
+    ("jaundice", "dont", "No alcohol", "অ্যালকোহল নয়", "The NHS says not to drink alcohol with hepatitis A.", "NHS বলে হেপাটাইটিস এ-তে অ্যালকোহল খাবেন না।"),
+    ("jaundice", "dont", "Don't prepare food for others", "অন্যের জন্য খাবার বানাবেন না", "While you are infectious with hepatitis A, the NHS says not to prepare food or drink for others.", "হেপাটাইটিস এ-র সংক্রমণ থাকা অবস্থায় NHS অন্যের জন্য খাবার বা পানীয় বানাতে মানা করে।"),
+    ("typhoid", "do", "Boiled or bottled water only", "শুধু ফোটানো বা বোতলের পানি", "Use it even for brushing teeth, and skip ice unless it is made from safe water.", "দাঁত মাজতেও এমন পানি ব্যবহার করুন; নিরাপদ পানির না হলে বরফ এড়ান।"),
+    ("typhoid", "do", "Eat food that is freshly cooked and hot", "টাটকা রান্না করা গরম খাবার খান", "The NHS, CDC and WHO advise thoroughly cooked food served hot, and washing hands with soap before eating.", "NHS, CDC ও WHO ভালোভাবে রান্না করা গরম খাবার এবং খাওয়ার আগে সাবান দিয়ে হাত ধুতে বলে।"),
+    ("typhoid", "dont", "Don't prepare food for others", "অন্যের জন্য খাবার বানাবেন না", "The NHS and WHO say a person being treated should avoid preparing or serving food for others.", "NHS ও WHO বলে চিকিৎসাধীন ব্যক্তি অন্যের জন্য খাবার বানানো বা পরিবেশন এড়াবেন।"),
+    ("viral-fever", "do", "Keep drinking liquids", "তরল খেতে থাকুন", "MedlinePlus says drinking enough liquids prevents dehydration.", "MedlinePlus বলে যথেষ্ট তরল পানিশূন্যতা ঠেকায়।"),
+    ("viral-fever", "dont", "Don't guess the cause", "কারণ আন্দাজ করবেন না", "Treatment depends on what causes the fever. See a doctor if the fever is high, lasts, or you are unsure.", "জ্বরের কারণের ওপর চিকিৎসা নির্ভর করে। জ্বর বেশি হলে, চলতে থাকলে বা নিশ্চিত না হলে ডাক্তার দেখান।"),
+    ("food-poisoning", "do", "Small sips, often", "অল্প অল্প চুমুক, ঘন ঘন", "Drink lots of fluids, in small sips if you feel sick. A pharmacist may suggest oral rehydration powder mixed with water.", "প্রচুর তরল খান, বমি বমি লাগলে অল্প অল্প চুমুকে। ফার্মাসিস্ট পানিতে মেশানো খাওয়ার স্যালাইন পরামর্শ দিতে পারেন।"),
+    ("food-poisoning", "do", "Eat when you feel able", "ক্ষুধা পেলে খান", "There is no need to force food. When you can eat, the NHS says avoiding fatty or spicy food may help.", "জোর করে খাওয়ার দরকার নেই। খেতে পারলে NHS চর্বিযুক্ত বা ঝাল খাবার এড়াতে বলে।"),
+    ("food-poisoning", "dont", "Don't wait on warning signs", "বিপদচিহ্ন দেখে অপেক্ষা করবেন না", "Blood in vomit or stool, being unable to keep fluids down, signs of dehydration that stay after rehydration drinks, diarrhoea over 7 days or vomiting over 2 days need a doctor. Call for urgent help for sudden severe tummy pain or confusion.", "বমি বা পায়খানায় রক্ত, তরল পেটে না থাকা, স্যালাইনের পরও পানিশূন্যতা, ৭ দিনের বেশি ডায়রিয়া বা ২ দিনের বেশি বমিতে ডাক্তার দেখান। হঠাৎ তীব্র পেটব্যথা বা অসংলগ্নতায় জরুরি সাহায্য নিন।"),
+    ("diarrhoea", "do", "Fluids first", "আগে তরল", "The NHS says drinking lots of fluids is the most important step. A pharmacist may suggest oral rehydration powder mixed with water.", "NHS বলে প্রচুর তরল খাওয়াই সবচেয়ে জরুরি। ফার্মাসিস্ট পানিতে মেশানো খাওয়ার স্যালাইন পরামর্শ দিতে পারেন।"),
+    ("diarrhoea", "dont", "No fruit juice or fizzy drinks", "ফলের রস ও কোমল পানীয় নয়", "The NHS says they can make diarrhoea worse.", "NHS বলে এগুলো ডায়রিয়া আরও খারাপ করতে পারে।"),
+    ("diarrhoea", "dont", "Don't wait if it lasts", "চলতে থাকলে অপেক্ষা করবেন না", "Diarrhoea in adults usually stops within 5 to 7 days. See a doctor if it lasts longer, there is blood, or you cannot keep fluids down.", "প্রাপ্তবয়স্কদের ডায়রিয়া সাধারণত ৫-৭ দিনে থামে। এর বেশি চললে, রক্ত থাকলে বা তরল পেটে না থাকলে ডাক্তার দেখান।"),
+    ("constipation", "do", "Raise fibre gradually", "ধীরে ধীরে আঁশ বাড়ান", "The NHS says fibre comes from fruit, vegetables and cereals, and to add oats, wheat bran or linseed. Changes can take a few days to a few weeks.", "NHS বলে আঁশ ফল, সবজি ও দানাশস্য থেকে আসে, সঙ্গে ওটস, গমের ভুসি বা তিসি যোগ করতে বলে। ফল পেতে কয়েক দিন থেকে কয়েক সপ্তাহ লাগতে পারে।"),
+    ("constipation", "do", "Drink plenty of water", "প্রচুর পানি খান", "Not enough fibre and not enough fluid are common causes, says the NHS.", "NHS-এর মতে কম আঁশ ও কম তরল সাধারণ কারণ।"),
+    ("constipation", "dont", "Don't ignore blood or sudden changes", "রক্ত বা হঠাৎ পরিবর্তন অবহেলা করবেন না", "See a doctor for blood in your poo, tummy pain, weight loss without trying, or a sudden change in bowel habits.", "পায়খানায় রক্ত, পেটব্যথা, কারণ ছাড়া ওজন কমা বা হঠাৎ পায়খানার অভ্যাস বদলালে ডাক্তার দেখান।"),
+    ("gastric-ulcer", "do", "Eat smaller meals", "ছোট ছোট বেলায় খান", "The NHS suggests smaller meals instead of a few large ones.", "NHS বড় বড় কয়েক বেলার বদলে ছোট ছোট বেলায় খেতে বলে।"),
+    ("gastric-ulcer", "do", "Dinner 3 to 4 hours before bed", "ঘুমের ৩-৪ ঘণ্টা আগে রাতের খাবার", "The NHS suggests finishing the evening meal 3 to 4 hours before going to bed.", "NHS ঘুমের ৩-৪ ঘণ্টা আগে রাতের খাবার শেষ করতে বলে।"),
+    ("gastric-ulcer", "dont", "Don't wait on warning signs", "বিপদচিহ্ন দেখে অপেক্ষা করবেন না", "Worsening pain, weight or appetite loss, persistent vomiting or trouble swallowing need an urgent doctor. Vomiting blood, black or bloody stools, severe or sudden chest pain need emergency care.", "ব্যথা বাড়লে, ওজন বা ক্ষুধা কমলে, ক্রমাগত বমি বা গিলতে কষ্ট হলে দ্রুত ডাক্তার দেখান। রক্তবমি, কালো বা রক্তমাখা পায়খানা, তীব্র বা হঠাৎ বুকব্যথায় জরুরি চিকিৎসা নিন।"),
+]
+
+# condition, icon, title en/bn, detail en/bn
+HABITS = [
+    ("dengue", "bed", "Rest and watch", "বিশ্রাম নিন ও নজর রাখুন", "There is no specific treatment for dengue. WHO advises avoiding ibuprofen and aspirin because they raise bleeding risk; ask a doctor about pain relief.", "ডেঙ্গুর কোনো নির্দিষ্ট চিকিৎসা নেই। WHO আইবুপ্রোফেন ও অ্যাসপিরিন এড়াতে বলে কারণ এতে রক্তক্ষরণের ঝুঁকি বাড়ে; ব্যথার ওষুধ নিয়ে ডাক্তারকে জিজ্ঞেস করুন।"),
+    ("dengue", "sparkles", "No food cures dengue", "কোনো খাবারই ডেঙ্গু সারায় না", "The WHO page names no food or folk remedy that treats dengue. Be wary of claims that one does.", "WHO-র পাতায় ডেঙ্গু সারানোর কোনো খাবার বা ঘরোয়া প্রতিকারের নাম নেই। কোনো খাবারকে সারিয়ে তোলার দাবি করা হলে সতর্ক থাকুন।"),
+    ("jaundice", "stethoscope", "Get yellow skin checked", "হলুদ ত্বক পরীক্ষা করান", "Jaundice has many causes; a doctor finds which. Ask a doctor or pharmacist before any painkiller, as WHO advises avoiding unnecessary medicines that can harm the liver.", "জন্ডিসের অনেক কারণ থাকে; ডাক্তার কারণ খুঁজে বের করবেন। যেকোনো ব্যথার ওষুধের আগে ডাক্তার বা ফার্মাসিস্টকে জিজ্ঞেস করুন, কারণ WHO লিভারের ক্ষতি করতে পারে এমন অপ্রয়োজনীয় ওষুধ এড়াতে বলে।"),
+    ("jaundice", "shield", "Safe water and food", "নিরাপদ পানি ও খাবার", "Hepatitis A spreads through unclean food and water. Wash hands with soap, drink safe water, and avoid uncooked fruit and vegetables you have not washed or peeled.", "হেপাটাইটিস এ অপরিষ্কার খাবার ও পানি থেকে ছড়ায়। সাবান দিয়ে হাত ধুন, নিরাপদ পানি খান, আর না ধোয়া বা খোসা না ছাড়ানো কাঁচা ফল-সবজি এড়ান।"),
+    ("typhoid", "glass-water", "Wash hands with soap", "সাবান দিয়ে হাত ধুন", "Especially before eating or preparing food, and after the toilet.", "বিশেষ করে খাওয়ার বা রান্নার আগে এবং টয়লেটের পর।"),
+    ("typhoid", "stethoscope", "Get a fever checked", "জ্বর পরীক্ষা করান", "Typhoid needs treatment by a doctor. The CDC says to see one for a fever when you feel very ill.", "টাইফয়েডে ডাক্তারের চিকিৎসা লাগে। CDC বলে খুব অসুস্থ বোধ করলে জ্বরে ডাক্তার দেখান।"),
+    ("viral-fever", "activity", "See a doctor if unsure", "নিশ্চিত না হলে ডাক্তার দেখান", "Fever is usually a sign the body is fighting an infection, and treatment depends on the cause.", "জ্বর সাধারণত সংক্রমণের সঙ্গে শরীরের লড়াইয়ের চিহ্ন, আর চিকিৎসা কারণের ওপর নির্ভর করে।"),
+    ("food-poisoning", "heart", "Babies and young children", "শিশু ও ছোট বাচ্চা", "Keep breastfeeding or bottle feeding; if a baby is being sick, give smaller feeds more often and never weaken formula. Worry about a baby under 12 months: call a doctor.", "বুকের দুধ বা বোতলের দুধ চালিয়ে যান; বমি করলে কম পরিমাণে ঘন ঘন খাওয়ান, আর ফর্মুলা কখনও পাতলা করবেন না। ১২ মাসের কম বয়সী শিশু নিয়ে চিন্তা হলে ডাক্তারকে ডাকুন।"),
+    ("diarrhoea", "droplet", "Watch for dehydration", "পানিশূন্যতার দিকে নজর রাখুন", "Dark, smelly pee or peeing less than usual are signs. Speak to a pharmacist; older people and people with other conditions should ask sooner.", "গাঢ়, গন্ধযুক্ত বা কম প্রস্রাব পানিশূন্যতার লক্ষণ। ফার্মাসিস্টের সঙ্গে কথা বলুন; বয়স্ক বা অন্য রোগ থাকা মানুষ আরও আগে জিজ্ঞেস করুন।"),
+    ("constipation", "footprints", "Keep a toilet routine and move", "পায়খানার নিয়ম ও চলাফেরা রাখুন", "The NHS suggests a regular toilet routine, not delaying when you feel the urge, resting your feet on a low stool and a daily walk.", "NHS নিয়মিত টয়লেটের অভ্যাস, বেগ এলে দেরি না করা, নিচু টুলে পা রাখা এবং রোজ হাঁটার পরামর্শ দেয়।"),
+    ("constipation", "pill", "Laxatives only briefly", "রেচক ওষুধ অল্প সময়ের জন্য", "If diet and lifestyle changes do not help, ask a pharmacist. Most laxatives work within 3 days and should be used only briefly.", "খাবার ও জীবনযাপনের পরিবর্তনে কাজ না হলে ফার্মাসিস্টকে জিজ্ঞেস করুন। বেশিরভাগ রেচক ৩ দিনের মধ্যে কাজ করে এবং অল্প সময়ই ব্যবহার করা উচিত।"),
+    ("gastric-ulcer", "cigarette-off", "Don't smoke", "ধূমপান নয়", "The NHS lists not smoking among the steps for a stomach ulcer.", "NHS পাকস্থলীর আলসারের জন্য ধূমপান না করাকে পরামর্শের অংশ করেছে।"),
+    ("gastric-ulcer", "pill", "Ask before painkillers", "ব্যথার ওষুধের আগে জিজ্ঞেস করুন", "The NHS says not to take ibuprofen or other anti-inflammatory painkillers without speaking to a doctor.", "NHS বলে ডাক্তারের সঙ্গে কথা না বলে আইবুপ্রোফেন বা অন্য প্রদাহনাশক ব্যথার ওষুধ খাবেন না।"),
+]
+
+
+def esc_json(en, bn):
+    return f"jsonb_build_object('en', {q(en)}, 'bn', {q(bn)})"
+
+
+if __name__ == "__main__":
+    # icon names must exist in the app's registry; fall back to a known one
+    known = {"activity", "bed", "droplet", "footprints", "glass-water", "pill", "salad", "shield", "shield-plus", "sparkles", "stethoscope", "zap", "cigarette-off", "heart", "heart-pulse"}
+    habits = [(c, i if i in known else ("sparkles" if "fallback" in i else i), *rest) for c, i, *rest in HABITS]
+    print("-- Everyday illnesses (growth pass, 2026-11-23): dengue, jaundice and hepatitis A, typhoid, viral fever, food poisoning, diarrhoea,")
+    print("-- constipation and stomach ulcer, each a DRAFT (active = false) until a medical reviewer reviews it in the admin. Every food rule says")
+    print("-- only what its cited page says (WHO, NHS, CDC and MedlinePlus pages opened 2026-11-23); a food a page does not mention has no rule.")
+    print("-- General guidance, never a dose. Generated by database/tools/acute_conditions.py. Idempotent. Run by migration 0042 and the seeder.\n")
+    print("INSERT INTO sources (key, title, publisher, url, year, kind) VALUES")
+    print(",\n".join(f"  ({q(k)}, {esc_json(en, bn)}, {q(pub)}, {q(url)}, {year if year else 'NULL'}, 'patient_info')" for k, en, bn, pub, url, year in SOURCES))
+    print("ON CONFLICT (key) DO NOTHING;\n")
+    print("INSERT INTO conditions (slug, name, summary, icon, color, sort, active) VALUES")
+    base = 20
+    print(",\n".join(f"  ({q(s)}, {esc_json(en, bn)}, {esc_json(sen, sbn)}, {q(icon)}, {q(color)}, {base + i}, false)" for i, (s, en, bn, sen, sbn, icon, color, _) in enumerate(CONDITIONS)))
+    print("ON CONFLICT (slug) DO NOTHING;\n")
+    print("INSERT INTO source_links (source_id, condition_id, sort)\nSELECT s.id, c.id, v.sort FROM (VALUES")
+    links = [(src, c[0], n) for c in CONDITIONS for n, src in enumerate(c[7])]
+    print(",\n".join(f"  ({q(src)}, {q(cond)}, {n})" for src, cond, n in links))
+    print(") AS v(source, condition, sort) JOIN sources s ON s.key = v.source JOIN conditions c ON c.slug = v.condition\nWHERE NOT EXISTS (SELECT 1 FROM source_links x WHERE x.source_id = s.id AND x.condition_id = c.id);\n")
+    print("INSERT INTO food_rules (condition_id, food_id, verdict, reason, source_id)\nSELECT c.id, f.id, v.verdict, jsonb_build_object('en', v.en, 'bn', v.bn), s.id FROM (VALUES")
+    print(",\n".join(f"  ({q(c)}, {q(f)}, {q(v)}, {q(t[0])}, {q(t[1])}, {q(s)})" for c, f, v, t, s in RULES))
+    print(") AS v(condition, food, verdict, en, bn, source)\nJOIN conditions c ON c.slug = v.condition JOIN foods f ON f.slug = v.food JOIN sources s ON s.key = v.source\nON CONFLICT (condition_id, food_id) DO NOTHING;\n")
+    print("INSERT INTO timing_rules (condition_id, kind, time_hint, title, detail, sort)\nSELECT c.id, v.kind, NULL, jsonb_build_object('en', v.ten, 'bn', v.tbn), jsonb_build_object('en', v.den, 'bn', v.dbn), v.sort FROM (VALUES")
+    counters = {}
+    rows = []
+    for cond, kind, ten, tbn, den, dbn in TIMING:
+        n = counters.get(cond, 0)
+        counters[cond] = n + 1
+        rows.append(f"  ({q(cond)}, {q(kind)}, {q(ten)}, {q(tbn)}, {q(den)}, {q(dbn)}, {n})")
+    print(",\n".join(rows))
+    print(") AS v(condition, kind, ten, tbn, den, dbn, sort) JOIN conditions c ON c.slug = v.condition\nWHERE NOT EXISTS (SELECT 1 FROM timing_rules x WHERE x.condition_id = c.id AND x.sort = v.sort);\n")
+    print("INSERT INTO habits (condition_id, icon, title, detail, sort)\nSELECT c.id, v.icon, jsonb_build_object('en', v.ten, 'bn', v.tbn), jsonb_build_object('en', v.den, 'bn', v.dbn), v.sort FROM (VALUES")
+    counters = {}
+    rows = []
+    for cond, icon, ten, tbn, den, dbn in habits:
+        n = counters.get(cond, 0)
+        counters[cond] = n + 1
+        rows.append(f"  ({q(cond)}, {q(icon)}, {q(ten)}, {q(tbn)}, {q(den)}, {q(dbn)}, {n})")
+    print(",\n".join(rows))
+    print(") AS v(condition, icon, ten, tbn, den, dbn, sort) JOIN conditions c ON c.slug = v.condition\nWHERE NOT EXISTS (SELECT 1 FROM habits x WHERE x.condition_id = c.id AND x.sort = v.sort);")

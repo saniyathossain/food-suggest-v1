@@ -159,6 +159,7 @@ async fn serve(config: AppConfig) -> Result<(), String> {
             tracing::warn!(what = "media.import_failed", why = %error);
         }
     });
+    crate::app::services::sync::spawn_scheduler(state.sync.clone());
     let listener = TcpListener::bind(&address).await.map_err(|error| format!("bind {address}: {error}"))?;
     tracing::info!(what = "http.listening", address = %address, cache = state.cache.driver());
     axum::serve(listener, bootstrap::app(state))

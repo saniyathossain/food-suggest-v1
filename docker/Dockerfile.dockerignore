@@ -12,6 +12,10 @@ codes/frontend/dist/
 codes/frontend/.vite/
 **/.env
 **/.env.*
+!**/.env.example
+**/*.pem
+**/*.key
+**/*.tsbuildinfo
 **/*.log
 **/.DS_Store
 **/coverage/

@@ -1,10 +1,13 @@
-use crate::app::dtos::catalog::{BootstrapDto, ConditionDetailDto, FoodDetailDto, FoodSearchDto, FoodSearchQuery};
+use crate::app::dtos::catalog::{BootstrapDto, ConditionDetailDto, FoodDetailDto, FoodSearchDto, FoodSearchQuery, SearchIndexDto};
 use crate::app::dtos::content::{PostCardDto, PostDto, PostQuery, RecipeCardDto, RecipeDto, RecipeQuery};
 use crate::app::dtos::mode::DietModeDto;
 use crate::app::dtos::LocaleQuery;
 use crate::app::enums::Locale;
 use crate::app::exceptions::AppError;
-use crate::app::services::{content, diet_mode, CatalogIndex, CatalogService};
+use crate::app::enums::FeatureKey;
+use crate::app::http::middleware::MaybeViewer;
+use crate::app::services::entitlements::Entitlements;
+use crate::app::services::{billing, content, diet_mode, CatalogIndex, CatalogService};
 use crate::bootstrap::AppState;
 use axum::extract::{Path, Query, State};
 use axum::http::header::CACHE_CONTROL;
@@ -21,6 +24,17 @@ fn cached<Body>(body: Body) -> Cached<Body> {
 pub async fn bootstrap(State(state): State<AppState>, Query(query): Query<LocaleQuery>) -> Result<Cached<BootstrapDto>, AppError> {
     let snapshot = state.catalog.snapshot().await?;
     Ok(cached(CatalogService::bootstrap(&snapshot, query.locale(state.config.app.locale))))
+}
+
+/// Habits and medicine generics for the in-app search, one language, cacheable.
+/// What the search can find depends on the viewer's tier (the `spotlight` feature), so the answer is private to them.
+pub async fn search_index(State(state): State<AppState>, MaybeViewer(viewer): MaybeViewer, Query(query): Query<LocaleQuery>) -> Result<([(axum::http::HeaderName, &'static str); 1], Json<SearchIndexDto>), AppError> {
+    let snapshot = state.catalog.snapshot().await?;
+    let locale = query.locale(state.config.app.locale);
+    let index = CatalogIndex::new(&snapshot, locale);
+    let tier = viewer.as_ref().and_then(billing::effective_tier);
+    let level = Entitlements::of(&index, tier).value(FeatureKey::Spotlight);
+    Ok(([(CACHE_CONTROL, "private, max-age=60")], Json(CatalogService::search_index(&snapshot, locale, level))))
 }
 
 pub async fn condition(

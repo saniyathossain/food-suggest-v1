@@ -6,10 +6,10 @@ import { ApiError, clearCache, send } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
 import type { LocalizedText, MediaItem, Verdict } from '@/lib/types';
 
-export interface RawCondition { id: number; slug: string; name: LocalizedText; summary: LocalizedText; icon: string; color: string; media_id: number | null; active: boolean }
-export interface RawFood { id: number; slug: string; category_id: number; name: LocalizedText }
-export interface RawRule { id: number; condition_id: number; food_id: number; verdict: Verdict; reason: LocalizedText }
-export interface Snapshot { conditions: RawCondition[]; foods: RawFood[]; rules: RawRule[]; categories: { id: number; slug: string; name: LocalizedText }[] }
+export interface RawCondition { id: number; slug: string; name: LocalizedText; summary: LocalizedText; icon: string; color: string; media_id: number | null; active: boolean; reviewed_on?: string | null }
+export interface RawFood { id: number; slug: string; category_id: number; name: LocalizedText; active?: boolean }
+export interface RawRule { id: number; condition_id: number; food_id: number; verdict: Verdict; reason: LocalizedText; source_id?: number | null; reviewed_on?: string | null }
+export interface Snapshot { conditions: RawCondition[]; foods: RawFood[]; rules: RawRule[]; categories: { id: number; slug: string; name: LocalizedText }[]; recipes?: unknown[]; posts?: unknown[]; generics?: unknown[]; modes?: unknown[] }
 
 const TOKEN_KEY = 'pathya.admin';
 

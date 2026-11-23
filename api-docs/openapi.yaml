@@ -6,8 +6,15 @@ info:
   description: |
     Public reads are computed from one cached catalog snapshot (zero queries per page view) and answer in one
     language chosen by `lang`. Admin routes need `Authorization: Bearer <ADMIN_TOKEN>` (replaced by RBAC in the
-    platform unit). Errors are `{"error", "code"}` plus `fields` on 422; every response carries `x-request-id`.
+    platform unit). Roles: super_admin, admin, editor, medical_reviewer (reviews, never publishes or edits), user.
+    Errors are `{"error", "code"}` plus `fields` on 422; every response carries `x-request-id`.
     Guidance is general information, not medical advice.
+
+    Lists: every list that can grow is cursor-paged (`limit`, `cursor` from the last page's `next_cursor`, `total`) or, for
+    admin tables, page-numbered (`page`, `per_page` 10-100, default 25; answer `{ items, total, page, per_page }`). Sorting and
+    filters are query parameters, never client logic, so a mobile app can page the same endpoints. JSON request bodies are
+    cleaned on arrival: HTML tags, control characters and script URLs are stripped from every string (secret fields such as
+    passwords and keys are left untouched).
 servers:
   - url: http://127.0.0.1:8100
     description: Local Docker
@@ -33,7 +40,7 @@ paths:
   /api/v1/auth/reset:
     post: { summary: Set a new password with the link's token (ends all sessions), responses: { '204': { description: Done }, '422': { description: Expired token or bad password } } }
   /api/v1/me/profiles:
-    get: { summary: 'Profiles (self and family) with conditions, allergies, surgeries, pregnancy, medicines, lab history', security: [{ session: [] }], responses: { '200': { description: Profiles } } }
+    get: { summary: 'Profiles (self and family) with conditions, allergies, allergens (closed list), surgeries, pregnancy, height_cm, waist_cm, activity, sleep_hours, budget, medicines, lab history', security: [{ session: [] }], responses: { '200': { description: Profiles } } }
     post: { summary: 'Add a profile (402 upgrade_required when the tier''s profile count is used)', security: [{ session: [] }], responses: { '201': { description: Saved }, '402': { description: Upgrade required } } }
   /api/v1/me/profiles/{id}:
     put: { summary: Save a profile and its conditions, security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: Saved } } }
@@ -44,10 +51,128 @@ paths:
     post: { summary: 'Add a medicine as prescribed: brand, generic or typed name; dose in the person''s words (tier: medicines). The app never suggests a dose.', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '201': { description: Saved }, '402': { description: Upgrade required } } }
   /api/v1/me/profiles/{id}/medicines/{row}:
     patch: { summary: 'Stop a medicine (dated, kept in history) or remove it (stopped_on null)', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: row, in: path, required: true, schema: { type: integer } }], responses: { '204': { description: Done } } }
+  /api/v1/me/profiles/{id}/meals:
+    get:
+      summary: 'A day of the meal log with totals against a typical adult''s limits (tier: meal_log)'
+      description: 'Day defaults to today (Dhaka). Meters list limits first (kcal, sugar, sat_fat, sodium: stay under) then goals (protein, fibre, iron, calcium, potassium: reach). Nutrients a dataset does not report stay null and add nothing. 402 upgrade_required (feature meal_log) when the tier lacks it.'
+      security: [{ session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: date, in: query, schema: { type: string, example: '2026-11-23' } }, { $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200':
+          description: The day
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DayLog' }
+              example: { date: '2026-11-23', profile_id: 1, entries: [{ id: 7, meal: lunch, grams: 250, note: '', food: rice, name: Rice, image: null, variant: null, nutrients: { kcal: 325.0, protein_g: 6.8, fat_g: null, carb_g: 70.0, fibre_g: null, sugar_g: 0.3, sat_fat_g: null, sodium_mg: null, potassium_mg: null, iron_mg: null, calcium_mg: null } }], meals: [{ meal: breakfast, entries: 0, kcal: 0.0 }, { meal: lunch, entries: 1, kcal: 325.0 }, { meal: snack, entries: 0, kcal: 0.0 }, { meal: dinner, entries: 0, kcal: 0.0 }], totals: { kcal: 325.0 }, meters: [{ key: kcal, kind: limit, unit: kcal, amount: 325.0, target: 2000.0, share: 0.16, over: false }], unreported: 0, note: 'Measured against a typical adult''s day (WHO and EU reference values). General guidance, not personal advice: your own needs differ.' }
+        '402': { description: Upgrade required }
+        '404': { description: Not your profile }
+    post:
+      summary: 'Log a food (tier: meal_log)'
+      description: 'grams 1-3000; `eaten_on` defaults to today, may not be before 2020 or after tomorrow; `variant` is a variant slug of that food (the way it was cooked), absent = the usual form; at most 60 entries per profile per day.'
+      security: [{ session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MealInput' }
+            example: { food: rice, variant: rice-boiled, grams: 250, meal: lunch, eaten_on: '2026-11-23' }
+      responses: { '201': { description: 'Saved: { id }' }, '402': { description: Upgrade required }, '422': { description: Validation failed } }
+  /api/v1/me/profiles/{id}/meals/range:
+    get:
+      summary: 'Days that have entries, each with totals and the limits it passed (tiers: meal_log and charts_pack)'
+      description: 'Defaults to the last 30 days; at most 92 days, oldest first. Days with no entries are left out.'
+      security: [{ session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: from, in: query, schema: { type: string } }, { name: to, in: query, schema: { type: string } }]
+      responses:
+        '200':
+          description: The range
+          content:
+            application/json:
+              example: { from: '2026-10-25', to: '2026-11-23', days: [{ date: '2026-11-22', entries: 2, totals: { kcal: 780.0, sodium_mg: 3900.0 }, over: [sodium] }] }
+        '402': { description: Upgrade required }
+  /api/v1/me/profiles/{id}/meals/{entry}:
+    delete: { summary: 'Remove a logged food (tier: meal_log)', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: entry, in: path, required: true, schema: { type: integer } }], responses: { '204': { description: Removed }, '404': { description: Not found } } }
   /api/v1/me/plan:
     get: { summary: 'Personal plan for a profile: tier limits (conditions counted; only the eat-more list is cut, never avoid / go easy), meal alternatives, medicine–medicine and medicine–food checks with sources', security: [{ session: [] }], parameters: [{ name: profile, in: query, schema: { type: integer } }, { name: lang, in: query, schema: { type: string } }], responses: { '200': { description: Personal plan } } }
+  /api/v1/me/profiles/{id}/report/weekly:
+    get:
+      summary: 'Seven days of the meal log in one page (tier: weekly_report)'
+      description: 'The week ends on `to` (default today). `average` is the average LOGGED day against the reference (days with no entries are not counted as zero); `over_days` says on how many logged days each limit was passed; `top_foods` are the five heaviest in calories.'
+      security: [{ session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: to, in: query, schema: { type: string } }, { $ref: '#/components/parameters/Lang' }]
+      responses:
+        '200':
+          description: The week
+          content:
+            application/json:
+              example: { profile_id: 7, from: '2026-11-17', to: '2026-11-23', logged_days: 2, average: [{ key: kcal, kind: limit, unit: kcal, amount: 227.5, target: 2000.0, share: 0.11, over: false }], days: [{ date: '2026-11-22', entries: 1, totals: { kcal: 130.0 }, over: [] }], over_days: [{ key: kcal, days: 0 }, { key: sodium, days: 0 }], top_foods: [{ food: white-rice, name: White rice (bhat), grams: 350, kcal: 455.0 }], note: 'Measured against a typical adult''s day (WHO and EU reference values). General guidance, not personal advice: your own needs differ.' }
+        '402': { description: 'Upgrade required (feature weekly_report)' }
+  /api/v1/me/profiles/{id}/shares:
+    get: { summary: 'Accounts this profile is shared with (owner only)', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: 'Rows { user_id, name, email }' } } }
+    post:
+      summary: 'Share a profile, read only, with another account by its email (tier: family_sharing)'
+      description: 'Up to 5 accounts per profile. The other account must already exist (422 says so). Removing the share ends access at once. Note: the 422 for an unknown email tells the owner that no account has it.'
+      security: [{ session: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [email], properties: { email: { type: string } } }, example: { email: 'amma@example.com' } } } }
+      responses: { '201': { description: 'The account: { user_id, name, email }' }, '402': { description: 'Upgrade required (feature family_sharing)' }, '422': { description: Validation failed } }
+  /api/v1/me/profiles/{id}/shares/{user}:
+    delete: { summary: 'Stop sharing a profile with an account', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }, { name: user, in: path, required: true, schema: { type: integer } }], responses: { '204': { description: Done } } }
+  /api/v1/me/shared:
+    get: { summary: 'Profiles other people shared with me (read only)', security: [{ session: [] }], responses: { '200': { description: 'Rows { id, name, relation, owner }' } } }
+  /api/v1/me/shared/{id}/plan:
+    get: { summary: 'The plan of a shared profile, built under the OWNER''s tier', security: [{ session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: Personal plan }, '404': { description: Not shared with you } } }
+  /api/v1/me/export:
+    get:
+      summary: 'Download everything the account holds about its own people as JSON (tier: data_export)'
+      description: 'Profiles with conditions, medicines and lab history, and every meal-log entry. Sent as an attachment named pathya-export.json.'
+      security: [{ session: [] }]
+      responses: { '200': { description: 'ExportDto: { generated_on, email, profiles[], meals[] }' }, '402': { description: 'Upgrade required (feature data_export)' } }
+  /api/v1/search-index:
+    get: { summary: 'What the in-app search can find, by the viewer''s tier (one language, private cache)', description: 'The `spotlight` tier feature sets how far the search reaches: level 1 returns no habits or medicines (pages and foods only), level 2 adds habits, level 3 (or unlimited) adds medicines; the answer carries `level` so a client can show what an upgrade would add. The app fetches this once when the search opens and filters it locally. Habits of conditions that are not live yet are left out.', parameters: [{ $ref: '#/components/parameters/Lang' }], responses: { '200': { description: 'SearchIndexDto: { habits[], medicines[{ slug, name, group }] }' } } }
   /api/v1/medicines/search:
-    get: { summary: Brands and generics starting with q (2+ letters), security: [{ session: [] }], parameters: [{ name: q, in: query, schema: { type: string } }], responses: { '200': { description: Hits } } }
+    get: { summary: Brands starting with q and generics containing q (2+ letters), security: [{ session: [] }], parameters: [{ name: q, in: query, schema: { type: string } }], responses: { '200': { description: Hits } } }
+  /api/v1/library/medicines:
+    get:
+      summary: 'Medicine library: filtered, sorted, cursor-paged (public, one language, cacheable)'
+      description: 'Filters q (name or group), group (slugs, comma separated), timing (empty_stomach, before_food, with_food, after_food, any; comma separated). sort: az (default), za, conflicts (food notes plus medicine conflicts), food_notes, drug_conflicts, group, timing. cursor is the previous page''s next_cursor; limit 1-60 (24). The answer also carries `groups` (every group with how many medicines choosing it would show, zero included) and `timings` (the same for each way of taking it), so a client can draw live counts without another call. Each card has `image` (media-library photo or null).'
+      parameters:
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: group, in: query, schema: { type: string } }
+        - { name: timing, in: query, schema: { type: string } }
+        - { name: sort, in: query, schema: { type: string, enum: [az, za, conflicts, food_notes, drug_conflicts, group, timing] } }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 60 } }
+      responses: { '200': { description: 'MedicinePageDto: { items[MedicineCardDto], next_cursor, total, groups[], timings[] }' } }
+  /api/v1/library/medicines/{slug}:
+    get:
+      summary: 'One medicine: how it is taken, photo, food notes, medicine conflicts, brands, same-group medicines'
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+      responses: { '200': { description: MedicineDetailDto }, '404': { description: Unknown medicine } }
+  /api/v1/admin/options/{kind}:
+    get:
+      summary: 'Picker options from the catalogue, searched on the server and cursor-paged (editor and up)'
+      description: 'kind: foods, conditions, medicines or tiers. q matches both languages and the slug (names that start with q first); cursor is the previous page''s next_cursor; limit 1-50 (20); value=<slug> returns just that one option, to learn the label of a stored choice. Answer: { items[{ value, label, hint }], next_cursor, total }.'
+      security: [{ admin: [] }, { session: [] }]
+      parameters:
+        - { name: kind, in: path, required: true, schema: { type: string, enum: [foods, conditions, medicines, tiers] } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: cursor, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 50 } }
+        - { name: value, in: query, schema: { type: string } }
+        - { name: lang, in: query, schema: { type: string, enum: [en, bn] } }
+      responses: { '200': { description: OptionsPageDto }, '404': { description: Unknown kind } }
+  /api/v1/admin/counts:
+    get: { summary: 'Row counts for the admin sidebar: accounts, payments waiting for review, gateways, audit entries, media (editor and up)', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: 'SectionCountsDto' } } }
+  /api/v1/admin/foods/{slug}:
+    patch: { summary: 'Change a food: name (both languages), category slug, active (off hides it from the public site) (editor)', security: [{ admin: [] }, { session: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { name: { type: object, properties: { en: { type: string }, bn: { type: string } } }, category: { type: string }, active: { type: boolean } } } } } }, responses: { '200': { description: Saved }, '404': { description: Unknown food }, '422': { description: Field errors } } }
+    delete: { summary: 'Delete a food; its rules, variants, photos, nutrition and meal-log rows go with it (admin)', security: [{ admin: [] }, { session: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], responses: { '204': { description: Deleted }, '404': { description: Unknown food } } }
+  /api/v1/admin/generics/{slug}/media:
+    patch: { summary: 'Give a medicine a photo from the media library; media_id 0 clears it (editor)', security: [{ admin: [] }, { session: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, required: [media_id], properties: { media_id: { type: integer } } } } } }, responses: { '200': { description: Saved }, '404': { description: Unknown medicine } } }
   /api/v1/recipes:
     get:
       summary: Published recipes (filters q, kind, food, condition = not "avoid" for it); each with its fit per condition
@@ -73,14 +198,68 @@ paths:
       summary: An article (body lines, sources)
       parameters: [{ name: slug, in: path, required: true, schema: { type: string } }, { name: lang, in: query, schema: { type: string } }]
       responses: { '200': { description: Article }, '404': { description: Unknown or hidden } }
+  /api/v1/admin/conditions/{slug}/review:
+    post:
+      summary: 'Mark a condition and all its rules reviewed (medical reviewer, admin or super admin, never an editor; needs a named account, never the shared token)'
+      description: 'Refused (422) while any rule cites nothing (no source of its own and the condition has none). A condition goes live only after this: PATCH /admin/conditions/{slug} with active true is refused for a condition that is unreviewed or has a rule edited after its review.'
+      security: [{ admin: [] }, { session: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses: { '200': { description: 'ReviewDto: { subject, rules_marked, reviewed_on }' }, '403': { description: 'Role may not review' }, '422': { description: Validation failed } }
+  /api/v1/admin/food-rules/{id}/review:
+    post: { summary: 'Mark one rule reviewed (it must be cited)', security: [{ admin: [] }, { session: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: ReviewDto }, '422': { description: 'No source' } } }
+  /api/v1/admin/food-rules/bulk:
+    post:
+      summary: 'One verdict for many foods of a condition (editor)'
+      description: 'Foods with a rule keep their reason unless a new one is sent; a food with no rule needs a reason. An edited rule has to be reviewed again.'
+      security: [{ admin: [] }, { session: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [condition, foods, verdict], properties: { condition: { type: string }, foods: { type: array, items: { type: string }, maxItems: 500 }, verdict: { $ref: '#/components/schemas/Verdict' }, reason: { $ref: '#/components/schemas/Text' }, source: { type: string } } }, example: { condition: pcos, foods: [maida, biscuits], verdict: limit, reason: { en: Refined flour has less fibre., bn: '' }, source: nhs-pmos } } } }
+      responses: { '200': { description: 'RuleBulkResultDto: { created, updated, skipped[{ row, message }] }' } }
+  /api/v1/admin/food-rules/export:
+    get: { summary: 'Rules as CSV or JSON (any staff role)', description: 'Columns: condition, food, verdict, reason_en, reason_bn, source (key), reviewed_on. Cells starting with = + - @ are prefixed with an apostrophe so a spreadsheet never runs them.', security: [{ admin: [] }, { session: [] }], parameters: [{ name: condition, in: query, schema: { type: string } }, { name: format, in: query, schema: { type: string, enum: [csv, json], default: csv } }], responses: { '200': { description: 'The file, as an attachment' } } }
+  /api/v1/admin/food-rules/import:
+    post:
+      summary: 'Import rules from CSV or JSON (editor); dry_run only checks'
+      description: 'At most 2000 rules and 2 MB. CSV header: condition,food,verdict,reason_en (required) and reason_bn,source. Refused rows come back with their row number; the good ones are saved. A rule changed by an import has to be reviewed again.'
+      security: [{ admin: [] }, { session: [] }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [format, data], properties: { format: { type: string, enum: [csv, json] }, data: { type: string }, dry_run: { type: boolean } } }, example: { format: csv, dry_run: true, data: "condition,food,verdict,reason_en,reason_bn,source\ngout,egg,ok,Fine in moderation,,nhs-gout" } } } }
+      responses: { '200': { description: 'RuleImportResultDto: { rows, created, updated, rejected[{ row, message }], dry_run }' } }
+  /api/v1/admin/coverage:
+    get: { summary: 'Rules coverage per condition (any staff role)', description: 'rules by verdict, foods with no rule (uncovered + a sample), uncited and unreviewed rules, timing/habit/source counts, reviewed_on, whether it can ship and what blocks it.', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: 'CoverageDto: { foods, conditions[] }' } } }
+  /api/v1/admin/users:
+    get: { summary: 'Accounts, page-numbered (editor and up): filters q, role, tier', security: [{ admin: [] }, { session: [] }], parameters: [{ name: page, in: query, schema: { type: integer, minimum: 0 } }, { name: per_page, in: query, description: '10-100, default 25', schema: { type: integer, minimum: 10, maximum: 100 } }, { name: q, in: query, schema: { type: string } }, { name: role, in: query, schema: { type: string } }, { name: tier, in: query, schema: { type: string } }], responses: { '200': { description: 'PageDto<UserAdminDto>: { items, total, page, per_page }' } } }
+  /api/v1/admin/payments:
+    get: { summary: 'Payments, page-numbered (admin): filters status, gateway, q', security: [{ admin: [] }, { session: [] }], parameters: [{ name: page, in: query, schema: { type: integer, minimum: 0 } }, { name: per_page, in: query, description: '10-100, default 25', schema: { type: integer, minimum: 10, maximum: 100 } }, { name: q, in: query, schema: { type: string } }, { name: status, in: query, schema: { type: string } }, { name: gateway, in: query, schema: { type: string } }], responses: { '200': { description: 'PageDto<PaymentAdminDto>' } } }
+  /api/v1/admin/medicines:
+    get: { summary: 'Medicine brands sold in Bangladesh, page-numbered (editor and up): filters q, generic', security: [{ admin: [] }, { session: [] }], parameters: [{ name: page, in: query, schema: { type: integer, minimum: 0 } }, { name: per_page, in: query, description: '10-100, default 25', schema: { type: integer, minimum: 10, maximum: 100 } }, { name: q, in: query, schema: { type: string } }, { name: generic, in: query, schema: { type: string } }], responses: { '200': { description: 'PageDto<MedicineAdminDto>' } } }
+  /api/v1/admin/generics:
+    get: { summary: 'Generic medicines with conflict counts, label sync date and photo (editor and up)', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: 'GenericAdminDto[] (media_id, image)' } } }
+  /api/v1/admin/audit:
+    get: { summary: 'Audit trail, newest first (admin)', description: 'page, per_page (10-100, default 25). `action` matches the start of the action name (rule., condition., tier., post.published, rules.imported…); `q` matches the subject or the actor email.', security: [{ admin: [] }, { session: [] }], parameters: [{ name: action, in: query, schema: { type: string } }, { name: q, in: query, schema: { type: string } }, { name: page, in: query, schema: { type: integer } }], responses: { '200': { description: 'Page of { id, at, who, action, subject, detail }' } } }
+  /api/v1/admin/calendar:
+    get: { summary: 'Articles and recipes by day: published, scheduled or draft (editor)', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: 'Rows { kind, slug, title_en, title_bn, date, state }' } } }
+  /api/v1/admin/tiers/{slug}/preview:
+    post:
+      summary: 'What saving these feature values would change for a tier (admin); saves nothing'
+      security: [{ admin: [] }, { session: [] }]
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { example: { features: [{ feature: meal_log, value: 1 }, { feature: profiles, value: 8 }] } } } }
+      responses: { '200': { description: 'TierPreviewDto: { tier, accounts, changes[{ feature, before, after }], gains[], losses[] }. Editing the tier itself is PATCH /admin/tiers/{slug}, super admin only; it applies to every account on the tier at once.' } }
+  /api/v1/admin/media/usage:
+    get: { summary: 'Media library usage (editor)', description: 'total, used, unused, bytes, bytes by source, and the first 60 unused items.', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: MediaUsageDto } } }
+  /api/v1/admin/traffic:
+    get: { summary: 'Hits per day and the busiest routes, last 30 days (admin)', description: 'Counted per day and route group only (page: first segment; api: first three segments). No user, address, agent or query is stored. Counts are flushed to the database every five minutes and before this call.', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: 'TrafficDto: { days[{ day, count }], routes[{ route, hits }], total }' } } }
+  /api/v1/admin/plan-mix:
+    get: { summary: 'Accounts per tier (valid and lapsed) and role, signups per day, paid revenue per month (admin)', security: [{ admin: [] }, { session: [] }], responses: { '200': { description: PlanMixDto } } }
   /api/v1/admin/recipes:
     get: { summary: All recipes with publish state, security: [{ bearer: [] }], responses: { '200': { description: Rows } } }
   /api/v1/admin/recipes/{slug}:
-    patch: { summary: Publish or hide a recipe, security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+    patch: { summary: 'Publish or hide a recipe; publish_on (YYYY-MM-DD, empty clears) schedules it: the catalogue flips it live when the day comes (editor)', security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+    delete: { summary: 'Delete a recipe (admin)', security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], responses: { '204': { description: Deleted }, '404': { description: Unknown } } }
   /api/v1/admin/posts:
     get: { summary: All articles with publish state, security: [{ bearer: [] }], responses: { '200': { description: Rows } } }
   /api/v1/admin/posts/{slug}:
-    patch: { summary: Publish or hide an article, security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+    patch: { summary: 'Publish or hide an article; publish_on (YYYY-MM-DD, empty clears) schedules it: the catalogue flips it live when the day comes (editor)', security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], requestBody: { content: { application/json: { schema: { type: object, properties: { published: { type: boolean } } } } } }, responses: { '200': { description: Saved } } }
+    delete: { summary: 'Delete a article (admin)', security: [{ bearer: [] }], parameters: [{ name: slug, in: path, required: true, schema: { type: string } }], responses: { '204': { description: Deleted }, '404': { description: Unknown } } }
   /api/v1/modes/{slug}:
     get:
       summary: A diet mode (everyday, ramadan, intermittent-16-8) with its meals, tips and how each condition fits it
@@ -324,6 +503,58 @@ paths:
       summary: Flush the catalog cache
       responses:
         '204': { description: Flushed }
+  /api/v1/admin/sync-sources:
+    get:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'External sync sources (super admin). Secret header values are never returned; vault_ready is false when APP_KEY is not set.'
+      responses: { '200': { description: Sources, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSetup' } } } }, '403': { $ref: '#/components/responses/Error' } }
+    post:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'Add a source (super admin). slug, name, kind and base_url are required. Secret header values are sealed with APP_KEY.'
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSourceInput' } } } }
+      responses: { '200': { description: Saved, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSource' } } } }, '422': { $ref: '#/components/responses/Error' } }
+  /api/v1/admin/sync-sources/test:
+    post:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'One fetch with the settings sent (no retries, nothing saved). Send the slug of a saved source to reuse its stored secret headers. A PUT, PATCH or DELETE test sends the real request and needs confirm_write; a passed test of a saved source lets it run.'
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSourceInput' } } } }
+      responses: { '200': { description: What was read, content: { application/json: { schema: { $ref: '#/components/schemas/SyncTest' } } } }, '422': { $ref: '#/components/responses/Error' } }
+  /api/v1/admin/sync-sources/{slug}:
+    patch:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'Change a source (super admin); only what is sent changes. headers replaces the list; a secret header with an empty value keeps the stored one. schedule_hours null = by hand.'
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSourceInput' } } } }
+      responses: { '200': { description: Saved, content: { application/json: { schema: { $ref: '#/components/schemas/SyncSource' } } } }, '404': { $ref: '#/components/responses/Error' }, '422': { $ref: '#/components/responses/Error' } }
+    delete:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'Delete a source and its runs (super admin). Rows it already saved stay.'
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses: { '204': { description: Deleted }, '404': { $ref: '#/components/responses/Error' } }
+  /api/v1/admin/sync-sources/{slug}/run:
+    post:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'Run a source now (super admin). Retries timeouts, connection errors, 429 and 5xx with exponential backoff; never other 4xx. Answers the finished run (status ok or failed). 422 when it is already running.'
+      parameters: [{ name: slug, in: path, required: true, schema: { type: string } }]
+      responses: { '200': { description: The run, content: { application/json: { schema: { $ref: '#/components/schemas/SyncRun' } } } }, '404': { $ref: '#/components/responses/Error' }, '422': { $ref: '#/components/responses/Error' } }
+  /api/v1/admin/sync-runs:
+    get:
+      tags: [admin]
+      security: [{ admin: [] }]
+      summary: 'Runs history, newest first (super admin)'
+      parameters:
+        - { name: source, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string, enum: [running, ok, failed] } }
+        - { name: q, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer, minimum: 0 } }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 10, maximum: 100 } }
+      responses: { '200': { description: A page of runs, content: { application/json: { schema: { type: object, properties: { items: { type: array, items: { $ref: '#/components/schemas/SyncRun' } }, total: { type: integer }, page: { type: integer }, per_page: { type: integer } } } } } } }
 components:
   securitySchemes:
     session: { type: apiKey, in: cookie, name: pathya_session }
@@ -367,6 +598,37 @@ components:
         load_per_100g: { type: [number, 'null'] }
         load_band: { type: [string, 'null'], enum: [low, medium, high, null] }
         source: { type: [object, 'null'] }
+    MealInput:
+      type: object
+      required: [food, grams, meal]
+      properties:
+        food: { type: string, description: Food slug }
+        variant: { type: string, description: 'Variant slug of that food (how it was cooked)' }
+        grams: { type: integer, minimum: 1, maximum: 3000 }
+        eaten_on: { type: string, description: 'YYYY-MM-DD, default today' }
+        meal: { type: string, enum: [breakfast, lunch, snack, dinner] }
+        note: { type: string, maxLength: 200 }
+    Meter:
+      type: object
+      properties:
+        key: { type: string, enum: [kcal, sugar, sat_fat, sodium, protein, fibre, iron, calcium, potassium] }
+        kind: { type: string, enum: [limit, goal] }
+        unit: { type: string }
+        amount: { type: number }
+        target: { type: number }
+        share: { type: number, description: amount / target }
+        over: { type: boolean, description: 'A limit that is passed (never true for a goal)' }
+    DayLog:
+      type: object
+      properties:
+        date: { type: string }
+        profile_id: { type: integer }
+        entries: { type: array, items: { type: object } }
+        meals: { type: array, items: { type: object, properties: { meal: { type: string }, entries: { type: integer }, kcal: { type: number } } } }
+        totals: { type: object }
+        meters: { type: array, items: { $ref: '#/components/schemas/Meter' } }
+        unreported: { type: integer, description: Entries whose food has no calorie figure }
+        note: { type: string }
     Verdict: { type: string, enum: [avoid, limit, ok, recommended] }
     Gender: { type: string, enum: [male, female, other] }
     AgeGroup: { type: string, enum: [child, teen, adult, senior] }
@@ -466,6 +728,7 @@ components:
         age: { type: integer, minimum: 1, maximum: 120 }
         gender: { $ref: '#/components/schemas/Gender' }
         conditions: { type: array, maxItems: 6, items: { type: string }, example: [diabetes, insomnia] }
+        criteria: { $ref: '#/components/schemas/Criteria' }
     PlanFood:
       type: object
       properties:
@@ -475,6 +738,8 @@ components:
         category: { type: string }
         verdict: { $ref: '#/components/schemas/Verdict' }
         conflict: { type: boolean, description: 'A restriction overrode a recommendation from another condition' }
+        why: { $ref: '#/components/schemas/Why' }
+        cost: { type: [integer, 'null'], minimum: 1, maximum: 3, description: 'Rough cost band 1 (everyday) to 3 (costly)' }
         reasons:
           type: array
           items: { type: object, properties: { condition: { type: string }, color: { type: string }, verdict: { $ref: '#/components/schemas/Verdict' }, reason: { type: string } } }
@@ -513,6 +778,45 @@ components:
         habits: { type: array, items: { $ref: '#/components/schemas/Habit' } }
         notes: { type: array, items: { type: string } }
         sources: { type: array, items: { $ref: '#/components/schemas/Source' } }
+        insights:
+          type: array
+          description: 'What the extra criteria say (empty when none were given): where a value sits against its published range, in words, cited. A pointer to a condition page, never a diagnosis.'
+          items: { $ref: '#/components/schemas/Insight' }
+    Why:
+      type: object
+      description: 'The one reason that decided a verdict'
+      properties:
+        basis: { type: string, enum: [condition, allergy] }
+        rule_id: { type: [integer, 'null'] }
+        condition: { type: [object, 'null'], description: 'The condition that won' }
+        allergen: { type: [string, 'null'], enum: [milk, egg, peanut, tree_nut, gluten, soy, fish, shellfish, sesame, null] }
+        reason: { type: string }
+        source: { type: [object, 'null'], description: 'The rule''s own source, else the first source of its condition' }
+        reviewed_on: { type: [string, 'null'] }
+        also: { type: integer, description: 'How many other conditions also had a say' }
+    Insight:
+      type: object
+      properties:
+        criterion: { type: string, enum: [bmi, waist, activity, sleep, hba1c, fasting_glucose, blood_pressure, hemoglobin] }
+        band: { type: string, enum: [low, typical, raised, high] }
+        value: { type: string, example: 'BMI 27.1' }
+        title: { type: string }
+        detail: { type: string }
+        source: { type: [object, 'null'] }
+        suggests: { type: [object, 'null'] }
+    Criteria:
+      type: object
+      description: 'Optional extra inputs of POST /plan and of a profile. BMI uses WHO classes (25 / 30), or the WHO Asian action points (23 / 27.5) for BD, IN, PK, LK, NP; waist uses the IDF limits (South Asian 90 cm men / 80 cm women); sleep and activity follow AASM/SRS and WHO; labs follow ADA, WHO and WHO haemoglobin thresholds. Children get no BMI.'
+      properties:
+        height_cm: { type: integer }
+        weight_kg: { type: number }
+        waist_cm: { type: integer }
+        activity: { type: string, enum: [sedentary, light, moderate, active] }
+        sleep_hours: { type: number }
+        allergens: { type: array, items: { type: string, enum: [milk, egg, peanut, tree_nut, gluten, soy, fish, shellfish, sesame] }, description: 'Foods carrying them are forced to avoid (why.basis allergy) and leave meals' }
+        budget: { type: string, enum: [low, medium, high], description: 'Orders suggestions cheaper first; low drops the costliest. Never changes a verdict.' }
+        labs: { type: array, items: { type: object, properties: { kind: { type: string }, value: { type: number } } }, description: 'Oldest first; the latest of each kind is read' }
+        pregnancy: { type: string, enum: [none, pregnant, breastfeeding] }
     RuleUpsert:
       type: object
       required: [condition, food, verdict, reason]
@@ -521,6 +825,7 @@ components:
         food: { type: string }
         verdict: { $ref: '#/components/schemas/Verdict' }
         reason: { $ref: '#/components/schemas/Text' }
+        source: { type: string, description: 'Key of the cited source; absent = leave the citation. Saving a rule clears its review.' }
     FoodCreate:
       type: object
       required: [slug, category, name]
@@ -605,3 +910,80 @@ components:
     Saved:
       type: object
       properties: { id: { type: integer } }
+    SyncHeader:
+      type: object
+      properties: { name: { type: string }, value: { type: string, description: 'empty for a secret header' }, secret: { type: boolean } }
+    SyncSource:
+      type: object
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        kind: { type: string, enum: [medicines, foods, conditions, allergies, custom] }
+        base_url: { type: string, description: 'http or https only; loopback, link-local and private addresses are refused after DNS resolution' }
+        method: { type: string, enum: [get, post, put, patch, delete], description: 'PUT, PATCH and DELETE are never redirected and run only after their exact request passed /sync-sources/test' }
+        headers: { type: array, items: { $ref: '#/components/schemas/SyncHeader' } }
+        query_template: { type: string, description: 'the address query string, every method. {today} = the date' }
+        body: { type: string, description: 'request body, any method but GET: JSON if it starts with { or [, else form text' }
+        mode: { type: string, enum: [update, append], description: 'update: add new rows and refresh known ones; append: only add new rows' }
+        platform: { type: [string, 'null'], description: 'slug of the platform preset it was set up from' }
+        timeout_ms: { type: integer, minimum: 500, maximum: 120000 }
+        max_retries: { type: integer, minimum: 0, maximum: 10 }
+        backoff_base_ms: { type: integer }
+        backoff_factor: { type: number, minimum: 1, maximum: 10 }
+        backoff_max_ms: { type: integer }
+        jitter: { type: boolean }
+        schedule_hours: { type: [integer, 'null'], description: 'null = by hand' }
+        active: { type: boolean }
+        last_run_at: { type: [integer, 'null'], description: unix seconds }
+        last_status: { type: [string, 'null'], enum: [running, ok, failed, null] }
+        last_error: { type: [string, 'null'] }
+        can_save: { type: boolean, description: 'false = the kind has no mapper yet' }
+        needs_test: { type: boolean, description: 'a PUT / PATCH / DELETE source whose current request has not passed Test: a run answers 422' }
+    SyncPlatform:
+      type: object
+      description: 'A platform preset (data: sync_platforms). Secret headers carry no value.'
+      properties: { slug: { type: string }, name: { type: string }, kind: { type: string }, base_url: { type: string }, method: { type: string }, headers: { type: array, items: { $ref: '#/components/schemas/SyncHeader' } }, query_template: { type: string }, body: { type: string }, mode: { type: string }, docs_url: { type: string }, note: { type: object, properties: { en: { type: string }, bn: { type: string } } }, can_save: { type: boolean } }
+    SyncSetup:
+      type: object
+      properties: { sources: { type: array, items: { $ref: '#/components/schemas/SyncSource' } }, platforms: { type: array, items: { $ref: '#/components/schemas/SyncPlatform' } }, vault_ready: { type: boolean } }
+    SyncSourceInput:
+      type: object
+      properties:
+        slug: { type: string, description: 'create only' }
+        name: { type: string }
+        kind: { type: string, enum: [medicines, foods, conditions, allergies, custom] }
+        base_url: { type: string }
+        method: { type: string, enum: [get, post, put, patch, delete], description: 'PUT, PATCH and DELETE are never redirected and run only after their exact request passed /sync-sources/test' }
+        headers: { type: array, items: { type: object, required: [name, value, secret], properties: { name: { type: string }, value: { type: string }, secret: { type: boolean } } } }
+        query_template: { type: string }
+        body: { type: string }
+        mode: { type: string, enum: [update, append] }
+        platform: { type: [string, 'null'] }
+        confirm_write: { type: boolean, description: 'test only: required for PUT, PATCH and DELETE, which send the real request' }
+        timeout_ms: { type: integer }
+        max_retries: { type: integer }
+        backoff_base_ms: { type: integer }
+        backoff_factor: { type: number }
+        backoff_max_ms: { type: integer }
+        jitter: { type: boolean }
+        schedule_hours: { type: [integer, 'null'] }
+        active: { type: boolean }
+    SyncTest:
+      type: object
+      properties: { ok: { type: boolean }, error: { type: [string, 'null'] }, elapsed_ms: { type: integer }, rows_seen: { type: integer }, rows_usable: { type: integer }, can_save: { type: boolean }, sample: { type: array, items: { type: string } } }
+    SyncRun:
+      type: object
+      properties:
+        id: { type: integer }
+        source: { type: string }
+        source_name: { type: string }
+        started_by: { type: string, enum: [manual, schedule] }
+        started_at: { type: integer, description: unix seconds }
+        finished_at: { type: [integer, 'null'] }
+        attempts: { type: integer, description: 'requests made: 1 + retries used' }
+        status: { type: string, enum: [running, ok, failed] }
+        rows_seen: { type: integer }
+        rows_created: { type: integer }
+        rows_updated: { type: integer }
+        rows_skipped: { type: integer }
+        error: { type: [string, 'null'] }

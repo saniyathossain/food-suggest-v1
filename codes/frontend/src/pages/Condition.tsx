@@ -2,8 +2,11 @@
 // under the top bar while the page scrolls, verdict lanes as colour-coded columns (swipeable on a phone), then sources.
 import { useState } from 'react';
 import { Icon, Utensils } from '@/components/icons';
-import { Clock, HeartHandshake, ArrowLeft } from '@/components/icons/page';
+import { Clock, HeartHandshake } from '@/components/icons/page';
+import { Crumbs } from '@/components/journey/Crumbs';
+import { PlanNext } from '@/components/journey/NextStep';
 import { FoodRow } from '@/components/FoodRow';
+import { Insight } from '@/components/Insight';
 import { Lane, Lanes } from '@/components/Lanes';
 import { ConditionBones } from '@/components/kit/routeskeleton';
 import { ErrorBox } from '@/components/kit/loaderror';
@@ -15,7 +18,6 @@ import { Segmented } from '@/components/ui/segmented';
 import { VERDICTS } from '@/components/Verdict';
 import { endpoints, useResource } from '@/lib/api';
 import { useI18n } from '@/lib/i18n';
-import { onLink } from '@/lib/router';
 import type { ConditionDetail } from '@/lib/types';
 import { tone } from '@/lib/utils';
 
@@ -51,7 +53,7 @@ function Body({ data }: { data: ConditionDetail }) {
           label={data.name}
           value={tab}
           onChange={setTab}
-          className="shadow-md [background:var(--muted)]!"
+          className="seg-solid"
           options={[
             { value: 'foods', label: <><Utensils size={18} /> {t.condition.foods}</> },
             { value: 'timing', label: <><Clock size={18} /> {t.condition.timing} · {num(data.timing.length)}</> },
@@ -61,6 +63,15 @@ function Body({ data }: { data: ConditionDetail }) {
       </div>
       <FadeIn id={tab}>
         {tab === 'foods' && (
+          <div className="grid gap-5">
+            <Insight>
+              {t.insight.condition
+                .replace('{0}', data.name)
+                .replace('{1}', num(data.foods.avoid.length))
+                .replace('{2}', num(data.foods.limit.length))
+                .replace('{3}', num(data.foods.recommended.length))
+                .replace('{4}', data.foods.recommended.slice(0, 3).map((food) => food.name).join(', '))}
+            </Insight>
           <Lanes>
             {VERDICTS.map((verdict) => (
               <Lane key={verdict} verdict={verdict} count={data.foods[verdict].length}>
@@ -73,11 +84,13 @@ function Body({ data }: { data: ConditionDetail }) {
               </Lane>
             ))}
           </Lanes>
+          </div>
         )}
         {tab === 'timing' && <TimingList items={data.timing} />}
         {tab === 'habits' && <HabitGrid items={data.habits} />}
       </FadeIn>
       <Sources items={data.sources} />
+      <PlanNext kind="condition" />
       <Disclaimer />
     </div>
   );
@@ -89,9 +102,7 @@ export default function Condition({ slug }: { slug: string }) {
   return (
     <MotionRoot>
       <main className="page">
-        <a className="no-print press mb-4 inline-flex h-10 items-center gap-2 rounded-full px-3 text-subhead font-semibold text-muted-foreground hover:bg-accent hover:text-foreground" href="/" onClick={onLink}>
-          <ArrowLeft size={18} /> {t.condition.back}
-        </a>
+        <Crumbs trail={[{ href: '/', label: t.nav.conditions }]} here={data?.name} />
         {error && <ErrorBox />}
         {!data && !error && <ConditionBones />}
         {data && <Body data={data} />}

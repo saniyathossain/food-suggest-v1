@@ -47,4 +47,7 @@ Rule: features import kit/lib/generated and never each other (shared needs move 
 - One definition per closed list: Rust enum → generated TS union; never a string literal list twice.
 - DTOs only across HTTP; models never leave repositories; services are pure where they can be (plan engine).
 - File ≤ 400 lines, function ≤ 60, component ≤ 200; controllers thin; queries only in repositories; no N+1.
+- UI controls: fewer than 5 options are chips, 5+ a searchable dropdown, DB-backed choices `RemoteSelect`; confirmations are `confirmDialog`, never the browser's (`scripts/check-source.mjs`).
+- Lists: every sortable criterion in `lib/sorts.ts` (or a `sort` query on a cursor-paged API), one frame per panel, no nested bordered cards.
+- Every JSON body is sanitized in `middleware/sanitize.rs`; admin lists take `page` + `per_page` (10-100) via `support/page.rs`.
 - Every tunable is env with a safe default; every user-facing word in `lang/{en,bn}`; UTF-8 NFC for stored text.

@@ -10,6 +10,10 @@ pub struct RuleUpsertDto {
     pub food: String,
     pub verdict: Verdict,
     pub reason: LocalizedText,
+    /// the cited source's key (`sources.key`); absent = leave as is (a new rule then relies on the condition's sources)
+    #[serde(default)]
+    #[ts(optional)]
+    pub source: Option<String>,
 }
 
 #[derive(Debug, Deserialize, TS)]
@@ -18,6 +22,16 @@ pub struct FoodCreateDto {
     pub slug: String,
     pub category: String,
     pub name: LocalizedText,
+}
+
+#[derive(Debug, Deserialize, TS)]
+#[ts(export)]
+pub struct FoodPatchDto {
+    pub name: Option<LocalizedText>,
+    /// a category slug
+    pub category: Option<String>,
+    /// off hides the food from the public site without deleting it
+    pub active: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, TS)]
@@ -57,4 +71,13 @@ pub struct MediaDto {
 #[ts(export)]
 pub struct SavedDto {
     pub id: i32,
+}
+
+/// What a review marked.
+#[derive(Debug, Serialize, TS)]
+#[ts(export)]
+pub struct ReviewDto {
+    pub subject: String,
+    pub rules_marked: u64,
+    pub reviewed_on: String,
 }

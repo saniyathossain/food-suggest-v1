@@ -151,6 +151,7 @@ pub struct PaymentQuery {
     pub gateway: Option<String>,
     pub q: Option<String>,
     pub page: Option<u64>,
+    pub per_page: Option<u64>,
 }
 
 /// Admin decision on a payment: approve a manual transfer (paid), reject it (failed), or mark a refund.

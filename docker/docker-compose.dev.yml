@@ -12,6 +12,15 @@ services:
     ports:
       - "127.0.0.1:${WEB_PORT:-5180}:5180"
     depends_on: [app]
+    # Root inside (npm ci writes into the mounted source), so it keeps only the file capabilities it needs, can never gain more,
+    # and has the same ceilings as every other container (CPU, memory with no swap on top, processes).
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: ${WEB_MEM_LIMIT:-2g}
+    memswap_limit: ${WEB_MEM_LIMIT:-2g}
+    cpus: ${WEB_CPUS:-2.0}
+    pids_limit: 1024
 
 volumes:
   web_modules: {}

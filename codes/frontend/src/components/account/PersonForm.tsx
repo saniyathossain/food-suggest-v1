@@ -9,10 +9,13 @@ import { Segmented } from '@/components/ui/segmented';
 import { ApiError, send } from '@/lib/api';
 import { feature } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
-import type { Bootstrap, Gender, Kinship, Me, Person, PersonInput, Pregnancy } from '@/lib/types';
+import type { Activity, Allergen, Bootstrap, Budget, Gender, Kinship, Me, Person, PersonInput, Pregnancy } from '@/lib/types';
 import { cn, tone } from '@/lib/utils';
 
 const RELATIONS: Kinship[] = ['me', 'spouse', 'child', 'parent', 'sibling', 'other'];
+const ACTIVITIES: Activity[] = ['sedentary', 'light', 'moderate', 'active'];
+const BUDGETS: Budget[] = ['low', 'medium', 'high'];
+const ALLERGENS: Allergen[] = ['milk', 'egg', 'peanut', 'tree_nut', 'gluten', 'soy', 'fish', 'shellfish', 'sesame'];
 
 export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me: Me; person: Person | null; onSaved: (id: number) => void }) {
   const { t } = useI18n();
@@ -25,6 +28,12 @@ export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me:
   const [conditions, setConditions] = useState<Record<string, string>>(() => Object.fromEntries((person?.conditions ?? []).map((row) => [row.condition.slug, row.diagnosed_year ? String(row.diagnosed_year) : ''])));
   const [allergies, setAllergies] = useState((person?.allergies ?? []).join('\n'));
   const [surgeries, setSurgeries] = useState((person?.surgeries ?? []).join('\n'));
+  const [height, setHeight] = useState(person?.height_cm ? String(person.height_cm) : '');
+  const [waist, setWaist] = useState(person?.waist_cm ? String(person.waist_cm) : '');
+  const [sleep, setSleep] = useState(person?.sleep_hours ? String(person.sleep_hours) : '');
+  const [activity, setActivity] = useState<Activity | ''>(person?.activity ?? '');
+  const [budget, setBudget] = useState<Budget | ''>(person?.budget ?? '');
+  const [allergens, setAllergens] = useState<Allergen[]>(person?.allergens ?? []);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const modesAllowed = feature(me, 'diet_modes') !== 0;
@@ -53,7 +62,13 @@ export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me:
         const diagnosed = year(conditions[slug] ?? '');
         return diagnosed === undefined ? { slug } : { slug, diagnosed_year: diagnosed };
       }),
+      allergens,
       ...(year(birthYear) === undefined ? {} : { birth_year: year(birthYear) as number }),
+      ...(year(height) === undefined ? {} : { height_cm: year(height) as number }),
+      ...(year(waist) === undefined ? {} : { waist_cm: year(waist) as number }),
+      ...(sleep.trim() === '' ? {} : { sleep_hours: Number(sleep.replace(',', '.')) }),
+      ...(activity === '' ? {} : { activity }),
+      ...(budget === '' ? {} : { budget }),
     };
     try {
       // id 0 is a draft (from the quick builder on Today): it is created, not updated
@@ -118,6 +133,46 @@ export function PersonForm({ boot, me, person, onSaved }: { boot: Bootstrap; me:
           {!modesAllowed && mode !== 'everyday' && <UpgradeCard text={t.tiers.limitedMode} />}
         </section>
       )}
+      <section className="grid gap-4">
+        <div>
+          <h3 className="text-headline">{t.account.aboutYou}</h3>
+          <p className="text-footnote text-muted-foreground">{t.account.aboutYouHint}</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            { id: 'person-height', label: t.account.heightCm, value: height, set: setHeight, field: 'height_cm' },
+            { id: 'person-waist', label: t.account.waistCm, value: waist, set: setWaist, field: 'waist_cm' },
+            { id: 'person-sleep', label: t.account.sleepHours, value: sleep, set: setSleep, field: 'sleep_hours' },
+          ].map((item) => (
+            <div key={item.id} className="grid gap-1.5">
+              <Label htmlFor={item.id}>{item.label}</Label>
+              <Input id={item.id} inputMode="decimal" maxLength={5} value={item.value} onChange={(event) => item.set(event.target.value.replace(/[^\d.,]/g, ''))} aria-invalid={Boolean(errors[item.field]) || undefined} />
+              {errors[item.field] && <p className="text-footnote text-avoid-ink">{errors[item.field]}</p>}
+            </div>
+          ))}
+        </div>
+        <div className="min-w-0 max-w-full">
+          <Segmented label={t.account.activityLabel} value={activity} onChange={(value) => setActivity(value as Activity | '')} options={[{ value: '', label: '–' }, ...ACTIVITIES.map((value) => ({ value, label: t.account.activity[value] }))]} />
+        </div>
+        <div className="min-w-0 max-w-full">
+          <Segmented label={t.account.budgetLabel} value={budget} onChange={(value) => setBudget(value as Budget | '')} options={[{ value: '', label: '–' }, ...BUDGETS.map((value) => ({ value, label: t.account.budget[value] }))]} />
+        </div>
+        <div className="grid gap-2">
+          <span className="text-subhead font-semibold">{t.account.allergensLabel}</span>
+          <ul className="flex flex-wrap gap-2">
+            {ALLERGENS.map((kind) => {
+              const on = allergens.includes(kind);
+              return (
+                <li key={kind}>
+                  <button type="button" role="checkbox" aria-checked={on} onClick={() => setAllergens((now) => (on ? now.filter((item) => item !== kind) : [...now, kind]))} className={cn('press inline-flex h-9 items-center rounded-full border px-3.5 text-footnote font-semibold', on ? 'border-foreground bg-card' : 'bg-card/60 text-muted-foreground')}>
+                    {t.account.allergen[kind]}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
           <Label htmlFor="allergies">{t.account.allergies}</Label>

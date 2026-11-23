@@ -45,3 +45,9 @@ lighthouse/
 
 # AIDLC session log (local only)
 aidlc-docs/audit.md
+
+# seed photos belong in the media bucket (S3 / MinIO), not in git: new ones are ignored here (the 147 committed in the first commit stay tracked until
+# they are moved with `git rm --cached` once the bucket sync exists). CREDITS.md and the seeder SQL stay tracked, so the sources are never lost.
+codes/backend/database/assets/**/*.webp
+codes/backend/database/assets/**/*.png
+codes/backend/database/assets/**/*.jpg

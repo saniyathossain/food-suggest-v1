@@ -27,7 +27,7 @@ function Slider({ label, icon: Glyph, value, min, max, step, unit, onChange }: {
           {num(value)} <small className="text-subhead font-medium text-muted-foreground">{unit}</small>
         </span>
       </span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="h-2 w-full cursor-pointer accent-[var(--primary)]" />
+      <input type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="lens-range h-7 w-full accent-[var(--primary)]" />
     </label>
   );
 }

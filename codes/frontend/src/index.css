@@ -26,3 +26,7 @@
 @import './styles/base.css';
 @import './styles/utilities.css';
 @import './styles/motion.css';
+@import './styles/lens.css';
+@import './styles/type.css';
+@import './styles/glass.css';
+@import './styles/flow.css';

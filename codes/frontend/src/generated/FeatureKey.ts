@@ -3,4 +3,4 @@
 /**
  * A tier feature: a count (-1 = unlimited) or a switch (1 / 0). Enforced by the API, not only hidden in the page.
  */
-export type FeatureKey = "profiles" | "conditions" | "suggestions" | "meal_alternatives" | "diet_modes" | "medicines" | "history" | "reports";
+export type FeatureKey = "profiles" | "conditions" | "suggestions" | "meal_alternatives" | "diet_modes" | "medicines" | "history" | "reports" | "meal_log" | "charts_pack" | "weekly_report" | "family_sharing" | "data_export" | "spotlight";

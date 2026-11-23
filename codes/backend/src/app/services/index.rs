@@ -80,6 +80,15 @@ impl<'snapshot> CatalogIndex<'snapshot> {
         Some(SourceDto { title: self.text(&item.title), publisher: item.publisher.clone(), url: item.url.clone(), year: item.year })
     }
 
+    /// The source behind a rule: its own, else the first source of its condition (None when nothing is cited).
+    pub fn rule_source(&self, rule: &crate::app::models::food_rule::Model) -> Option<SourceDto> {
+        let own = self.source(rule.source_id);
+        own.or_else(|| {
+            let link = self.snapshot.source_links.iter().filter(|link| link.condition_id == Some(rule.condition_id)).min_by_key(|link| link.sort)?;
+            self.source(Some(link.source_id))
+        })
+    }
+
     pub fn tag_for(&self, condition_id: Option<i32>) -> Option<ConditionTagDto> {
         condition_id.and_then(|id| self.condition(id)).map(|model| self.tag(model))
     }

@@ -11,7 +11,7 @@ export function Lane({ verdict, count, children }: { verdict: Verdict; count: nu
   const { t, num } = useI18n();
   return (
     <section aria-label={t.verdict[verdict]} className="surface flex w-[min(84vw,360px)] flex-col overflow-hidden rounded-xl md:w-auto" style={tone(verdictColor[verdict])}>
-      <header className="tone-soft mb-2 flex items-center gap-3 p-4">
+      <header className="tone-soft mb-2 flex min-h-[5.75rem] items-center gap-3 p-4">
         <span className="tile grid size-10 place-items-center rounded-md">
           <VerdictIcon verdict={verdict} size={20} />
         </span>

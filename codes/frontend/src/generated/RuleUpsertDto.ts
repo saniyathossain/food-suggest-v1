@@ -2,4 +2,8 @@
 import type { LocalizedText } from "./LocalizedText";
 import type { Verdict } from "./Verdict";
 
-export type RuleUpsertDto = { condition: string, food: string, verdict: Verdict, reason: LocalizedText, };
+export type RuleUpsertDto = { condition: string, food: string, verdict: Verdict, reason: LocalizedText, 
+/**
+ * the cited source's key (`sources.key`); absent = leave as is (a new rule then relies on the condition's sources)
+ */
+source?: string, };

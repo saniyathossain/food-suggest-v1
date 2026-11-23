@@ -25,6 +25,12 @@ pub struct Model {
     /// months 1-12 when typically in season (None = not seasonal)
     #[sea_orm(column_type = "JsonBinary", nullable)]
     pub season: Option<Json>,
+    /// 1 = everyday and low cost, 2 = moderate, 3 = costly (a rough band, not a price)
+    #[serde(default)]
+    pub cost_band: Option<i16>,
+    /// months from birth from which the food suits a baby (0 = from birth, 6 = about six months, 12 = one year); None = no age stated
+    #[serde(default)]
+    pub age_from_months: Option<i16>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

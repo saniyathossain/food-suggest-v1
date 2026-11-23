@@ -1,6 +1,6 @@
 use crate::app::dtos::catalog::{
     BootstrapDto, CategoryDto, ConditionDetailDto, ConditionSummaryDto, CountryDto, FoodBoardDto, FoodItemDto,
-    FoodConditionVerdictDto, FoodDetailDto, FoodSearchDto, FoodSwapDto, FoodVerdictDto, HabitDto,
+    FoodConditionVerdictDto, SearchIndexDto, SearchMedicineDto, FoodDetailDto, FoodSearchDto, FoodSwapDto, FoodVerdictDto, HabitDto,
     MealSlotBriefDto, SourceDto, TimingDto, VerdictCounts,
 };
 use crate::app::enums::{AgeGroup, Gender, Locale, Verdict};
@@ -153,6 +153,19 @@ impl CatalogService {
             .collect()
     }
 
+    /// Habits (of live conditions, and the general ones) and medicine generics for the in-app search.
+    pub fn search_index(snapshot: &CatalogSnapshot, locale: Locale, level: i32) -> SearchIndexDto {
+        let index = CatalogIndex::new(snapshot, locale);
+        let live: Vec<i32> = snapshot.conditions.iter().filter(|item| item.active).map(|item| item.id).collect();
+        // -1 is unlimited: the widest reach
+        let level = if level < 0 { 3 } else { level.clamp(1, 3) };
+        SearchIndexDto {
+            level,
+            habits: if level >= 2 { Self::habits_for(&index, &live, true) } else { Vec::new() },
+            medicines: if level < 3 { Vec::new() } else { snapshot.generics.iter().filter(|item| item.active).map(|item| SearchMedicineDto { slug: item.slug.clone(), name: item.name.clone(), group: index.text(&item.group_name) }).collect() },
+        }
+    }
+
     /// One food: its verdict for every condition (strictest first), the meals that suggest it, healthier swaps from the
     /// same category (recommended by at least one condition, not avoided by any), and the sources behind those verdicts.
     pub fn food(snapshot: &CatalogSnapshot, slug: &str, locale: Locale) -> Result<FoodDetailDto, AppError> {
@@ -167,6 +180,9 @@ impl CatalogService {
                     condition: index.tag(condition),
                     verdict: rule.verdict,
                     reason: index.text(&rule.reason),
+                    rule_id: rule.id,
+                    source: index.rule_source(rule),
+                    reviewed_on: rule.reviewed_on.clone(),
                 })
             })
             .collect();
@@ -182,6 +198,7 @@ impl CatalogService {
             origin: food.origin,
             season: season_of(food),
             in_season: season_of(food).contains(&current_month()),
+            age_from_months: food.age_from_months,
             photos: preparation::photos_of(&index, food),
             variants: preparation::variants_of(&index, food),
             glycemic: preparation::food_glycemic(&index, food),
@@ -295,6 +312,7 @@ impl CatalogService {
                 category: index.category_slug(food.category_id),
                 subcategory: index.subcategory(food.subcategory_id).map(|sub| sub.slug),
                 gi: food.gi,
+                age_from_months: food.age_from_months,
                 macros: usual.get(&food.id).and_then(|variant| preparation::macros(&index, variant)),
                 verdicts: snapshot
                     .rules

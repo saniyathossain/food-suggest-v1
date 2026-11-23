@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 type Props = Omit<ComponentProps<typeof Button>, 'onClick' | 'state'> & { onClick: () => Promise<unknown> };
 
 export function ActionButton({ onClick, ...props }: Props) {
-  const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle');
+  const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
   const timer = useRef(0);
   useEffect(() => () => window.clearTimeout(timer.current), []);
   const run = () => {
@@ -17,7 +17,10 @@ export function ActionButton({ onClick, ...props }: Props) {
         setState('done');
         timer.current = window.setTimeout(() => setState('idle'), SETTLE_MS);
       })
-      .catch(() => setState('idle'));
+      .catch(() => {
+        setState('error');
+        timer.current = window.setTimeout(() => setState('idle'), 1400);
+      });
   };
   return <Button {...props} state={state} onClick={run} />;
 }

@@ -5,6 +5,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader, type AppIcon } from '@/components/icons';
+import { CircleAlert } from '@/components/icons/page';
 import { BUTTON_BASE, BUTTON_SIZE, BUTTON_VARIANT } from '@/components/ui/button-styles';
 import { cn } from '@/lib/utils';
 
@@ -18,7 +19,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     /** the leading icon */
     icon?: AppIcon | undefined;
     /** what the action is doing: busy swaps the icon for a spinner and holds the button; done draws a check in its place */
-    state?: 'idle' | 'busy' | 'done' | undefined;
+    state?: 'idle' | 'busy' | 'done' | 'error' | undefined;
   };
 
 /** The label when the children are text only; null when they hold an element. */
@@ -41,9 +42,10 @@ function DoneMark() {
   );
 }
 
-function Leading({ state, Icon }: { state: 'idle' | 'busy' | 'done'; Icon: AppIcon | undefined }) {
+function Leading({ state, Icon }: { state: 'idle' | 'busy' | 'done' | 'error'; Icon: AppIcon | undefined }) {
   if (state === 'busy') return <Loader className="animate-spin" />;
   if (state === 'done') return <DoneMark />;
+  if (state === 'error') return <CircleAlert className="swap-in" />;
   if (!Icon) return null;
   return <Icon className="transition-transform duration-300 group-hover/btn:scale-110" />;
 }

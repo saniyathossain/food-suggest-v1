@@ -27,7 +27,7 @@ function SeasonPill({ data }: { data: FoodDetail }) {
 }
 
 export function FoodHero({ data, variant }: { data: FoodDetail; variant: string }) {
-  const { t } = useI18n();
+  const { t, num } = useI18n();
   return (
     <header className="grid gap-6 md:grid-cols-[minmax(0,420px)_1fr] md:items-center md:gap-10">
       <Gallery photos={data.photos} name={data.name} category={data.category.slug} variant={variant} />
@@ -40,6 +40,11 @@ export function FoodHero({ data, variant }: { data: FoodDetail; variant: string 
         <h1 className="text-display">{data.name}</h1>
         <div className="flex flex-wrap gap-2">
           <SeasonPill data={data} />
+          {data.age_from_months !== null && (
+            <span className="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_srgb,var(--tone-rose)_14%,var(--card))] px-3.5 py-1.5 text-subhead font-semibold">
+              {data.age_from_months === 0 ? t.baby.fromBirth : t.baby.fromMonths.replace('{n}', num(data.age_from_months))}
+            </span>
+          )}
         </div>
         <ul className="flex flex-wrap gap-2">
           {data.verdicts.length === 0 && <li className="text-subhead text-muted-foreground">{t.foods.neutral}</li>}

@@ -17,6 +17,10 @@ season: Array<number>, in_season: boolean, category: string, subcategory: string
  */
 gi: number | null, 
 /**
+ * months from birth from which the food suits a baby (0 = from birth, 6 = about six months, 12 = one year); None = no age stated
+ */
+age_from_months: number | null, 
+/**
  * energy and macronutrients per 100 g of the usual form, when the dataset has them
  */
 macros: MacrosDto | null, verdicts: Array<FoodVerdictDto>, };
