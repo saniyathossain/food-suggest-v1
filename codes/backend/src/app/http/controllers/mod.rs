@@ -3,6 +3,7 @@ pub mod admin;
 pub mod auth;
 pub mod billing;
 pub mod catalog;
+pub mod details;
 pub mod health;
 pub mod library;
 pub mod links;

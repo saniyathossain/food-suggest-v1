@@ -2,6 +2,7 @@
 pub mod audience_note;
 pub mod audit_entry;
 pub mod condition;
+pub mod condition_detail;
 pub mod criteria_note;
 pub mod food_allergen;
 pub mod country;

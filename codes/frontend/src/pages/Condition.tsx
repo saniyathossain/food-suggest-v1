@@ -5,6 +5,7 @@ import { Icon, Utensils } from '@/components/icons';
 import { Clock, HeartHandshake } from '@/components/icons/page';
 import { Crumbs } from '@/components/journey/Crumbs';
 import { PlanNext } from '@/components/journey/NextStep';
+import { ConditionFacts } from '@/components/condition/ConditionFacts';
 import { LinkedWith } from '@/components/links/LinkedWith';
 import { FoodRow } from '@/components/FoodRow';
 import { Insight } from '@/components/Insight';
@@ -48,6 +49,7 @@ function Body({ data }: { data: ConditionDetail }) {
   return (
     <div className="grid gap-8">
       <Cover data={data} />
+      <ConditionFacts details={data.details} />
       <div className="sticky top-[78px] z-20 -my-2 py-2">
         <Segmented<Tab>
           size="lg"

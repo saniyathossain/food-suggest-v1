@@ -1,4 +1,4 @@
-use crate::app::http::controllers::{sync, admin, auth, billing, catalog, family, health, insights, library, links, me, meals, ops, options, plan, staff};
+use crate::app::http::controllers::{sync, admin, auth, billing, catalog, family, health, insights, details, library, links, me, meals, ops, options, plan, staff};
 use crate::app::http::middleware::require_admin;
 use crate::bootstrap::AppState;
 use crate::app::services::media::MAX_UPLOAD_BYTES;
@@ -32,6 +32,7 @@ pub fn router(state: &AppState) -> Router<AppState> {
         .route("/foods", post(admin::create_food))
         .route("/foods/{slug}", patch(admin::update_food).delete(admin::delete_food))
         .route("/conditions/{slug}", patch(admin::update_condition))
+        .route("/conditions/{slug}/details", put(details::put))
         .route("/modes", get(admin::modes))
         .route("/modes/{slug}", patch(admin::update_mode))
         .route("/users", get(staff::users))
@@ -224,6 +225,7 @@ pub const ROUTES: &[(&str, &str, &str, &str)] = &[
     ("POST", "/api/v1/admin/conditions/{slug}/review", "medical reviewer", "mark a condition and all its rules reviewed"),
     ("POST", "/api/v1/admin/foods", "admin", "create food"),
     ("PATCH", "/api/v1/admin/conditions/{slug}", "admin", "update condition"),
+    ("PUT", "/api/v1/admin/conditions/{slug}/details", "editor", "replace the lines of one part of a condition (about, symptoms, causes, see_doctor, urgent), both languages"),
     ("DELETE", "/api/v1/admin/cache", "admin", "flush catalog cache"),
     ("GET", "/api/v1/admin/media", "admin", "media library"),
     ("POST", "/api/v1/admin/media", "admin", "import media by URL"),

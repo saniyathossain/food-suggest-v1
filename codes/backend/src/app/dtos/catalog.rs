@@ -1,5 +1,5 @@
 use ts_rs::TS;
-use crate::app::enums::{AgeGroup, Allergen, CookingFat, CookingMethod, FoodOrigin, GlycemicBand, Gender, Locale, TimingKind, Verdict};
+use crate::app::enums::{AgeGroup, Allergen, CookingFat, DetailKind, CookingMethod, FoodOrigin, GlycemicBand, Gender, Locale, TimingKind, Verdict};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, TS)]
@@ -159,6 +159,16 @@ pub struct ConditionDetailDto {
     pub timing: Vec<TimingDto>,
     pub habits: Vec<HabitDto>,
     pub sources: Vec<SourceDto>,
+    /// what it is, symptoms, causes, when to book a visit, when to get help now (empty groups are left out)
+    pub details: Vec<DetailGroupDto>,
+}
+
+/// The lines of one part of a condition's detail, in the asked language.
+#[derive(Debug, Serialize, TS)]
+#[ts(export)]
+pub struct DetailGroupDto {
+    pub kind: DetailKind,
+    pub items: Vec<String>,
 }
 
 #[derive(Debug, Default, Deserialize, TS)]

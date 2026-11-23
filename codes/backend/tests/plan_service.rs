@@ -36,6 +36,7 @@ fn snapshot() -> CatalogSnapshot {
     };
     CatalogSnapshot {
         links: vec![],
+        condition_details: vec![],
         countries: vec![country::Model { id: 1, code: "BD".to_owned(), name: text("Bangladesh"), active: true, sort: 0 }],
         conditions: vec![condition(1, "diabetes"), condition(2, "insomnia")],
         categories: vec![food_category::Model { id: 1, slug: "drinks".to_owned(), name: text("Drinks"), sort: 0, media_id: None }],

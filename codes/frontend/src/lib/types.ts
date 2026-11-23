@@ -168,3 +168,9 @@ export type { LinkRefDto as LinkRef } from '../generated/LinkRefDto';
 export type { LinkInputDto as LinkInput } from '../generated/LinkInputDto';
 export type { LinkPatchDto as LinkPatch } from '../generated/LinkPatchDto';
 export type { LinkSavedDto as LinkSaved } from '../generated/LinkSavedDto';
+
+// a condition's details: symptoms, causes, warning signs (codes/backend/src/app/dtos/{catalog,details}.rs)
+export type { DetailKind } from '../generated/DetailKind';
+export type { DetailGroupDto as DetailGroup } from '../generated/DetailGroupDto';
+export type { DetailsPutDto as DetailsPut } from '../generated/DetailsPutDto';
+export type { DetailsSavedDto as DetailsSaved } from '../generated/DetailsSavedDto';

@@ -1,9 +1,9 @@
 use crate::app::dtos::catalog::{
-    BootstrapDto, CategoryDto, ConditionDetailDto, ConditionSummaryDto, CountryDto, FoodBoardDto, FoodItemDto,
+    BootstrapDto, CategoryDto, ConditionDetailDto, ConditionSummaryDto, CountryDto, DetailGroupDto, FoodBoardDto, FoodItemDto,
     FoodConditionVerdictDto, SearchIndexDto, SearchMedicineDto, FoodDetailDto, FoodSearchDto, FoodSwapDto, FoodVerdictDto, HabitDto,
     MealSlotBriefDto, SourceDto, TimingDto, VerdictCounts,
 };
-use crate::app::enums::{AgeGroup, Allergen, Gender, Locale, Verdict};
+use crate::app::enums::{AgeGroup, Allergen, DetailKind, Gender, Locale, Verdict};
 use crate::app::exceptions::AppError;
 use crate::app::repositories::CatalogSnapshot;
 use crate::app::services::{content, diet_mode, preparation, CatalogIndex};
@@ -117,7 +117,21 @@ impl CatalogService {
             timing: Self::timing_for(&index, &[model.id], None),
             habits: Self::habits_for(&index, &[model.id], false),
             sources: Self::sources_for(&index, &[model.id]),
+            details: Self::details_for(&index, model.id),
         })
+    }
+
+    /// A condition's detail lines grouped by part, in the page's order; a part with no lines is left out.
+    pub fn details_for(index: &CatalogIndex<'_>, condition_id: i32) -> Vec<DetailGroupDto> {
+        let mut rows: Vec<_> = index.snapshot.condition_details.iter().filter(|row| row.condition_id == condition_id).collect();
+        rows.sort_by_key(|row| row.sort);
+        DetailKind::ALL
+            .iter()
+            .filter_map(|kind| {
+                let items: Vec<String> = rows.iter().filter(|row| row.kind == *kind).map(|row| index.text(&row.text)).filter(|text| !text.is_empty()).collect();
+                (!items.is_empty()).then_some(DetailGroupDto { kind: *kind, items })
+            })
+            .collect()
     }
 
     /// Timing rules for the given conditions plus general ones (no condition), optionally per country.

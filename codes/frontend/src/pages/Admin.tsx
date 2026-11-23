@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { KeyRound } from '@/components/icons';
 import { ArrowRight, BookOpen, CalendarClock, ChartLine, ChefHat, Clock, CreditCard, Crown, Database, HardDrive, Hash, ListChecks, Lock, Pill, Plus, Repeat, Server, Stethoscope, Users, Wallet } from '@/components/icons/page';
+import { ConditionDetails } from '@/components/admin/ConditionDetails';
 import { ConditionSettings } from '@/components/admin/ConditionSettings';
 import { DataTable, type Column } from '@/components/admin/DataTable';
 import { Accounts } from '@/components/admin/Accounts';
@@ -304,6 +305,7 @@ export default function Admin() {
         {condition && (
           <>
             <ConditionSettings key={condition.slug} admin={admin} condition={condition} />
+            <ConditionDetails key={`details-${condition.slug}`} admin={admin} condition={condition} />
             <MediaLibrary admin={admin} condition={condition} />
             <RuleTable admin={admin} condition={condition} />
           </>

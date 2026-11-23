@@ -5,6 +5,7 @@ pub mod admin;
 pub mod billing;
 pub mod catalog;
 pub mod content;
+pub mod details;
 pub mod library;
 pub mod links;
 pub mod meal;

@@ -2,6 +2,7 @@
 mod accounts;
 mod billing;
 mod catalog;
+mod details;
 mod links;
 mod meals;
 mod medicines;

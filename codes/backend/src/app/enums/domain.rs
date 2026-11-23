@@ -925,3 +925,26 @@ impl LinkOrigin {
         }
     }
 }
+
+/// A part of a condition's detail: what it is, its symptoms, its causes and risks, when to book a visit, and when to get help now.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter, DeriveActiveEnum, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[sea_orm(rs_type = "String", db_type = "Text")]
+#[serde(rename_all = "snake_case")]
+pub enum DetailKind {
+    #[sea_orm(string_value = "about")]
+    About,
+    #[sea_orm(string_value = "symptoms")]
+    Symptoms,
+    #[sea_orm(string_value = "causes")]
+    Causes,
+    #[sea_orm(string_value = "see_doctor")]
+    SeeDoctor,
+    #[sea_orm(string_value = "urgent")]
+    Urgent,
+}
+
+impl DetailKind {
+    /// The order the page shows them in.
+    pub const ALL: [Self; 5] = [Self::About, Self::Symptoms, Self::Causes, Self::SeeDoctor, Self::Urgent];
+}

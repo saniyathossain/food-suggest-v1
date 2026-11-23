@@ -194,6 +194,11 @@ export const en = {
   },
   gender: { male: 'Male', female: 'Female', other: 'Other' },
   ageGroup: { child: 'Child', teen: 'Teen', adult: 'Adult', senior: 'Senior' },
+  // a condition's own details: what it is, symptoms, causes, when to see a doctor (GET /api/v1/conditions/{slug} `details`)
+  conditionDetails: {
+    kinds: { about: 'What it is', symptoms: 'Symptoms', causes: 'Causes and risks', see_doctor: 'When to see a doctor', urgent: 'Get help now' },
+    note: 'General information from the sources below, not a diagnosis. A doctor can tell what applies to you.',
+  },
   // the links between foods, conditions, medicines, allergens and readings (GET /api/v1/links)
   links: {
     title: 'Linked with',
@@ -915,6 +920,28 @@ export const en = {
     deleteMediaTitle: 'Delete this image?',
     refundTitle: 'Mark this payment refunded?',
     refundBody: 'Record that the money went back to the customer. Their tier is not changed here.',
+    conditionDetails: {
+      title: 'Symptoms and details',
+      lead: 'The lines people read on the condition page. One line is one bullet; keep each short. English and Bangla lines pair up by position.',
+      en: 'English (one line each)',
+      bn: 'বাংলা (one line each)',
+      mismatch: 'English and Bangla have a different number of lines: the missing ones show as English only.',
+      lines: '{n} lines',
+      ph: {
+        about: 'One or two sentences: what the condition is',
+        symptoms: 'One symptom per line',
+        causes: 'One cause or risk per line',
+        see_doctor: 'One reason to book a visit per line',
+        urgent: 'One warning sign per line: get help now',
+      },
+      phBn: {
+        about: 'এক-দুই বাক্যে: অবস্থাটি কী',
+        symptoms: 'প্রতি লাইনে একটি লক্ষণ',
+        causes: 'প্রতি লাইনে একটি কারণ বা ঝুঁকি',
+        see_doctor: 'প্রতি লাইনে ডাক্তার দেখানোর একটি কারণ',
+        urgent: 'প্রতি লাইনে একটি সতর্ক সংকেত: এখনই সাহায্য নিন',
+      },
+    },
     linksAdmin: {
       title: 'Links',
       lead: 'Every link between foods, conditions, medicines, allergens and readings. A new link is saved in the table the plan already reads for that kind of pair.',
